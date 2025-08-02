@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'Italiana';
+  src: url('./italiana-400.woff2') format('woff2'),
+       url('./italiana-400.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
