@@ -41,6 +41,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-italiana: 'Italiana', serif;
+  --font-kalameh: 'Kalameh', serif;
 }
 
 :root {
@@ -83,7 +84,13 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    direction: rtl;
+    @apply bg-background text-foreground font-kalameh;
+  }
+
+  .default-inner-container {
+    @apply max-w-7xl mx-auto;
   }
 }
