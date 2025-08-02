@@ -7,11 +7,13 @@
 }
 
 .heading-2 {
+    
     font-size: 3rem;
 }
 
 .heading-3 {
-    font-size: clamp(1.5rem, 3vw, 1.8rem);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 3rem);
 }
 
 .heading-4 {
