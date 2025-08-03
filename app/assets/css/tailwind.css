@@ -91,6 +91,6 @@
   }
 
   .default-inner-container {
-    @apply max-w-7xl mx-auto;
+    @apply max-w-full xl:max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 xl:px-0;
   }
 }
