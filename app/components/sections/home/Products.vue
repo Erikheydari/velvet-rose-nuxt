@@ -8,15 +8,16 @@
     </p>
 
     <Carousel class="relative w-full default-inner-container mb-12" :opts="{
-      align: 'start',
+      loop: true,
+      direction: 'rtl',
     }">
       <CarouselContent>
-        <CarouselItem v-for="(product, index) in products" :key="index" class="md:basis-1/2 lg:basis-1/3 pt-8">
+        <CarouselItem v-for="(product, index) in products" :key="index" class="basis-full sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4 pt-8">
           <ProductCard :product="product" :type="props.type" />
         </CarouselItem>
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious variant="outline" />
+      <CarouselNext variant="outline" />
     </Carousel>
 
 
