@@ -1,8 +1,9 @@
 <template>
   <TheCard class="transition-shadow hover:shadow-xs relative aspect-[328/455]"
     :class="{ 'border border-border': props.type === 'primary', 'bg-transparent': props.type === 'secondary' }">
+
     <div v-if="props.product.discount_percentage > 0"
-      class=" absolute top-4 left-4 bg-primary text-primary-foreground rounded-full gap-0.5 size-12 flex items-center justify-center text-xl relatvie z-1">
+      class=" absolute top-4 left-4 bg-primary text-primary-foreground rounded-full gap-0.5 size-12 flex items-center justify-center text-xl relatvie z-10">
       <span class="text-sm -mb-2">
         %
       </span>
@@ -10,14 +11,31 @@
         {{ props.product.discount_percentage }}
       </span>
     </div>
+
+    <ProductCardColorSwatches v-if="props.product.colors && props.product.colors.length > 0"
+      :colors="props.product.colors" class="absolute top-4 right-4 z-1" />
+
     <ProductCardImage :image="props.product.image" :alt="props.product.alt_image" :name="props.product.name"
       :type="props.type" class="relative size-full object-contain z-[1]" />
-    <TheCardContent class="space-y-4 relative z-1">
-      <TheCardTitle class="font-extrabold text-primary heading-4">
+
+    <TheCardHeader class="relative z-1">
+      <TheCardTitle class="text-primary line-clamp-2">
         {{ props.product.name }}
       </TheCardTitle>
-      <ProductCardColorSwatches :colors="props.product.colors" />
+    </TheCardHeader>
+
+    <TheCardContent class="space-y-4 relative z-1 grow">
+      <p v-if="(props.product.options && props.product.options.length > 0) && !(props.product.colors && props.product.colors.length > 0)"
+        class="text-muted-foreground text-sm">
+        <span class="body-2" v-for="(option, index) in props.product.options" :key="index">
+          {{ option }}
+          <span v-if="index < (props.product.options?.length ?? 0) - 1">
+            -
+          </span>
+        </span>
+      </p>
     </TheCardContent>
+
     <TheCardFooter class="relative z-1 justify-between items-end">
       <ProductCardPrice :product="props.product" />
       <Button variant="outline" size="icon" @click.prevent.stop="addToCart">
