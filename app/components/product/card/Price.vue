@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 flex items-baseline gap-4">
-    <bdi class="text-2xl font-semibold text-primary">
+    <bdi class="body-1 text-primary">
       {{ props.product.final_price }}
       <small>
         تومان
