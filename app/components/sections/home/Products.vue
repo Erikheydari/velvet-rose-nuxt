@@ -21,7 +21,7 @@
 
 
     <div class="flex justify-center">
-      <TheButton size="lg">
+      <TheButton size="lg" :as="NuxtLink" to="/products">
         مشاهده همه
       </TheButton>
     </div>
@@ -32,14 +32,20 @@
 import { ProductCard } from '~/components/product/card';
 import type { Product } from '~/types/product.types';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '~/components/ui/carousel';
+import { NuxtLink } from '#components';
 
-const props = defineProps<{
+//props with default value
+const props = withDefaults(defineProps<{
   title?: string
   description?: string
   products: Product[]
   type: 'default' | 'secondary' | 'primary'
-}>()
-
+  to?: string
+}>(), {
+  type: 'default',
+  title: 'محصولات آرایشی بهداشتی',
+  description: 'تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند',
+})
 </script>
 
 <style></style>
