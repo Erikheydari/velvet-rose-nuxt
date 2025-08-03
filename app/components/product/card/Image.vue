@@ -1,7 +1,7 @@
 <template>
   <div class="aspect-square w-full h-auto relative group max-w-[calc(100%-3.5rem)] mx-auto -translate-y-12">
     <span v-if="props.image && !imageError && props.type !== 'secondary'"
-      :class="{ 'animate-pulse': isImageLoading, 'bg-secondary': props.type === 'default' }"
+      :class="{ 'animate-pulse': isImageLoading, 'bg-secondary': props.type === 'default', 'bg-primary': props.type === 'primary' }"
       class="group-hover:scale-103 transition-transform duration-300 rounded-full size-60 max-w-[90%] max-h-[90%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10"></span>
     <figure v-if="props.image && !imageError">
       <img :src="props.image" :alt="props.alt || props.name || ''" @load="isImageLoading = false"
