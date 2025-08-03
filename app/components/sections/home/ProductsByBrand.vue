@@ -46,7 +46,7 @@
 
 
     <div class="flex justify-center">
-      <TheButton size="lg" :as="NuxtLink" to="/products">
+      <TheButton size="lg" :as="NuxtLink" to="/products" variant="outline">
         مشاهده همه
       </TheButton>
     </div>
@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { TheCarousel, TheCarouselContent, TheCarouselItem, TheCarouselPrevious, TheCarouselNext } from '#components';
+import { TheCarousel, TheCarouselContent, TheCarouselItem, TheCarouselPrevious, TheCarouselNext, NuxtLink } from '#components';
 import type { Product } from '~/types/product.types';
 import type { CarouselApi } from '~/components/ui/carousel';
 import { ref, watch } from 'vue';
