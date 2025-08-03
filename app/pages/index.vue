@@ -2,7 +2,7 @@
   <SectionsHomeHero />
   <SectionsHomeProducts :products="productsStore.products" type="default" title="محصولات آرایشی بهداشتی"
     description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
-    <SectionsHomeProducts :products="productsStore.products" type="primary" title="محصولات آرایشی بهداشتی"
+    <SectionsHomeProducts :products="productsStore.products" type="secondary" title="محصولات آرایشی بهداشتی"
     description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
 </template>
 
