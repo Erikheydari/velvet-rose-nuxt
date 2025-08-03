@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WithClassAsProps } from './interface'
-import { ArrowRight } from 'lucide-vue-next'
+import { ChevronRight } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { Button, type ButtonVariants } from '@/components/ui/button'
 import { useCarousel } from './useCarousel'
@@ -22,7 +22,7 @@ const { orientation, canScrollNext, scrollNext } = useCarousel()
     data-slot="carousel-next"
     :disabled="!canScrollNext"
     :class="cn(
-      'absolute size-8 rounded-full',
+      'absolute size-8 rounded-full h-18',
       orientation === 'horizontal'
         ? 'top-1/2 -right-12 -translate-y-1/2'
         : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -33,7 +33,7 @@ const { orientation, canScrollNext, scrollNext } = useCarousel()
     @click="scrollNext"
   >
     <slot>
-      <ArrowRight />
+      <ChevronRight />
       <span class="sr-only">Next Slide</span>
     </slot>
   </Button>
