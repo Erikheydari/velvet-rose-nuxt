@@ -4,7 +4,7 @@
       :class="{ 'animate-pulse': isImageLoading, 'bg-secondary': props.type === 'default', 'bg-primary': props.type === 'primary' }"
       class="group-hover:scale-103 transition-transform duration-300 rounded-full size-[80%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10"></span>
     <figure v-if="props.image && !imageError">
-      <img :src="props.image" :alt="props.alt || props.name || ''" @load="isImageLoading = false"
+      <img :src="props.image.src" :alt="props.image.alt || props.name || ''" @load="isImageLoading = false"
         @error="imageError = true"
         class="object-contain group-hover:scale-108 group-hover:rotate-2 transition-all duration-300 origin-center h-full w-full"
         :class="{ 'opacity-0': isImageLoading || imageError, 'opacity-100': !isImageLoading && !imageError }" />
@@ -23,9 +23,10 @@
 
 <script lang="ts" setup>
 import { ImageOff } from 'lucide-vue-next';
+import type { ProductImage } from '~/types/product.types';
+
 const props = defineProps<{
-  image?: string
-  alt?: string
+  image?: ProductImage
   name?: string
   type: 'default' | 'secondary' | 'primary'
 }>()
