@@ -1,6 +1,6 @@
 <template>
-  <section class="w-full h-screen flex items-center justify-center bg-video relative bg-background">
-    <h1 class="heading-1 text-primary font-italiana absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+  <section class="w-full h-screen flex items-center justify-center bg-video relative bg-background -mb-20 lg:mb-0">
+    <h1 class="heading-1 text-primary font-italiana absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-nowrap">
       Velvet Rose
     </h1>
     <video autoplay muted loop class="w-full h-full absolute top-0 left-0 object-cover ">
