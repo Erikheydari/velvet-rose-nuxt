@@ -18,12 +18,14 @@ export const buttonVariants = cva(
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
+        tonal: 'bg-secondary/40 text-primary hover:bg-secondary/20',
       },
       size: {
         default: 'h-10 px-4 pt-1.5 pb-2 has-[>svg]:px-3 text-base',
         sm: 'h-9 rounded-full gap-1.5 px-3 pt-1.5 pb-2 has-[>svg]:px-2.5 text-sm',
-        lg: 'h-12 rounded-full px-6 pb-2.5 pt-1  has-[>svg]:px-4 text-lg',
+        lg: 'h-12 rounded-full px-6 pb-2.5 pt-1  has-[>svg]:px-4 text-lg [&_svg]:size-5',
         icon: 'size-9',
+        'icon-lg': 'size-12 [&_svg]:size-5',
       },
     },
     defaultVariants: {
