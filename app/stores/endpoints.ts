@@ -20,6 +20,7 @@ export const useEndpointStore = defineStore('endpointStore', () => {
     const categories = {
         get: `${apiUrl}${apiPrefix}/categories`,
         products: (id: number) => `${apiUrl}${apiPrefix}/categories/${id}/products`,
+        getBySlug: (slug: string) => `${apiUrl}${apiPrefix}/categories/${slug}`,
     }
 
     return {
