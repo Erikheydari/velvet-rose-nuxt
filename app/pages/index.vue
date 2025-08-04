@@ -1,8 +1,8 @@
 <template>
   <SectionsHomeHero />
+  <SectionsHomeBeforeAfter />
 
-
-  <SectionsHomeProducts :products="productsStore.products" type="default">
+  <SectionsHomeProducts :products="productsStore.products" type="primary">
     <SectionsHeading title="محصولات آرایشی بهداشتی"
       description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
   </SectionsHomeProducts>
