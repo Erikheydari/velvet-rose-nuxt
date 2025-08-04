@@ -11,7 +11,6 @@ export interface Category {
   name: string
   banner?: string
   slug: string
-  seo: Seo
 }
 
 export interface Brand {
