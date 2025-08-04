@@ -2,7 +2,7 @@
   <section class="bg-secondary py-10">
     <slot />
 
-    <Carousel class="relative w-full default-inner-container mb-12" :opts="{
+    <Carousel class="relative lg:w-full default-inner-container mb-12" :opts="{
       loop: true,
       align: alignSlider,
       direction: 'rtl',
@@ -13,8 +13,8 @@
           <ProductCard :product="product" :type="props.type" />
         </CarouselItem>
       </CarouselContent>
-      <CarouselPrevious variant="outline" />
-      <CarouselNext variant="outline" />
+      <CarouselPrevious class="lg:block hidden" variant="outline" />
+      <CarouselNext class="lg:block hidden" variant="outline" />
     </Carousel>
 
 
