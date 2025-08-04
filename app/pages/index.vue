@@ -4,7 +4,7 @@
     description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
   <SectionsHomeProducts :products="productsStore.products" type="secondary" title="محصولات آرایشی بهداشتی"
     description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
-  <section class="">
+  <section class="mb-10">
     <SectionsHomeProductsByBrand :products="productsStore.products" title="Tom Ford" description="Product Model" />
   </section>
 </template>

@@ -17,6 +17,7 @@ const { carouselRef, orientation } = useCarousel()
     ref="carouselRef"
     data-slot="carousel-content"
     class="overflow-hidden"
+    :class="props.class"
   >
     <div
       :class="

@@ -1,18 +1,23 @@
 <template>
-  <section class="bg-secondary py-10 px">
-    <h3 v-if="props.title" class="heading-3 text-primary text-center mb-4">
-      {{ props.title }}
-    </h3>
-    <p v-if="props.description" class="text-center text-muted-foreground mb-12 text-lg">
-      {{ props.description }}
-    </p>
+  <section class="bg-secondary py-10">
+    <div class="default-inner-container">
+      <h3 v-if="props.title" class="heading-3 text-primary text-center mb-4">
+        {{ props.title }}
+      </h3>
+      <p v-if="props.description" class="text-center text-muted-foreground mb-12 text-lg">
+        {{ props.description }}
+      </p>
+
+    </div>
 
     <Carousel class="relative w-full default-inner-container mb-12" :opts="{
       loop: true,
+      align: alignSlider,
       direction: 'rtl',
     }">
       <CarouselContent>
-        <CarouselItem v-for="(product, index) in products" :key="index" class="basis-full sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4 pt-8">
+        <CarouselItem v-for="(product, index) in products" :key="index"
+          class="basis-[80%] sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4 pt-8">
           <ProductCard :product="product" :type="props.type" />
         </CarouselItem>
       </CarouselContent>
@@ -34,6 +39,11 @@ import { ProductCard } from '~/components/product/card';
 import type { Product } from '~/types/product.types';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '~/components/ui/carousel';
 import { NuxtLink } from '#components';
+import { useWindowSize } from '@vueuse/core';
+
+const { width } = useWindowSize()
+
+const alignSlider = computed(() => width.value > 1024 ? 'start' : 'center')
 
 //props with default value
 const props = withDefaults(defineProps<{

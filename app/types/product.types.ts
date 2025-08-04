@@ -21,14 +21,10 @@ export interface Brand {
 }
 
 export interface ProductImage {
-  id: number
-  image: string
-  alt_image?: string
-  length?: string
-  width?: string
-  height?: string
-  weight?: string
+  src: string
+  alt?: string | null
 }
+
 
 export interface ProductAttributes {
   [key: string]: {
@@ -48,8 +44,7 @@ export interface Product {
   qty: number
   category: Category
   brand: Brand
-  image?: string
-  alt_image?: string
+  image?: ProductImage
   length?: string
   width?: string
   height?: string
