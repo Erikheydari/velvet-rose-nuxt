@@ -1,6 +1,6 @@
 <template>
   <header class="w-full sticky top-0 z-50 transition-all duration-300 -mb-24"
-    :class="{ 'bg-background-glass shadow-sm': isSticky }">
+    :class="{ 'bg-background/90 backdrop-blur': isSticky }">
     <div class="w-full py-4 px-8 transition-all duration-300" :class="{ 'py-2': isSticky }">
       <div class="w-full flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -16,7 +16,7 @@
         <div class="flex items-center gap-2">
           <ul class="flex items-center gap-2">
             <li v-for="item in headerNavItems" :key="item.label">
-              <TheButton variant="link" class="text-muted-foreground hover:text-primary" size="lg"
+              <TheButton variant="link" class="text-foreground/70 hover:text-primary" size="lg"
                 :class="{ 'text-primary': $route.path === item.to }" :to="item.to">
                 {{ item.label }}
               </TheButton>
@@ -44,8 +44,4 @@ const isSticky = computed(() => y.value > 100);
 </script>
 
 <style>
-.bg-background-glass {
-  backdrop-filter: blur(20px);
-  background-color: rgba(var(--background), 0.95);
-}
 </style>
