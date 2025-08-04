@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL || 'http://78.157.42.110',
-      apiPrefix: process.env.API_PREFIX || '/api',
+      apiPrefix: process.env.API_PREFIX || '/api'
     },
   },
 })
