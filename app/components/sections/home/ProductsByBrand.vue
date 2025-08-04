@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full relative py-[20%] lg:py-[5%] lg:pb-0 lg:min-h-screen">
+  <div class="w-full relative py-[20%] lg:py-[5%] lg:pb-0 lg:min-h-screen mb-20">
     <div class="flex flex-col justify-center items-center relative lg:mb-20">
       <h3 class="heading-2 font-extrabold text-primary relative z-0 leading-none">
         {{ props.title }}
@@ -38,14 +38,13 @@
         class="brand-carousel-nav border-none [&>svg]:size-10 z-2 absolute bg-secondary right-0 w-[15%] h-[28%] opacity-0" />
     </TheCarousel>
     <div class="flex justify-center">
-      <TheButton size="lg" :as="NuxtLink" to="/products" variant="outline">
+      <TheButton size="lg" to="/products" variant="outline">
         مشاهده همه
       </TheButton>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { NuxtLink } from '#components';
 import type { Product } from '~/types/product.types';
 import type { CarouselApi } from '~/components/ui/carousel';
 import { ref, watch } from 'vue';
