@@ -1,14 +1,6 @@
 <template>
   <section class="bg-secondary py-10">
-    <div class="default-inner-container">
-      <h3 v-if="props.title" class="heading-3 text-primary text-center mb-4">
-        {{ props.title }}
-      </h3>
-      <p v-if="props.description" class="text-center text-muted-foreground mb-12 text-lg">
-        {{ props.description }}
-      </p>
-
-    </div>
+    <slot />
 
     <Carousel class="relative w-full default-inner-container mb-12" :opts="{
       loop: true,
@@ -27,7 +19,7 @@
 
 
     <div class="flex justify-center">
-      <TheButton size="lg" :as="NuxtLink" to="/products">
+      <TheButton size="lg" to="/products">
         مشاهده همه
       </TheButton>
     </div>
@@ -38,7 +30,6 @@
 import { ProductCard } from '~/components/product/card';
 import type { Product } from '~/types/product.types';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '~/components/ui/carousel';
-import { NuxtLink } from '#components';
 import { useWindowSize } from '@vueuse/core';
 
 const { width } = useWindowSize()
