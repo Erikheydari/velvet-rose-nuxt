@@ -15,8 +15,8 @@
     <ProductCardColorSwatches v-if="props.product.colors && props.product.colors.length > 0"
       :colors="props.product.colors" class="absolute top-4 right-4 z-1" />
 
-    <ProductCardImage :image="props.product.image" :alt="props.product.alt_image" :name="props.product.name"
-      :type="props.type" class="relative size-full object-contain z-[1]" />
+    <ProductCardImage :image="props.product.image" :name="props.product.name" :type="props.type"
+      class="relative size-full object-contain z-[1]" />
 
     <TheCardHeader class="relative z-1">
       <TheCardTitle class="text-primary line-clamp-2">
@@ -29,8 +29,8 @@
         class="text-muted-foreground text-sm">
         <span class="body-2" v-for="(option, index) in props.product.options" :key="index">
           {{ option }}
-          <span v-if="index < (props.product.options?.length ?? 0) - 1">
-            -
+          <span v-if="index < (props.product.options?.length ?? 0) - 1" class="ml-1 -mr-1">
+            {{ '،' }}
           </span>
         </span>
       </p>
