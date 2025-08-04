@@ -4,12 +4,11 @@
     <main class="w-full h-full">
       <slot />
     </main>
-    <TheFooter />
+    <Footer />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { TheFooter } from '~/components/footer';
 import { TheHeader } from '~/components/header';
 
 </script>
