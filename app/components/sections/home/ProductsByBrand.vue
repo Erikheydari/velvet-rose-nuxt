@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full relative py-[20%] lg:py-[5%] lg:h-screen">
-    <div class="flex flex-col justify-center items-center relative mb-[5%]">
+  <div class="w-full relative py-[20%] lg:py-[5%] lg:pb-0 lg:min-h-screen">
+    <div class="flex flex-col justify-center items-center relative lg:mb-20">
       <h3 class="heading-2 font-extrabold text-primary relative z-0 leading-none">
         {{ props.title }}
       </h3>
@@ -9,18 +9,18 @@
         {{ props.description }}
       </p>
     </div>
-    <TheCarousel dir="rtl" class="carousel-container lg:pt-[2%] lg:pb-0 lg:h-[calc(100vh-300px)] relative z-1" :opts="{
+    <TheCarousel dir="rtl" class="carousel-container lg:pt-[2%] lg:pb-0 relative z-1 " :opts="{
       loop: true,
       direction: 'rtl',
       align: 'center',
       containScroll: 'keepSnaps'
     }" @init-api="(val) => emblaMainApi = val">
-      <TheCarouselContent class="relative z-1">
+      <TheCarouselContent class="relative ml-0 z-1">
         <TheCarouselItem v-for="(product, index) in products" :key="product.id"
-          class="basis-full md:basis-1/3 flex items-end justify-center relative pt-[20%] lg:pt-[8%]">
+          class="basis-full md:basis-1/3 flex items-end justify-center relative pt-[30%] md:pt-[10%]  lg:pt-[8%] pl-0">
           <div :class="[
             'transition-all duration-500 origin-bottom md:max-w-none lg:max-w-[15vw] ',
-            { 'scale-130 md:scale-[1.2] lg:scale-[1.6]': index === selectedIndex, 'md:scale-80 lg:scale-100': index !== selectedIndex }
+            { 'scale-130 md:scale-[1.2] lg:scale-[1.6]': index === selectedIndex, 'md:scale-60 lg:scale-100': index !== selectedIndex }
           ]">
             <figure class="aspect-square w-auto product-image">
               <img :src="`${product.image?.src}`" :alt="product.name" class="w-full h-full object-contain" />
@@ -29,13 +29,13 @@
         </TheCarouselItem>
       </TheCarouselContent>
       <TheCarouselPrevious
-        class="border-none shadow-none [&>svg]:size-10 z-0 absolute top-1/2 -translate-y-1/12 bg-secondary left-0 w-[15%] h-[28%] rounded-r-full rounded-l-none" />
+        class="brand-carousel-nav border-none shadow-none [&>svg]:size-10 z-0 absolute  bg-secondary left-0 w-[25vw] h-[28%] rounded-r-full rounded-l-none [&>svg]:-ml-[60%]" />
       <TheCarouselPrevious
-        class="border-none [&>svg]:size-10 z-2 absolute top-1/2 -translate-y-1/12 bg-secondary left-0 w-[15%] h-[28%] opacity-0" />
+        class="brand-carousel-nav border-none [&>svg]:size-10 z-2 absolute bg-secondary left-0 w-[15%] h-[28%] opacity-0" />
       <TheCarouselNext
-        class="border-none shadow-none [&>svg]:size-10 z-0 absolute top-1/2 -translate-y-1/12 bg-secondary right-0 w-[15%] h-[28%] rounded-l-full rounded-r-none" />
+        class="brand-carousel-nav border-none  shadow-none [&>svg]:size-10 z-0 absolute bg-secondary right-0 w-[25%] h-[28%] rounded-l-full rounded-r-none [&>svg]:-mr-[60%]" />
       <TheCarouselNext
-        class="border-none [&>svg]:size-10 z-2 absolute top-1/2 -translate-y-1/12 bg-secondary right-0 w-[15%] h-[28%] opacity-0" />
+        class="brand-carousel-nav border-none [&>svg]:size-10 z-2 absolute bg-secondary right-0 w-[15%] h-[28%] opacity-0" />
     </TheCarousel>
     <div class="flex justify-center">
       <TheButton size="lg" :as="NuxtLink" to="/products" variant="outline">
@@ -45,7 +45,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TheCarousel, TheCarouselContent, TheCarouselItem, TheCarouselPrevious, TheCarouselNext, NuxtLink } from '#components';
+import { NuxtLink } from '#components';
 import type { Product } from '~/types/product.types';
 import type { CarouselApi } from '~/components/ui/carousel';
 import { ref, watch } from 'vue';
@@ -86,4 +86,9 @@ const props = defineProps<{
   padding-bottom: clamp(2rem, 8vw, 4rem);
   padding-top: clamp(1rem, 5vw, 3rem);
 }
-</style>Z
+
+.brand-carousel-nav {
+  bottom: 10rem;
+  transform: translateY(80%);
+}
+</style>
