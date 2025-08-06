@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL || 'http://78.157.42.110',
+      mediaUrl: process.env.MEDIA_URL || 'http://78.157.42.110/storage/',
       apiPrefix: process.env.API_PREFIX || '/api',
     },
   },
