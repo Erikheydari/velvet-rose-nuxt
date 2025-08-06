@@ -14,8 +14,8 @@
                     </div>
 
                     <div class="flex-1">
-<!--                         <MenuTabs v-model="activeTab" />
-                        <MenuList :active-tab="activeTab" /> -->
+                        <MenuMobileTabs v-model="activeTab" />
+                        <MenuMobileList :active-tab="activeTab" />
                     </div>
                 </div>
             </div>
@@ -27,7 +27,6 @@
 
 <script lang="ts" setup>
 import { ref, watch, onUnmounted } from 'vue'
-// import MenuTabs from './MenuTabs.vue'
 // import MenuList from './MenuList.vue';
 import { Backdrop } from '@/components/ui/backdrop'
 
