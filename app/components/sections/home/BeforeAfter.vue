@@ -37,13 +37,11 @@
          class="absolute pointer-events-none z-10 rounded-full border-2 border-primary bg-transparent transition-opacity duration-200"
          :style="cursorStyle">
     </div>
-
-    <!-- Mobile scroll indicator line -->
   </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 
 const sectionRef = ref<HTMLElement | null>(null);
 const frontImageRef = ref<HTMLImageElement | null>(null);
@@ -55,6 +53,9 @@ const cursorX = ref(0);
 const cursorY = ref(0);
 const isHovering = ref(false);
 const isDesktop = ref(false);
+
+// Store cleanup functions
+let cleanupFunctions: Array<() => void> = [];
 
 // Computed style for cursor
 const cursorStyle = computed(() => {
@@ -80,127 +81,166 @@ const throttle = (func: Function, limit: number) => {
   };
 };
 
-onMounted(() => {
+// Clean up all event listeners and observers
+const cleanup = () => {
+  cleanupFunctions.forEach(fn => fn());
+  cleanupFunctions = [];
+  document.body.style.cursor = 'auto';
+};
+
+// Setup desktop interactions
+const setupDesktop = () => {
   const section = sectionRef.value;
   const frontImage = frontImageRef.value;
   if (!section || !frontImage) return;
 
-  // Client-side only check
-  if (typeof window !== 'undefined') {
-    isDesktop.value = window.matchMedia('(min-width: 1024px) and (hover: hover)').matches;
+  const handleMouseMove = throttle((e: MouseEvent) => {
+    const imgRect = frontImage.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+    
+    mouseX.value = e.clientX - imgRect.left;
+    mouseY.value = e.clientY - imgRect.top;
+    cursorX.value = e.clientX - sectionRect.left;
+    cursorY.value = e.clientY - sectionRect.top;
 
-    if (isDesktop.value) {
-      // Desktop hover effect with optimized mouse tracking
-      const handleMouseMove = throttle((e: MouseEvent) => {
-        const imgRect = frontImage.getBoundingClientRect();
-        const sectionRect = section.getBoundingClientRect();
-        
-        // Update mouse position relative to image
-        mouseX.value = e.clientX - imgRect.left;
-        mouseY.value = e.clientY - imgRect.top;
-        
-        // Update cursor position relative to section
-        cursorX.value = e.clientX - sectionRect.left;
-        cursorY.value = e.clientY - sectionRect.top;
+    frontImage.style.setProperty('--mouse-x', `${mouseX.value}px`);
+    frontImage.style.setProperty('--mouse-y', `${mouseY.value}px`);
+  }, 8);
 
-        // Update CSS custom properties for mask
-        frontImage.style.setProperty('--mouse-x', `${mouseX.value}px`);
-        frontImage.style.setProperty('--mouse-y', `${mouseY.value}px`);
-      }, 8); // ~120fps
+  const handleMouseEnter = () => { 
+    isHovering.value = true;
+    document.body.style.cursor = 'none';
+  };
+  
+  const handleMouseLeave = () => { 
+    isHovering.value = false;
+    document.body.style.cursor = 'auto';
+  };
 
-      const handleMouseEnter = () => { 
-        isHovering.value = true;
-        document.body.style.cursor = 'none';
-      };
-      
-      const handleMouseLeave = () => { 
-        isHovering.value = false;
-        document.body.style.cursor = 'auto';
-      };
+  section.addEventListener('mousemove', handleMouseMove);
+  section.addEventListener('mouseenter', handleMouseEnter);
+  section.addEventListener('mouseleave', handleMouseLeave);
 
-      section.addEventListener('mousemove', handleMouseMove);
-      section.addEventListener('mouseenter', handleMouseEnter);
-      section.addEventListener('mouseleave', handleMouseLeave);
+  // Store cleanup functions
+  cleanupFunctions.push(
+    () => section.removeEventListener('mousemove', handleMouseMove),
+    () => section.removeEventListener('mouseenter', handleMouseEnter),
+    () => section.removeEventListener('mouseleave', handleMouseLeave)
+  );
+};
 
-      onUnmounted(() => {
-        section.removeEventListener('mousemove', handleMouseMove);
-        section.removeEventListener('mouseenter', handleMouseEnter);
-        section.removeEventListener('mouseleave', handleMouseLeave);
-        document.body.style.cursor = 'auto';
-      });
+// Setup mobile interactions
+const setupMobile = () => {
+  const section = sectionRef.value;
+  const frontImage = frontImageRef.value;
+  if (!section || !frontImage) return;
 
+  let ticking = false;
+  
+  const updateClip = () => {
+    const rect = section.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const trigger = viewportHeight / 2;
+    
+    let clipPercent = 0;
+    
+    if (rect.top < trigger && rect.bottom > trigger) {
+      const progress = (trigger - rect.top) / rect.height;
+      clipPercent = Math.max(0, Math.min(100, progress * 100));
+    } else if (rect.top >= trigger) {
+      clipPercent = 0;
     } else {
-      // Mobile/tablet scroll-triggered reveal
-      let ticking = false;
-      
-      const updateClip = () => {
-        const rect = section.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const trigger = viewportHeight / 2;
-        
-        let clipPercent = 0;
-        
-        if (rect.top < trigger && rect.bottom > trigger) {
-          // Section is crossing the middle line
-          const progress = (trigger - rect.top) / rect.height;
-          clipPercent = Math.max(0, Math.min(100, progress * 100));
-        } else if (rect.top >= trigger) {
-          // Section is below the trigger line
-          clipPercent = 0;
-        } else {
-          // Section is above the trigger line
-          clipPercent = 100;
-        }
-        
-        frontImage.style.setProperty('--clip', `${clipPercent}%`);
-        ticking = false;
-      };
-
-      const handleScroll = () => {
-        if (!ticking) {
-          requestAnimationFrame(updateClip);
-          ticking = true;
-        }
-      };
-
-      // Initial calculation
-      updateClip();
-
-      // Intersection Observer for performance optimization
-      const observer = new IntersectionObserver((entries) => {
-        if (entries[0]?.isIntersecting) {
-          window.addEventListener('scroll', handleScroll, { passive: true });
-          updateClip(); // Initial update when element becomes visible
-        } else {
-          window.removeEventListener('scroll', handleScroll);
-        }
-      }, { 
-        threshold: 0,
-        rootMargin: '50px 0px' // Start observing 50px before the element
-      });
-
-      observer.observe(section);
-
-      onUnmounted(() => {
-        window.removeEventListener('scroll', handleScroll);
-        observer.disconnect();
-      });
+      clipPercent = 100;
     }
+    
+    frontImage.style.setProperty('--clip', `${clipPercent}%`);
+    ticking = false;
+  };
 
-    // Handle resize events
-    const handleResize = throttle(() => {
-      const newIsDesktop = window.matchMedia('(min-width: 1024px) and (hover: hover)').matches;
-      if (newIsDesktop !== isDesktop.value) {
-        // Reload component logic when switching between desktop/mobile
-        window.location.reload();
-      }
-    }, 250);
+  const handleScroll = () => {
+    if (!ticking) {
+      requestAnimationFrame(updateClip);
+      ticking = true;
+    }
+  };
 
-    window.addEventListener('resize', handleResize);
-    onUnmounted(() => {
-      window.removeEventListener('resize', handleResize);
-    });
+  // Initial calculation
+  updateClip();
+
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0]?.isIntersecting) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      updateClip();
+    } else {
+      window.removeEventListener('scroll', handleScroll);
+    }
+  }, { 
+    threshold: 0,
+    rootMargin: '50px 0px'
+  });
+
+  observer.observe(section);
+
+  // Store cleanup functions
+  cleanupFunctions.push(
+    () => window.removeEventListener('scroll', handleScroll),
+    () => observer.disconnect()
+  );
+};
+
+// Initialize interactions based on device type
+const initializeInteractions = async () => {
+  // Clean up existing interactions
+  cleanup();
+  
+  // Wait for next tick to ensure DOM is ready
+  await nextTick();
+  
+  // Check device type
+  const newIsDesktop = window.matchMedia('(min-width: 1024px) and (hover: hover)').matches;
+  isDesktop.value = newIsDesktop;
+  
+  // Reset states
+  isHovering.value = false;
+  
+  // Reset image styles
+  const frontImage = frontImageRef.value;
+  if (frontImage) {
+    frontImage.style.removeProperty('--mouse-x');
+    frontImage.style.removeProperty('--mouse-y');
+    frontImage.style.removeProperty('--clip');
   }
+  
+  // Setup appropriate interactions
+  if (newIsDesktop) {
+    setupDesktop();
+  } else {
+    setupMobile();
+  }
+};
+
+onMounted(() => {
+  if (typeof window === 'undefined') return;
+  
+  // Initial setup
+  initializeInteractions();
+
+  // Handle resize events with dynamic reinitialization
+  const handleResize = throttle(async () => {
+    const newIsDesktop = window.matchMedia('(min-width: 1024px) and (hover: hover)').matches;
+    if (newIsDesktop !== isDesktop.value) {
+      await initializeInteractions();
+    }
+  }, 250);
+
+  window.addEventListener('resize', handleResize);
+  
+  // Store final cleanup
+  cleanupFunctions.push(() => window.removeEventListener('resize', handleResize));
+});
+
+onUnmounted(() => {
+  cleanup();
 });
 </script>
 
