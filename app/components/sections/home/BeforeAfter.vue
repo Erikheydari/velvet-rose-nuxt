@@ -1,5 +1,5 @@
 <template>
-  <section ref="sectionRef" class="h-[80vh] w-full relative lg:cursor-none">
+  <section ref="sectionRef" class="h-[80vh] w-full relative lg:cursor-none overflow-x-hidden">
     <h2
       class="hidden lg:flex flex-col heading-3 text-primary font-bold text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-5/6 z-1">
       <span class="text-nowrap">
@@ -26,16 +26,15 @@
 
     <img src="/images/after.webp" alt="before-after"
       class="absolute bottom-0 left-1/2 -translate-x-1/2 min-w-120 w-full lg:w-[50vw] h-[80%] object-contain z-2 object-bottom back-image" />
-    
-    <img ref="frontImageRef" src="/images/before.webp" alt="before-after"
-      class="absolute bottom-0 left-1/2 -translate-x-1/2 min-w-120 w-full lg:w-[50vw] h-[80%] object-contain z-3 object-bottom front-image" 
-      :class="{ 'reveal-mode': isDesktop && isHovering }" />
 
+    <img ref="frontImageRef" src="/images/before.webp" alt="before-after"
+      class="absolute bottom-0 left-1/2 -translate-x-1/2 min-w-120 w-full lg:w-[50vw] h-[80%] object-contain z-3 object-bottom front-image"
+      :class="{ 'reveal-mode': isDesktop && isHovering }" />
+ 
     <!-- Custom cursor for desktop -->
-    <div v-if="isDesktop && isHovering" 
-         ref="cursorRef" 
-         class="absolute pointer-events-none z-10 rounded-full border-2 border-primary bg-transparent transition-opacity duration-200"
-         :style="cursorStyle">
+    <div v-if="isDesktop && isHovering" ref="cursorRef"
+      class="absolute pointer-events-none z-10 rounded-full border-2 border-primary bg-transparent transition-opacity duration-200"
+      :style="cursorStyle">
     </div>
   </section>
 </template>
@@ -72,7 +71,7 @@ const cursorStyle = computed(() => {
 // Throttle function for performance
 const throttle = (func: Function, limit: number) => {
   let inThrottle: boolean;
-  return function(this: any, ...args: any[]) {
+  return function (this: any, ...args: any[]) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;
@@ -97,7 +96,7 @@ const setupDesktop = () => {
   const handleMouseMove = throttle((e: MouseEvent) => {
     const imgRect = frontImage.getBoundingClientRect();
     const sectionRect = section.getBoundingClientRect();
-    
+
     mouseX.value = e.clientX - imgRect.left;
     mouseY.value = e.clientY - imgRect.top;
     cursorX.value = e.clientX - sectionRect.left;
@@ -107,12 +106,12 @@ const setupDesktop = () => {
     frontImage.style.setProperty('--mouse-y', `${mouseY.value}px`);
   }, 8);
 
-  const handleMouseEnter = () => { 
+  const handleMouseEnter = () => {
     isHovering.value = true;
     document.body.style.cursor = 'none';
   };
-  
-  const handleMouseLeave = () => { 
+
+  const handleMouseLeave = () => {
     isHovering.value = false;
     document.body.style.cursor = 'auto';
   };
@@ -136,14 +135,14 @@ const setupMobile = () => {
   if (!section || !frontImage) return;
 
   let ticking = false;
-  
+
   const updateClip = () => {
     const rect = section.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     const trigger = viewportHeight / 2;
-    
+
     let clipPercent = 0;
-    
+
     if (rect.top < trigger && rect.bottom > trigger) {
       const progress = (trigger - rect.top) / rect.height;
       clipPercent = Math.max(0, Math.min(100, progress * 100));
@@ -152,7 +151,7 @@ const setupMobile = () => {
     } else {
       clipPercent = 100;
     }
-    
+
     frontImage.style.setProperty('--clip', `${clipPercent}%`);
     ticking = false;
   };
@@ -174,7 +173,7 @@ const setupMobile = () => {
     } else {
       window.removeEventListener('scroll', handleScroll);
     }
-  }, { 
+  }, {
     threshold: 0,
     rootMargin: '50px 0px'
   });
@@ -192,17 +191,17 @@ const setupMobile = () => {
 const initializeInteractions = async () => {
   // Clean up existing interactions
   cleanup();
-  
+
   // Wait for next tick to ensure DOM is ready
   await nextTick();
-  
+
   // Check device type
   const newIsDesktop = window.matchMedia('(min-width: 1024px) and (hover: hover)').matches;
   isDesktop.value = newIsDesktop;
-  
+
   // Reset states
   isHovering.value = false;
-  
+
   // Reset image styles
   const frontImage = frontImageRef.value;
   if (frontImage) {
@@ -210,7 +209,7 @@ const initializeInteractions = async () => {
     frontImage.style.removeProperty('--mouse-y');
     frontImage.style.removeProperty('--clip');
   }
-  
+
   // Setup appropriate interactions
   if (newIsDesktop) {
     setupDesktop();
@@ -221,7 +220,7 @@ const initializeInteractions = async () => {
 
 onMounted(() => {
   if (typeof window === 'undefined') return;
-  
+
   // Initial setup
   initializeInteractions();
 
@@ -234,7 +233,7 @@ onMounted(() => {
   }, 250);
 
   window.addEventListener('resize', handleResize);
-  
+
   // Store final cleanup
   cleanupFunctions.push(() => window.removeEventListener('resize', handleResize));
 });
@@ -258,18 +257,14 @@ onUnmounted(() => {
 
 /* Desktop reveal mode with circular mask */
 .reveal-mode {
-  mask-image: radial-gradient(
-    circle var(--radius) at var(--mouse-x) var(--mouse-y), 
-    transparent 0, 
-    transparent var(--radius), 
-    black var(--radius)
-  );
-  -webkit-mask-image: radial-gradient(
-    circle var(--radius) at var(--mouse-x) var(--mouse-y), 
-    transparent 0, 
-    transparent var(--radius), 
-    black var(--radius)
-  );
+  mask-image: radial-gradient(circle var(--radius) at var(--mouse-x) var(--mouse-y),
+      transparent 0,
+      transparent var(--radius),
+      black var(--radius));
+  -webkit-mask-image: radial-gradient(circle var(--radius) at var(--mouse-x) var(--mouse-y),
+      transparent 0,
+      transparent var(--radius),
+      black var(--radius));
 }
 
 /* Mobile/tablet scroll-triggered reveal */
