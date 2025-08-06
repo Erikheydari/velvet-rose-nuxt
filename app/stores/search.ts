@@ -22,15 +22,16 @@ export const useSearchStore = defineStore('searchStore', () => {
   const isFullSearching = ref<boolean>(false)
   const fullSearchError = ref<Error | null>(null)
   const fullSearchQuery = ref<string>('')
-  const fullSearchMeta = ref<any>(null) // For pagination, total count, etc.
+  const fullSearchMeta = ref<any>(null)
 
-  // Search history (optional enhancement)
+  // Search history
   const searchHistory = ref<string[]>([])
   const maxHistoryItems = 10
 
-  // Debounce timer and abort controller
+  // Separate abort controllers for different search types
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
-  let abortController: AbortController | null = null
+  let realtimeAbortController: AbortController | null = null
+  let fullSearchAbortController: AbortController | null = null
 
   // Computed properties
   const hasResults = computed(() => searchResults.value.length > 0)
@@ -46,10 +47,17 @@ export const useSearchStore = defineStore('searchStore', () => {
     }
   }
 
-  const abortPreviousRequest = () => {
-    if (abortController) {
-      abortController.abort()
-      abortController = null
+  const abortRealtimeSearch = () => {
+    if (realtimeAbortController) {
+      realtimeAbortController.abort()
+      realtimeAbortController = null
+    }
+  }
+
+  const abortFullSearch = () => {
+    if (fullSearchAbortController) {
+      fullSearchAbortController.abort()
+      fullSearchAbortController = null
     }
   }
 
@@ -108,9 +116,9 @@ export const useSearchStore = defineStore('searchStore', () => {
       globalSearchQuery.value = query
     }
 
-    // Clear previous timer and abort previous request
+    // Clear previous timer and abort previous realtime request
     clearDebounceTimer()
-    abortPreviousRequest()
+    abortRealtimeSearch()
 
     const trimmedQuery = query.trim()
 
@@ -126,7 +134,7 @@ export const useSearchStore = defineStore('searchStore', () => {
     debounceTimer = setTimeout(() => {
       debouncedSearchQuery.value = trimmedQuery
       performSearch()
-    }, 300) // 300ms debounce
+    }, 300)
   }
 
   // Perform the actual real-time search
@@ -137,23 +145,26 @@ export const useSearchStore = defineStore('searchStore', () => {
       return
     }
 
+    // Abort any existing realtime search
+    abortRealtimeSearch()
+
     isSearching.value = true
     searchError.value = null
-    
-    // Create abort controller for this request
-    abortController = new AbortController()
+
+    // Create new abort controller for this realtime search
+    realtimeAbortController = new AbortController()
 
     try {
-      const { data, error } = await apiStore.apiRequest(
+      const { data, error, aborted } = await apiStore.apiRequest(
         endpointStore.products.search(query),
-        { 
+        {
           method: 'get',
-          signal: abortController.signal
+          signal: realtimeAbortController.signal
         }
       )
 
-      // Check if request was aborted
-      if (abortController.signal.aborted) {
+      // If request was aborted, don't update state
+      if (aborted) {
         return
       }
 
@@ -167,17 +178,13 @@ export const useSearchStore = defineStore('searchStore', () => {
         searchResults.value = Array.isArray(products) ? products : []
       }
     } catch (err) {
-      // Ignore abort errors
-      if (err instanceof Error && err.name === 'AbortError') {
-        return
-      }
-      
-      console.error('Search request failed:', err)
+      // This should not happen now since apiRequest handles abort errors
+      console.error('Unexpected search error:', err)
       searchError.value = err as Error
       searchResults.value = []
     } finally {
       isSearching.value = false
-      abortController = null
+      realtimeAbortController = null
     }
   }
 
@@ -193,13 +200,15 @@ export const useSearchStore = defineStore('searchStore', () => {
     // Add to search history
     addToHistory(trimmedQuery)
 
+    // Abort any existing full search
+    abortFullSearch()
+
     fullSearchQuery.value = trimmedQuery
     isFullSearching.value = true
     fullSearchError.value = null
 
-    // Create abort controller for this request
-    abortPreviousRequest()
-    abortController = new AbortController()
+    // Create new abort controller for this full search
+    fullSearchAbortController = new AbortController()
 
     try {
       const searchParams = new URLSearchParams({
@@ -208,16 +217,16 @@ export const useSearchStore = defineStore('searchStore', () => {
         limit: String(options.limit || 20)
       })
 
-      const { data, error } = await apiStore.apiRequest(
+      const { data, error, aborted } = await apiStore.apiRequest(
         `${endpointStore.products.search(trimmedQuery)}?${searchParams.toString()}`,
-        { 
+        {
           method: 'get',
-          signal: abortController.signal
+          signal: fullSearchAbortController.signal
         }
       )
 
-      // Check if request was aborted
-      if (abortController.signal.aborted) {
+      // If request was aborted, don't update state
+      if (aborted) {
         return
       }
 
@@ -240,26 +249,22 @@ export const useSearchStore = defineStore('searchStore', () => {
         }
       }
     } catch (err) {
-      // Ignore abort errors
-      if (err instanceof Error && err.name === 'AbortError') {
-        return
-      }
-      
-      console.error('Full search request failed:', err)
+      // This should not happen now since apiRequest handles abort errors
+      console.error('Unexpected full search error:', err)
       fullSearchError.value = err as Error
       fullSearchResults.value = []
       fullSearchMeta.value = null
     } finally {
       isFullSearching.value = false
-      abortController = null
+      fullSearchAbortController = null
     }
   }
 
   // Clear search results and query
   const clearSearch = () => {
     clearDebounceTimer()
-    abortPreviousRequest()
-    
+    abortRealtimeSearch()
+
     localSearchQuery.value = ''
     debouncedSearchQuery.value = ''
     searchResults.value = []
@@ -270,17 +275,15 @@ export const useSearchStore = defineStore('searchStore', () => {
     }
   }
 
-    // Clear full search results
-    const clearFullSearch = () => {
-      abortPreviousRequest()
-      
-      fullSearchQuery.value = ''
-      fullSearchResults.value = []
-      fullSearchError.value = null
-      fullSearchMeta.value = null
-    }
-  
+  // Clear full search results
+  const clearFullSearch = () => {
+    abortFullSearch()
 
+    fullSearchQuery.value = ''
+    fullSearchResults.value = []
+    fullSearchError.value = null
+    fullSearchMeta.value = null
+  }
 
   // Sync with global search query from composable
   watch(globalSearchQuery, (newQuery) => {
@@ -292,14 +295,19 @@ export const useSearchStore = defineStore('searchStore', () => {
   // Cleanup on store destruction
   const cleanup = () => {
     clearDebounceTimer()
+    abortRealtimeSearch()
+    abortFullSearch()
   }
+
+  // Initialize search history
+  loadSearchHistory()
 
   return {
     // Real-time search state
     searchResults,
     isSearching,
     searchError,
-    searchQuery: localSearchQuery, // expose as searchQuery for compatibility
+    searchQuery: localSearchQuery,
     debouncedSearchQuery,
 
     // Full search state
@@ -307,11 +315,16 @@ export const useSearchStore = defineStore('searchStore', () => {
     isFullSearching,
     fullSearchError,
     fullSearchQuery,
+    fullSearchMeta,
+
+    // Search history
+    searchHistory,
 
     // Computed
     hasResults,
     hasSearched,
     hasFullResults,
+    isLoading,
 
     // Actions
     setSearchQuery,
@@ -319,6 +332,8 @@ export const useSearchStore = defineStore('searchStore', () => {
     clearSearch,
     performFullSearch,
     clearFullSearch,
+    loadSearchHistory,
+    clearSearchHistory,
     cleanup
   }
 })
