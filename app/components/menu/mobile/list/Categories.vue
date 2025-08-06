@@ -44,14 +44,10 @@ const navigateBack = () => {
 const isCategoryActive = (categorySlug: string) => {
   return route.path === '/product-category/' + categorySlug
 }
-
-const iconMap = {
-  'hugeicons:arrow-right-01': 'ArrowRight',
-}
 </script>
 
 <template>
-  <div class="overflow-y-auto h-full max-h-[calc(100vh-180px)]">
+  <div class="overflow-y-auto h-full menu-body-height">
     <!-- Subcategory view -->
     <div v-if="currentCategory" class="flex flex-col">
       <div class="w-full flex items-center pl-2 h-13 border-b border-border gap-2" @click="navigateBack">
