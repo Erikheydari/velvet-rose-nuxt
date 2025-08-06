@@ -44,7 +44,7 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col h-full">
     <!-- Product Categories Tab -->
-    <!-- <ProductCategoriesList v-if="activeTab === 'productCategories'" :main-categories="mainCategories" /> -->
+    <MenuMobileListCategories v-if="activeTab === 'productCategories'" :main-categories="categoriesStore.categories" />
 
     <!-- Website Pages Tab -->
     <MenuMobileListPages v-if="activeTab === 'websitePages'" :main-menu-data="mainMenu" />
