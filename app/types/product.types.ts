@@ -16,9 +16,11 @@ export interface Category {
 }
 
 export interface Brand {
+  id: number
   name: string
   en_name?: string
   banner?: string
+  slug?: string
 }
 
 export interface ProductImage {
