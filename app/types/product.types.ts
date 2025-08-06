@@ -11,6 +11,8 @@ export interface Category {
   name: string
   banner?: string
   slug: string
+  icon?: string
+  children?: Category[]
 }
 
 export interface Brand {
