@@ -101,4 +101,9 @@
   .default-padding-x {
     @apply px-4 lg:px-8;
   }
+
+  /* Menu  */
+  .menu-body-height {
+    max-height: calc(100vh - var(--spacing) * 32);
+  }
 }
