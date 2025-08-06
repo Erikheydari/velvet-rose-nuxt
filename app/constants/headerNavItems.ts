@@ -5,10 +5,19 @@ interface HeaderNavItem {
   to: string;
 }
 
-interface MainMenuItem {
+interface ChildrenItem {
+  value?: string
+  label: string
+  slug?: string
+  href?: string
+  icon?: string
+}
+
+export interface MainMenuItem {
   text: string
   link: string
   icon: string
+  children?: ChildrenItem[]
 }
 
 export interface MainMenuData {
@@ -23,6 +32,12 @@ interface Tab {
   icon: string
 }
 
+
+interface HeaderUserItem {
+  label: string;
+  to: string;
+}
+
 export const headerNavItems: HeaderNavItem[] = [
   { label: 'صفحه اصلی', to: '/' },
   { label: 'محصولات', to: '/products' },
@@ -30,16 +45,23 @@ export const headerNavItems: HeaderNavItem[] = [
   { label: 'تماس با ما', to: '/contact' },
 ];
 
-interface HeaderUserItem {
-  label: string;
-  to: string;
-}
 
 export const headerUserItems: HeaderUserItem[] = [
   { label: 'ورود / ثبت نام', to: '/login' },
 ];
 
-export const headerMainMenu = [
+export const headerContact: ChildrenItem[] = [
+  { label: "ایمیل", value: "info@velvetrose.com", icon: 'Mail', href: "mailto:info@velvetrose.com" },
+  { label: "شماره تماس", value: "1122 933 98+", icon: 'Phone', href: "tel:+98112293398" },
+];
+
+export const headerSocials: ChildrenItem[] = [
+  { label: "اینستاگرام", href: "https://www.instagram.com/velvetrose.ir", icon: 'Instagram' },
+  { label: "توییتر", href: "https://www.twitter.com/velvetrose.ir", icon: 'X' },
+  { label: "تلگرام", href: "https://www.facebook.com/velvetrose.ir", icon: 'Telegram' },
+]
+
+export const headerPages: MainMenuItem[] = [
   {
     text: 'محصولات',
     link: '/products',
@@ -54,24 +76,18 @@ export const headerMainMenu = [
     text: 'تماس با ما',
     link: '/contact',
     icon: 'Contact',
+    children: [
+      ...headerContact,
+      ...headerSocials,
+    ]
   },
   {
     text: 'مجله',
     link: '/mag',
     icon: 'Mag',
-  },
+  }
 ]
 
-export const headerContact: ContactItem[] = [
-  { label: "ایمیل", value: "info@velvetrose.com", icon: 'Mail', href: "mailto:info@velvetrose.com" },
-  { label: "شماره تماس", value: "1122 933 98+", icon: 'Phone', href: "tel:+98112293398" },
-];
-
-export const headerSocials: SocialItem[] = [
-  { label: "اینستاگرام", href: "https://www.instagram.com/velvetrose.ir", icon: 'Instagram' },
-  { label: "توییتر", href: "https://www.twitter.com/velvetrose.ir", icon: 'X' },
-  { label: "تلگرام", href: "https://www.facebook.com/velvetrose.ir", icon: 'Telegram' },
-]
 
 export const headerTabs: Tab[] = [
   {
