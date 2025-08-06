@@ -6,6 +6,7 @@ export const useEndpointStore = defineStore('endpointStore', () => {
     const products = {
         get: `${apiUrl}${apiPrefix}/products`,
         detail: (id: number) => `${apiUrl}${apiPrefix}/products/${id}`,
+        search: (query: string) => `${apiUrl}${apiPrefix}/products?search=${query}`,
     }
 
     const pages = {
