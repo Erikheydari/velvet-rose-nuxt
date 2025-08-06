@@ -1,14 +1,18 @@
 <template>
+  <div class="flex justify-end px-4 py-2">
+    <NuxtLink :to="headerMainMenu.find(item => item.text === 'تماس با ما')?.link || '/contact'"
+      class="btn btn-outline-primary body-4 w-full justify-between flex mb-4">
+      صفحه تماس
+    </NuxtLink>
+    <TheButton variant="ghost" size="icon" class="h-13 w-13 rounded-none"
+      @click="isContactExpanded = !isContactExpanded">
+      <ChevronDown class="text-base text-primary" />
+    </TheButton>
+  </div>
   <transition name="slide-fade">
+
+
     <div v-if="isContactExpanded" class="bg-muted overflow-hidden">
-      <!-- Contact page link -->
-      <div class="flex justify-end px-4 py-2">
-        <NuxtLink :to="headerMainMenu.find(item => item.text === 'تماس با ما')?.link || '/contact'"
-          class="btn btn-outline-primary body-4 w-full justify-between flex mb-4">
-          صفحه تماس
-          <Icon name="hugeicons:arrow-up-left-01" class="text-base text-primary" />
-        </NuxtLink>
-      </div>
 
       <!-- Contact Items -->
       <div v-for="contact in headerContact" :key="contact.label"
@@ -30,7 +34,7 @@
         <a :href="social.href" class="text-foreground body-3">{{ social.label }}</a>
       </div>
     </div>
-  </transition> 
+  </transition>
 </template>
 
 <script lang="ts" setup>
@@ -41,7 +45,7 @@ import { headerMainMenu, headerContact, headerSocials } from '~/constants/header
 import Instagram from '~/assets/icons/instagram.svg?component';
 import Telegram from '~/assets/icons/telegram.svg?component';
 import X from '~/assets/icons/x.svg?component';
-import { Mail, Phone } from 'lucide-vue-next';
+import { ChevronDown, Mail, Phone } from 'lucide-vue-next';
 
 const props = defineProps<{
   mainMenuData: MainMenuData
