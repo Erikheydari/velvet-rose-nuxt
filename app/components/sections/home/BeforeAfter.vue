@@ -244,7 +244,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.object {
+.rounded-object {
   width: clamp(18rem, 25vw, 25rem);
 }
 
