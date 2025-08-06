@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useCategoriesStore } from '~/stores/categories'
 import type { Category } from '~/types/product.types'
 // import ProductCategoriesList from './CategoriesList.vue'
-import { headerMainMenu, headerContact, headerSocials } from '~/constants/headerNavItems'
+import { headerPages, headerContact, headerSocials } from '~/constants/headerNavItems'
 
 // Types definitions
 interface Props {
@@ -18,7 +18,7 @@ const categoriesStore = useCategoriesStore()
 
 const mainMenu = computed(() => {
   return {
-    mainMenu: headerMainMenu,
+    mainMenu: headerPages,
     contact: headerContact,
     socials: headerSocials
   }
@@ -47,7 +47,7 @@ onMounted(async () => {
     <MenuMobileListCategories v-if="activeTab === 'productCategories'" :main-categories="categoriesStore.categories" />
 
     <!-- Website Pages Tab -->
-    <MenuMobileListPages v-if="activeTab === 'websitePages'" :main-menu-data="mainMenu" />
+    <MenuMobileListPages v-if="activeTab === 'websitePages'" />
   </div>
 </template>
 
