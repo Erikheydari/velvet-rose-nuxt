@@ -22,14 +22,4 @@
   background-position: center;
   background-repeat: repeat;
 }
-
-.hero-height {
-  height: calc(100vh + var(--spacing) * 36);
-}
-
-@media (min-width: 1024px) {
-  .hero-height {
-    height: 100vh;
-  }
-}
 </style>
