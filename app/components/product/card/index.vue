@@ -1,7 +1,6 @@
 <template>
   <TheCard class="transition-shadow hover:shadow-xs relative aspect-[328/455]"
-    :class="{ 'border border-border': props.type === 'primary', 'bg-transparent': props.type === 'secondary' }">
-
+    :class="{ 'border border-border': props.type === 'primary', 'bg-transparent': props.type === 'secondary', 'border-border border': props.type === 'default' }">
     <div v-if="props.product.discount_percentage > 0"
       class=" absolute top-4 left-4 bg-primary text-primary-foreground rounded-full gap-0.5 size-12 flex items-center justify-center text-xl relatvie z-10">
       <span class="text-sm -mb-2">
