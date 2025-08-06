@@ -19,7 +19,7 @@
 
         <!-- Right Section - Logo -->
         <NuxtLink to="/" class="shrink-0">
-          <Logo class="transition-all duration-300" :class="{ 'h-10 md:h-12': isSticky, 'h-14 md:h-16': !isSticky }"
+          <Logo class="transition-all duration-300 z-49" :class="{ 'h-10 md:h-12': isSticky, 'h-14 md:h-16': !isSticky }"
             alt="لوگو سایت" />
         </NuxtLink>
       </div>
