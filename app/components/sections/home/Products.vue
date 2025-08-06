@@ -2,7 +2,7 @@
   <section class="bg-secondary py-10">
     <slot />
 
-    <Carousel class="relative lg:w-full default-inner-container mb-12" :opts="{
+    <Carousel class="relative lg:w-full default-inner-container mb-12 md:max-w-[90%]" :opts="{
       loop: true,
       align: alignSlider,
       direction: 'rtl',
