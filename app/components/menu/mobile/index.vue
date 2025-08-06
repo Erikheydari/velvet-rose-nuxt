@@ -5,12 +5,12 @@
             <div class="fixed top-0 right-0 z-50 w-full max-w-xs bg-background shadow-lg transition-transform duration-300 ease-in-out h-screen"
                 :class="{ 'translate-x-0': open, 'translate-x-full': !open }" dir="rtl">
                 <div class="flex flex-col h-full">
-                    <div class="flex items-center px-2 py-4 border-b border-border gap-2">
-                        <Button variant="ghost" size="icon" @click="handleClose" aria-label="Close menu">
-                            <Icon name="hugeicons:arrow-right-01" class="text-xl" />
-                        </Button>
+                    <div class="flex items-center p-2 border-b border-border gap-2">
+                        <TheButton variant="ghost" size="icon" @click="handleClose" aria-label="Close menu">
+                            <ArrowRight class="size-5" />
+                        </TheButton>
 
-                        <h2 class="heading-5">منو</h2>
+                        <h2 class="heading-5 -mt-2">منو</h2>
                     </div>
 
                     <div class="flex-1">
@@ -20,14 +20,14 @@
                 </div>
             </div>
         </div>
-    
+
         <Backdrop :is-active="open" :handle-close="handleClose" />
     </teleport>
 </template>
 
 <script lang="ts" setup>
+import { ArrowRight } from 'lucide-vue-next';
 import { ref, watch, onUnmounted } from 'vue'
-// import MenuList from './MenuList.vue';
 import { Backdrop } from '@/components/ui/backdrop'
 
 interface Props {
@@ -62,6 +62,4 @@ onUnmounted(() => {
 
 </script>
 
-<style>
-
-</style>
+<style></style>
