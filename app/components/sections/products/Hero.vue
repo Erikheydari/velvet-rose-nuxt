@@ -1,5 +1,5 @@
 <template>
-  <section class="flex items-center justify-center hero-height overflow-hidden bg-background">
+  <section class="flex  items-center justify-center hero-height overflow-hidden bg-background mb-8 lg:mb-12">
 
     <div class="right-image absolute translate-x-[40%] md:translate-x-[30%] -translate-y-1/2 image-container">
       <div class="bg-secondary rounded-object absolute top-1/3 -translate-y-1/2 left-1/2 -translate-x-1/2 z-0">
@@ -17,7 +17,7 @@
       </p>
     </div>
     <div
-      class="brands-container absolute bottom-[13%] lg:bottom-1/5 left-1/2 -translate-x-1/2 z-2 w-full max-w-[70%] lg:max-w-[50%] h-30 overflow-hidden">
+      class="brands-container absolute bottom-[13%] md:bottom-[18%] lg:bottom-[25%] xl:bottom-[15%] left-1/2 -translate-x-1/2 z-2 w-full max-w-[70%] lg:max-w-[50%] h-30 overflow-hidden">
       <div class="brands-wrapper">
         <div class="brands-track">
           <template v-for="i in 5" :key="`set-${i}`">
@@ -63,7 +63,7 @@ onMounted(() => {
 @import '@/assets/css/tailwind.css';
 
 .image-container {
-  @apply scale-350 md:scale-200 lg:scale-100 md:basis-1/2 relative translate-y-[70%] md:translate-y-[10%] z-4 pointer-events-none;
+  @apply scale-350 md:scale-200 lg:scale-100 md:basis-1/2 relative translate-y-[60%] md:translate-y-[18%] z-4 pointer-events-none;
   @apply lg:translate-x-0;
 }
 
