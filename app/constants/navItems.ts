@@ -1,4 +1,4 @@
-interface NavItem {
+export interface NavItem {
     label: string;
     to: string;
 }
@@ -9,18 +9,20 @@ export const navItems: NavItem[] = [
     { label: "درباره ما", to: "/about-us" },
 ];
 
-interface ContactItem {
+export interface ContactItem {
     label: string;
+    value?: string;
+    icon?: string;
     href: string;
     target?: string;
 }
-
+    
 export const contactItems: ContactItem[] = [
     { label: "ایمیل: info@velvetrose.com", href: "mailto:info@velvetrose.com" },
     { label: "شماره تماس: 1122 933 98+", href: "tel:+98112293398" },
 ];
 
-interface SocialItem {
+export interface SocialItem {
     label: string;
     href: string;
     icon: string;
