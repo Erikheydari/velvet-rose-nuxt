@@ -19,7 +19,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 }
 </script>
 
-<template> <!-- Search Button -->
+<template>
   <TheButton variant="tonal" size="icon-lg" class="" @click="handleTriggerClick"
     :aria-label="searchQuery ? 'جستجو' : 'باز کردن جستجو'">
     <Search class="w-5 h-5" />
