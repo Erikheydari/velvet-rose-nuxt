@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full">
-    <TheHeader />
+    <Header />
     <main class="w-full h-full">
       <slot />
     </main>
@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts" setup>
-import { TheHeader } from '~/components/header';
 
 </script>
 
