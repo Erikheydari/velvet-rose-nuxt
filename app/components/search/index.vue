@@ -19,13 +19,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
 }
 </script>
 
-<template>
-  <div
-    class="flex items-center rounded-xl overflow-hidden border border-input bg-muted/30 hover:bg-muted/50 transition-colors">
-    <!-- Search Button -->
-    <TheButton variant="default" size="icon-lg" class="h-12 w-12 shrink-0" @click="handleTriggerClick"
-      :aria-label="searchQuery ? 'جستجو' : 'باز کردن جستجو'">
-      <Search class="text-primary-foreground w-5 h-5" />
-    </TheButton>
-  </div>
+<template> <!-- Search Button -->
+  <TheButton variant="tonal" size="icon-lg" class="" @click="handleTriggerClick"
+    :aria-label="searchQuery ? 'جستجو' : 'باز کردن جستجو'">
+    <Search class="w-5 h-5" />
+  </TheButton>
 </template>
