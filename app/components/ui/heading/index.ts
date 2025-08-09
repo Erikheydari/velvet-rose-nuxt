@@ -1,0 +1,1 @@
+export { default as FantastyHeading } from './FantastyHeading.vue';
