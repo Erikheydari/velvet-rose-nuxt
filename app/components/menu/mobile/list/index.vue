@@ -29,7 +29,8 @@ const loadCategories = async () => {
     const response = await categoriesStore.fetchCategories()
     return response
   } catch (error) {
-    console.error('Failed to load categories:', error)
+    const { getErrorMessage } = await import('~/lib/utils')
+    console.error('Failed to load categories:', getErrorMessage(error))
   }
 }
 
