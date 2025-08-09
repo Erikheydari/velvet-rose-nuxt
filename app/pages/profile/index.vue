@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth'
-import { Icon } from '@iconify/vue'
+import { useAuthStore } from '@/stores/auth'
 
 // Protect this route - only authenticated users can access
 definePageMeta({
   middleware: 'auth',
-  layout: 'profile'
+  layout: 'auth'
 })
 
 useHead({
