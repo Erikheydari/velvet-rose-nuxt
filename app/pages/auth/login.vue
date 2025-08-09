@@ -20,9 +20,6 @@ useHead({
       ورود به حساب کاربری
     </h1>
     <FormLogin />
-    <TheButton variant="ghost" size="lg" class="w-full absolute bottom-0 right-0 rounded-none" to="/auth/register">
-      ثبت نام
-    </TheButton>
   </div>
 </template>
 
