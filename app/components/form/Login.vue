@@ -20,10 +20,9 @@
         </TheButton>
 
         <div class="flex flex-row gap-3 justify-between">
-            <TheButton variant="ghost" size="sm" @click.prevent="toggleOtp">
+            <!--             <TheButton variant="ghost" size="sm" @click.prevent="toggleOtp">
                 {{ isOtp ? 'ورود با رمز عبور' : 'ورود با کد یکبار مصرف' }}
-            </TheButton>
-            <TheButton v-if="!isOtp" variant="ghost" size="sm">رمز خود را فراموش کردید؟</TheButton>
+            </TheButton> -->
         </div>
     </form>
 </template>
