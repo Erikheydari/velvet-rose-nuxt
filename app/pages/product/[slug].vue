@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full 2xl:hero-height 2xl:h-screen px-4 xl:px-12 pt-36 pb-24 relative">
+  <div class="h-full 2xl:hero-height px-4 xl:px-12 pt-36 pb-24 relative">
 
     <div v-if="!productsStore.isLoading && productsStore.product"
       class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
@@ -10,7 +10,7 @@
             {{ productsStore.product?.name }}
           </h1>
 
-          <h2 class="heading-6 hidden xl:block">
+          <h2 class="heading-6 hidden xl:block leading-none">
             {{ productsStore.product?.full_name }}
           </h2>
         </div>
