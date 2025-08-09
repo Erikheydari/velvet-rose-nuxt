@@ -11,27 +11,22 @@
       </span>
     </div>
 
-    <ProductCardColorSwatches v-if="props.product.colors && props.product.colors.length > 0"
-      :colors="props.product.colors" class="absolute top-4 right-4 z-1" />
+
+    <ProductCardColorSwatches v-if="props.product.attributes.color && props.product.attributes.color.length > 0"
+      :colors="props.product.attributes.color" class="absolute top-4 right-4 z-1" />
 
     <ProductCardImage :image="props.product.image" :name="props.product.name" :type="props.type"
       class="relative size-full object-contain z-[1]" />
 
     <TheCardHeader class="relative z-1">
-      <TheCardTitle class="text-primary line-clamp-2">
+      <TheCardTitle class="text-primary line-clamp-2 font-bold">
         {{ props.product.name }}
       </TheCardTitle>
     </TheCardHeader>
 
     <TheCardContent class="space-y-4 relative z-1 grow">
-      <p v-if="(props.product.options && props.product.options.length > 0) && !(props.product.colors && props.product.colors.length > 0)"
-        class="text-muted-foreground text-sm flex flex-wrap gap-0.5">
-        <span class="body-2" v-for="(option, index) in props.product.options.slice(0, 3)" :key="index">
-          {{ option }}
-          <span v-if="index < 1" class="ml-1 -mr-1">
-            {{ '،' }}
-          </span>
-        </span>
+      <p v-if="generateOptionsString" class="text-muted-foreground body-2 line-clamp-1">
+        {{ generateOptionsString }}
       </p>
     </TheCardContent>
 
@@ -54,6 +49,10 @@ const props = defineProps<{
   type: 'default' | 'secondary' | 'primary';
 }>();
 
+
+const generateOptionsString = computed(() => {
+  return props.product.options?.join(', ') || '';
+});
 </script>
 
 <style scoped>
