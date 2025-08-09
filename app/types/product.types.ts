@@ -26,6 +26,7 @@ export interface Brand {
 export interface ProductImage {
   src: string
   alt?: string | null
+  id?: number
 }
 
 
@@ -54,5 +55,8 @@ export interface Product {
   weight?: string
   attributes: ProductAttributes
   colors: string[]
+  gallery?: ProductImage[]
   seo: Seo
+  slug: string
+  original_tag?: boolean
 }
