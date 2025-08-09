@@ -108,7 +108,7 @@
   }
 
   .background-backdrop {
-    @apply bg-background/50 backdrop-blur-sm;
+    @apply bg-background/50 backdrop-blur-sm border border-border;
   }
 
   /* Hero  */
@@ -119,6 +119,21 @@
 
   @media (min-width: 1024px) {
     .lg\:hero-height {
+      height: calc(100vh + var(--spacing) * 36);
+      @apply -mb-20 lg:mb-0;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .xl\:hero-height {
+      height: calc(100vh + var(--spacing) * 36);
+      @apply -mb-20 lg:mb-0;
+    }
+  }
+
+
+  @media (min-width: 1536px) {
+    .\32 xl\:hero-height {
       height: calc(100vh + var(--spacing) * 36);
       @apply -mb-20 lg:mb-0;
     }
