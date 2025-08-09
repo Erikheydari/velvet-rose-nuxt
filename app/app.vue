@@ -1,11 +1,14 @@
 <template>
-  <NuxtLayout :name="layout">
+  <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+
+  <Toaster position="top-center" richColors />
 </template>
 
 <script lang="ts" setup>
-const layout = 'default'
+import { Toaster } from '@/components/ui/sonner'
+import 'vue-sonner/style.css'
 </script>
 
 <style></style>
