@@ -1,13 +1,13 @@
 <template>
-  <div class="flex-1 flex items-baseline gap-4">
-    <bdi class="heading-6 font-bold text-primary">
-      {{ props.product.final_price }}
+  <div class="flex-1 flex flex-col items-start">
+    <bdi v-if="props.product.discount_percentage > 0" class="body-2 text-muted-foreground line-through">
+      {{ props.product.price }}
       <small>
         تومان
       </small>
     </bdi>
-    <bdi v-if="props.product.discount_percentage > 0" class="heading-6 text-muted-foreground line-through">
-      {{ props.product.price }}
+    <bdi class="heading-6 font-bold text-primary">
+      {{ props.product.final_price }}
       <small>
         تومان
       </small>
