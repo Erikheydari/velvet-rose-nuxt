@@ -115,10 +115,11 @@
           <span class="w-full mb-2 heading-5 font-bold text-primary">انتخاب سایز</span>
           <div class="flex flex-wrap gap-2">
             <TheButton v-for="size in productsStore.product.attributes.size" :key="size.id" class="size-selection-item"
-              :variant="size.id === selectedSizeId ? 'default' : 'outline'" :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
+              :variant="size.id === selectedSizeId ? 'default' : 'outline'"
+              :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-                }}</span>
+              }}</span>
             </TheButton>
           </div>
         </div>
