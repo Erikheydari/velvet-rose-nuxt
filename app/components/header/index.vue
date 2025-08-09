@@ -7,7 +7,7 @@
         <div class="flex items-center gap-3">
           <MenuMobileTrigger @toggle="toggleMenu" />
 
-          <TheButton variant="tonal" size="lg" class="shrink-0">
+          <TheButton variant="tonal" size="lg" class="shrink-0" :to="`/auth/login`">
             <User class="w-4 h-4" />
             <span class="hidden sm:inline">ورود / ثبت نام</span>
           </TheButton>
