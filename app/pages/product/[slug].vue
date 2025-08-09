@@ -1,13 +1,6 @@
 <template>
   <div class="h-full 2xl:hero-height 2xl:h-screen px-4 xl:px-12 pt-36 pb-24 relative">
 
-    <center class="mb-8">
-      <TheButton variant="outline" class="pr-7!" size="lg" @click="goBack">
-        بازگشت
-        <ChevronLeft />
-      </TheButton>
-    </center>
-
     <div v-if="!productsStore.isLoading && productsStore.product"
       class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
       <div class="order-2 xl:order-1 basis-full xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 ">
