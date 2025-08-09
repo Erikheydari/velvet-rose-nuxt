@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col default-inner-container lg:flex-row gap-4 default-padding-x mb-8 lg:mb-12">
+  <div class="flex flex-col lg-inner-container lg:flex-row gap-4 default-padding-x">
     <div class="image-container">
       <img src="/images/products/banner-1.webp" alt="banner" />
     </div>
