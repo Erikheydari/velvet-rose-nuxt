@@ -18,7 +18,7 @@ const componentIs = computed(() => {
 
 <template>
   <component :is="componentIs" :to="props.to" data-slot="card" :class="cn(
-    'bg-card text-card-foreground flex flex-col gap-4 rounded-4xl py-6',
+    'bg-card text-card-foreground flex flex-col gap-2 rounded-4xl py-6',
     props.class,
   )
     ">
