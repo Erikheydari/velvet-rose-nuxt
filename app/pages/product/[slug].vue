@@ -361,7 +361,8 @@ const handleAddToCart = async () => {
     console.log('Product added to cart successfully')
   } catch (error) {
     validationMessage.value = 'خطا در افزودن به سبد خرید'
-    console.error('Add to cart error:', error)
+    const { getErrorMessage } = await import('~/lib/utils')
+    console.error('Add to cart error:', getErrorMessage(error))
   }
 }
 
