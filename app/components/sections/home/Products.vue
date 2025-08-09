@@ -13,8 +13,8 @@
           <ProductCard :product="product" :type="props.type" />
         </CarouselItem>
       </CarouselContent>
-      <CarouselPrevious class="lg:block hidden" variant="outline" />
-      <CarouselNext class="lg:block hidden" variant="outline" />
+      <CarouselPrevious class="lg:flex hidden" variant="outline" />
+      <CarouselNext class="lg:flex hidden" variant="outline" />
     </Carousel>
 
 

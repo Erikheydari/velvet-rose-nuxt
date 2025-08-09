@@ -146,12 +146,6 @@ const onLeave = (el: Element, done: () => void) => {
 @import '~/assets/css/tailwind.css';
 
 .product-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 items-stretch;
-}
-
-@media (min-width: 1920px) {
-  .product-grid {
-    @apply grid-cols-4;
-  }
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8 items-stretch;
 }
 </style>
