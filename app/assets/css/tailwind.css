@@ -114,6 +114,13 @@
   }
 
   @media (min-width: 1024px) {
+    .lg\:hero-height {
+      height: calc(100vh + var(--spacing) * 36);
+      @apply -mb-20 lg:mb-0;
+    }
+  }
+
+  @media (min-width: 1024px) {
     .hero-height {
       height: 100vh;
     }
