@@ -1,5 +1,5 @@
 <template>
-  <TheCard class="transition-shadow hover:shadow-xs relative aspect-[328/455]"
+  <TheCard class="transition-shadow hover:shadow-xs relative aspect-[328/455]" :to="`/product/${props.product.slug}`"
     :class="{ 'border border-border': props.type === 'primary', 'bg-transparent': props.type === 'secondary', 'border-border border': props.type === 'default' }">
     <div v-if="props.product.discount_percentage > 0"
       class=" absolute top-4 left-4 bg-primary text-primary-foreground rounded-full gap-0.5 size-12 flex items-center justify-center text-xl relatvie z-10">
@@ -25,10 +25,10 @@
 
     <TheCardContent class="space-y-4 relative z-1 grow">
       <p v-if="(props.product.options && props.product.options.length > 0) && !(props.product.colors && props.product.colors.length > 0)"
-        class="text-muted-foreground text-sm">
-        <span class="body-2" v-for="(option, index) in props.product.options" :key="index">
+        class="text-muted-foreground text-sm flex flex-wrap gap-0.5">
+        <span class="body-2" v-for="(option, index) in props.product.options.slice(0, 3)" :key="index">
           {{ option }}
-          <span v-if="index < (props.product.options?.length ?? 0) - 1" class="ml-1 -mr-1">
+          <span v-if="index < 1" class="ml-1 -mr-1">
             {{ '،' }}
           </span>
         </span>
@@ -37,9 +37,6 @@
 
     <TheCardFooter class="relative z-1 justify-between items-end">
       <ProductCardPrice :product="props.product" />
-      <Button variant="outline" size="icon" @click.prevent.stop="addToCart">
-        <PlusIcon class="h-5 w-5" />
-      </Button>
     </TheCardFooter>
     <div v-if="props.type === 'secondary'"
       class="absolute top-0 left-0 w-full h-full bg-background secondary-card-mask z-0 ">
@@ -48,8 +45,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '~/components/ui/button';
-import { PlusIcon } from 'lucide-vue-next';
 import { ProductCardImage } from '.';
 import { ProductCardColorSwatches } from '.';
 import type { Product } from '~/types/product.types';
@@ -59,8 +54,6 @@ const props = defineProps<{
   type: 'default' | 'secondary' | 'primary';
 }>();
 
-const addToCart = () => {
-};
 </script>
 
 <style scoped>
