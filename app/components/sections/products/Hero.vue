@@ -22,8 +22,7 @@
         <div class="brands-track">
           <template v-for="i in 5" :key="`set-${i}`">
             <div v-for="brand in brands" :key="`${i}-${brand.id}`" class="brand-item">
-              <img v-if="brand.banner" :src="getBrandImage(brand.banner)" alt="brand"
-                class="h-30 w-auto object-contain" />
+              <img v-if="brand.banner" :src="brand.banner" alt="brand" class="h-30 w-auto object-contain" />
             </div>
           </template>
         </div>
@@ -42,14 +41,6 @@
 
 <script lang="ts" setup>
 import { useBrandsStore } from '@/stores/brands';
-import { useRuntimeConfig } from '#imports';
-
-const config = useRuntimeConfig();
-const mediaUrl = config.public.mediaUrl;
-
-const getBrandImage = (src: string) => {
-  return `${mediaUrl}${src}`
-}
 
 const brandsStore = useBrandsStore();
 const brands = computed(() => brandsStore.brands);
