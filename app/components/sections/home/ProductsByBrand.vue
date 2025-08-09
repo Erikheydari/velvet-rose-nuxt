@@ -1,14 +1,6 @@
 <template>
   <div class="w-full relative py-[20%] lg:py-[5%] lg:pb-0 lg:min-h-screen mb-20">
-    <div class="flex flex-col justify-center items-center relative lg:mb-20">
-      <h3 class="heading-2 font-extrabold text-primary relative z-0 leading-none">
-        {{ props.title }}
-      </h3>
-      <div class="background-gradient absolute left-0 bottom-0 w-full z-1"></div>
-      <p class="relative z-2 heading-3 font-light! leading-none -mt-[2%] text-primary">
-        {{ props.description }}
-      </p>
-    </div>
+    <FantastyHeading :title="props.title" :description="props.description" />
     <TheCarousel dir="rtl" class="carousel-container lg:pt-[2%] lg:pb-0 relative z-1 " :opts="{
       loop: true,
       direction: 'rtl',
@@ -48,6 +40,7 @@
 import type { Product } from '~/types/product.types';
 import type { CarouselApi } from '~/components/ui/carousel';
 import { ref, watch } from 'vue';
+
 const emblaMainApi = ref<CarouselApi>();
 const emblaThumbnailApi = ref<CarouselApi>();
 const selectedIndex = ref(0);
@@ -71,12 +64,6 @@ const props = defineProps<{
 }>();
 </script>
 <style scoped>
-.background-gradient {
-  height: clamp(5rem, 10vh, 10rem);
-  background: var(--color-background);
-  background: linear-gradient(0deg, rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0) 100%);
-}
-
 .product-image {
   max-height: clamp(15rem, min(35vw, 45vh), 20rem);
 }
