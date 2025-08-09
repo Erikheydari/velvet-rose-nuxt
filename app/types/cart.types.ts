@@ -6,8 +6,7 @@ export interface CartItem {
   
   export interface CartItemResponse extends CartItem {
     id?: number;
-    product?: any; // Add product details if returned by API
-    // Add other fields returned by your API
+    product?: any;
   }
   
   export interface ApiResponse<T = any> {

@@ -5,6 +5,7 @@ export default defineNuxtPlugin(async () => {
   try {
     await authStore.initAuth()
   } catch (error) {
-    console.error('Auth initialization failed:', error)
+    const { getErrorMessage } = await import('~/lib/utils')
+    console.error('Auth initialization failed:', getErrorMessage(error))
   }
 }) 

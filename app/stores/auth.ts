@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Actions
     const checkAuthStatus = async () => {
-        try {
+/*         try {
             loading.value = true
             error.value = null
 
@@ -57,7 +57,8 @@ export const useAuthStore = defineStore('auth', () => {
         } finally {
             loading.value = false
             isInitialized.value = true
-        }
+        } */
+
     }
 
     const register = async (payload: { name: string; email: string; password: string }) => {

@@ -1,4 +1,4 @@
-export default defineNuxtPlugin(async () => {
+/* export default defineNuxtPlugin(async () => {
   const cartStore = useCartStore()
   const authStore = useAuthStore()
   
@@ -49,4 +49,4 @@ export default defineNuxtPlugin(async () => {
     },
     { immediate: false }
   )
-}) 
+})  */
