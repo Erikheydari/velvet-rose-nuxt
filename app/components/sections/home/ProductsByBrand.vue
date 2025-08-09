@@ -40,6 +40,7 @@
 import type { Product } from '~/types/product.types';
 import type { CarouselApi } from '~/components/ui/carousel';
 import { ref, watch } from 'vue';
+import { FantastyHeading } from '~/components/ui/heading';
 
 const emblaMainApi = ref<CarouselApi>();
 const emblaThumbnailApi = ref<CarouselApi>();
