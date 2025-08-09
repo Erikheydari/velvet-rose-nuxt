@@ -107,6 +107,10 @@
     max-height: calc(100vh - var(--spacing) * 32);
   }
 
+  .background-backdrop {
+    @apply bg-background/50 backdrop-blur-sm;
+  }
+
   /* Hero  */
   .hero-height {
     height: calc(100vh + var(--spacing) * 36);
