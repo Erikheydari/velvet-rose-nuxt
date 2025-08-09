@@ -1,8 +1,8 @@
 <template>
   <div>
     <SectionsProductsHero />
-    <SectionsProductsBanners />
-    <ProductGrid>
+    <SectionsProductsBanners class="mb-8 lg:mb-12" />
+    <ProductGrid class="mb-8 lg:mb-12">
       <ProductCard v-for="product in productsStore.products" :key="product.id" :product="product" type="default" />
     </ProductGrid>
   </div>
