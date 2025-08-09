@@ -17,7 +17,7 @@ export const useApiStore = defineStore('apiStore', () => {
       endpoint: string,
       options: {
         method?: 'get' | 'post' | 'put' | 'delete';
-        body?: TRequest;
+        body?: TRequest | string;
         headers?: Record<string, string>;
         timeout?: number;
         signal?: AbortSignal; // Add signal support
@@ -33,35 +33,44 @@ export const useApiStore = defineStore('apiStore', () => {
           method: method as any,
           body: body as any,
           headers: {
-            'Content-Type': 'application/json',
             ...headers
           },
           timeout: timeoutValue,
         };
+  
+        // If body is object and no Content-Type provided, default to JSON
+        if (body && typeof body === 'object' && !('Content-Type' in fetchOptions.headers)) {
+          fetchOptions.headers['Content-Type'] = 'application/json';
+        }
   
         // Add signal if provided
         if (signal) {
           fetchOptions.signal = signal;
         }
   
-        const response = await $fetch<{ data: TResponse }>(endpoint, fetchOptions);
+        const response = await $fetch<{ data: TResponse } | TResponse>(endpoint, fetchOptions);
+  
+        // Support both wrapped and raw responses
+        const data = (response && typeof response === 'object' && 'data' in (response as any))
+          ? (response as any).data as TResponse
+          : response as TResponse
   
         return {
-          data: response.data,
+          data,
           error: null
         };
       } catch (error) {
         // Handle AbortError specifically
-        if (error && typeof error === 'object' && 'name' in error && error.name === 'AbortError') {
+        if (error && typeof error === 'object' && 'name' in error && (error as any).name === 'AbortError') {
           return {
             data: null,
             error: 'Request was aborted',
             aborted: true
-          };
+          } as any;
         }
   
         let errorMessage = 'Request failed';
-        let statusCode = null;
+        let statusCode = null as number | null;
   
         if (error && typeof error === 'object') {
           if ('statusCode' in error) {
@@ -83,7 +92,7 @@ export const useApiStore = defineStore('apiStore', () => {
           data: null,
           error: errorMessage,
           statusCode
-        };
+        } as any;
       }
     };
   
