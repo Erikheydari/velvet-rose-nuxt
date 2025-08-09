@@ -11,7 +11,7 @@
         </p>
       </div>
       <div class="space-y-6">
-        <h4 class="heading-4 text-primary-foreground text-center lg:text-start">
+        <h4 class="heading-5 text-primary-foreground text-center lg:text-start">
           دسترسی سریع
         </h4>
         <ul class="space-y-2 text-center lg:text-start">
@@ -23,7 +23,7 @@
         </ul>
       </div>
       <div class="space-y-6">
-        <h4 class="heading-4 text-primary-foreground text-center lg:text-start">
+        <h4 class="heading-5 text-primary-foreground text-center lg:text-start">
           راه های ارتباطی
         </h4>
         <ul class="space-y-2 text-center lg:text-start">
