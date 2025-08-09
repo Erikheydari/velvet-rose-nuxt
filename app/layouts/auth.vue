@@ -1,13 +1,29 @@
-<template>
-  <div>
-    <slot />
-  </div>
-</template>
-
-<script lang="ts" setup>
-
+<script setup lang="ts">
+import { ChevronRight } from 'lucide-vue-next'
 </script>
 
-<style>
+<template>
+  <section class="flex flex-row w-full h-screen justify-center items-center">
+    <TheButton variant="link" to="/" class="px-0! absolute top-0 right-0">
+      <ChevronRight class="size-4" />
+      بازگشت
+    </TheButton>
 
-</style>
+    <div
+      class="default-inner-container w-full flex flex-row h-2/3 justify-between border-border border rounded-2xl overflow-hidden ">
+      <div class="flex flex-col gap-4 justify-center items-center grow xl:p-12 relative">
+        <slot />
+      </div>
+      <div class="basis-2/3 overflow-hidden relative">
+        <video src="/videos/hero.mp4" autoplay muted loop
+          class="w-full object-cover h-full absolute top-0 left-0 z-10"></video>
+      </div>
+    </div>
+
+    <TheButton variant="link" class="absolute bottom-0 left-0">
+      نیاز به پشتیبانی دارید؟
+    </TheButton>
+  </section>
+</template>
+
+<style scoped></style>
