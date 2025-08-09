@@ -1,5 +1,6 @@
 <template>
-  <div class="h-full lg:hero-height lg:h-screen px-4 lg:px-12 pt-28">
+  <div class="h-full 2xl:hero-height 2xl:h-screen px-4 xl:px-12 pt-36 pb-24 relative">
+
     <center class="mb-8">
       <TheButton variant="outline" class="pr-7!" size="lg" @click="goBack">
         بازگشت
@@ -7,58 +8,53 @@
       </TheButton>
     </center>
 
-    <div v-if="!productsStore.isLoading && productsStore.product" class="flex flex-col lg:flex-row justify-between w-full gap-6 h-full">
-      <div class="basis-full lg:basis-1/3 flex h-full flex-col lg:sticky lg:top-24 gap-8">
+    <div v-if="!productsStore.isLoading && productsStore.product"
+      class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
+      <div class="order-2 xl:order-1 basis-full xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 ">
         <!-- Name -->
-        <div class="w-full">
+        <div class="w-full order-3 xl:order-1">
           <h1 class="heading-4 font-extrabold text-primary mb-2">
             {{ productsStore.product?.name }}
           </h1>
 
-          <h2 class="heading-6">
+          <h2 class="heading-6 hidden xl:block">
             {{ productsStore.product?.full_name }}
           </h2>
         </div>
 
+        <figure class="block xl:hidden w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto order-1">
+          <img :src="productsStore.product?.image?.src" :alt="productsStore.product?.name"
+            class="w-full h-full object-contain" />
+        </figure>
+
         <!-- Summary -->
-        <div class="text-muted-foreground body-2 relative">
+        <div class="text-muted-foreground body-2 relative order-4 xl:order-2">
           <p class="line-clamp-6 transition-all duration-300" :class="{ 'line-clamp-none': isSummaryExpanded }">
             {{ productsStore.product?.summary }}
           </p>
-          <TheButton
-            v-if="productsStore.product?.summary && productsStore.product?.summary.length > 255"
-            variant="ghost"
-            size="icon"
-            class="absolute bottom-0 left-0 z-10"
-            @click="isSummaryExpanded = !isSummaryExpanded"
-          >
+          <TheButton v-if="productsStore.product?.summary && productsStore.product?.summary.length > 255"
+            variant="ghost" size="icon" class="absolute bottom-0 left-0 z-10"
+            @click="isSummaryExpanded = !isSummaryExpanded">
             <ChevronDown class="size-4 transition-all duration-300" :class="{ 'rotate-180': isSummaryExpanded }" />
           </TheButton>
           <div
             v-if="!isSummaryExpanded && productsStore.product?.summary && productsStore.product?.summary.length > 255"
-            class="bg-gradient-to-t from-background to-transparent absolute bottom-0 left-0 w-full h-1/2"
-          ></div>
+            class="bg-gradient-to-t from-background to-transparent absolute bottom-0 left-0 w-full h-1/2"></div>
         </div>
 
         <!-- Options -->
-        <ul v-if="productOptions.length > 0" class="mb-4">
-          <li
-            v-for="option in productOptions.slice(0, 3)"
-            :key="option"
-            class="body-2 text-primary list-inside list-disc"
-          >
+        <ul v-if="productOptions.length > 0" class="mb-4 order-5 xl:order-3">
+          <li v-for="option in productOptions.slice(0, 3)" :key="option"
+            class="body-2 text-primary list-inside list-disc">
             {{ option }}
           </li>
-          <li
-            v-if="isOptionsExpanded"
-            v-for="option in productOptions.slice(3)"
-            :key="option"
-            class="body-2 text-primary list-inside list-disc"
-          >
+          <li v-if="isOptionsExpanded" v-for="option in productOptions.slice(3)" :key="option"
+            class="body-2 text-primary list-inside list-disc">
             {{ option }}
           </li>
           <li v-if="productOptions.length > 3" class="body-2 text-primary">
-            <TheButton variant="ghost" class="cursor-pointer py-0! mt-2" @click="isOptionsExpanded = !isOptionsExpanded">
+            <TheButton variant="ghost" class="cursor-pointer py-0! mt-2"
+              @click="isOptionsExpanded = !isOptionsExpanded">
               <Plus class="size-4" v-if="!isOptionsExpanded" />
               <Minus class="size-4" v-else />
               <span v-if="!isOptionsExpanded">
@@ -72,77 +68,70 @@
           </li>
         </ul>
 
-        <span
-          v-if="productsStore.product?.original_tag"
-          class="py-3 px-6 bg-secondary text-primary flex items-center gap-2 rounded-full justify-center w-fit mb-4"
-        >
+        <span v-if="productsStore.product?.original_tag"
+          class="py-3 px-6 bg-secondary text-primary flex items-center gap-2 rounded-full justify-center w-fit mb-4 order-6 xl:order-4">
           <Original class="color-primary size-6" />
           این محصول اورجینال می‌باشد.
         </span>
 
-        <div v-if="productsStore.product?.gallery" class="product-gallery flex gap-2 w-full grow">
+        <div v-if="productsStore.product?.gallery" class="product-gallery flex gap-2 w-full grow order-2 xl:order-5">
           <TheCarousel :opts="{ loop: true, direction: 'rtl' }">
             <TheCarouselContent>
-              <TheCarouselItem v-for="image, index in productsStore.product?.gallery" :key="image?.id || index" class="basis-full lg:basis-1/3">
-                <img :src="mediaUrl + image.src" :alt="productsStore.product?.name" class="w-full h-full object-cover" />
+              <TheCarouselItem v-for="image, index in productsStore.product?.gallery" :key="image?.id || index"
+                class="basis-1/3">
+                <img :src="mediaUrl + image.src" :alt="productsStore.product?.name"
+                  class="w-full h-full object-cover" />
               </TheCarouselItem>
             </TheCarouselContent>
           </TheCarousel>
         </div>
       </div>
 
-      <div class="basis-full lg:basis-2/3">
-        <FantastyHeading
-          v-if="productsStore.product?.brand?.name || productsStore.product?.brand?.en_name"
+      <div class="order-1 xl:order-2 basis-full xl:basis-2/3 ">
+        <FantastyHeading v-if="productsStore.product?.brand?.name || productsStore.product?.brand?.en_name"
           :title="productsStore.product?.brand?.en_name || productsStore.product?.brand?.name"
-          :description="productsStore.product?.full_name"
-          titleClass="heading-2 font-extrabold lg:h-[8vh]"
-          descriptionClass="heading-4 font-light! mt-4 pb-2"
-        />
+          :description="productsStore.product?.full_name" titleClass="heading-2 font-extrabold h-[10vh]"
+          descriptionClass="heading-5 font-light! -mt-4 lg:mt-4 pb-2 text-center lg:text-start leading-none" />
 
-        <figure class="w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto">
-          <img :src="productsStore.product?.image?.src" :alt="productsStore.product?.name" class="w-full h-full object-contain" />
+        <figure class="hidden xl:block w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto">
+          <img :src="productsStore.product?.image?.src" :alt="productsStore.product?.name"
+            class="w-full h-full object-contain" />
         </figure>
       </div>
 
-      <div class="basis-full lg:basis-1/3 flex flex-col lg:sticky lg:top-24 h-fit lg:gap-8 gap-4">
+      <div class="order-3 xl:order-3 basis-full xl:basis-1/3 flex flex-col xl:sticky xl:top-24 h-fit gap-8"
+        id="attributes-selection">
+
         <!-- Color Selection -->
-        <div v-if="productsStore.product?.attributes?.color?.length" class="color-selection flex gap-2 flex-col">
+        <div id="color-selection" v-if="productsStore.product?.attributes?.color?.length"
+          class="color-selection flex gap-2 flex-col">
           <span class="w-full mb-2 heading-5 font-bold text-primary">انتخاب رنگ</span>
           <div class="flex flex-wrap gap-2">
-            <TheButton
-              v-for="color in productsStore.product.attributes.color"
-              :key="color.id"
-              class="color-selection-item-color hover:opacity-90 transition-opacity"
-              variant="ghost"
-              size="icon-lg"
-              :style="{ backgroundColor: color.value }"
-              @click="selectColor(color.id as string)"
-            >
+            <TheButton v-for="color in productsStore.product.attributes.color" :key="color.id"
+              class="color-selection-item-color hover:opacity-90 transition-opacity" variant="ghost" size="icon-lg"
+              :style="{ backgroundColor: color.value }" @click="selectColor(color.id as string)">
               <Check class="size-4 mix-blend-difference text-white stroke-4" v-if="color.id === selectedColorId" />
             </TheButton>
           </div>
         </div>
 
         <!-- Size Selection -->
-        <div v-if="productsStore.product?.attributes?.size?.length" class="size-selection flex flex-col gap-2">
+        <div id="size-selection" v-if="productsStore.product?.attributes?.size?.length"
+          class="size-selection flex flex-col gap-2">
           <span class="w-full mb-2 heading-5 font-bold text-primary">انتخاب سایز</span>
           <div class="flex flex-wrap gap-2">
-            <TheButton
-              v-for="size in productsStore.product.attributes.size"
-              :key="size.id"
-              class="size-selection-item"
+            <TheButton v-for="size in productsStore.product.attributes.size" :key="size.id" class="size-selection-item"
               :variant="size.id === selectedSizeId ? 'default' : 'outline'"
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
-              @click="selectSize(size.id as string)"
-            >
-              <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name }}</span>
+              @click="selectSize(size.id as string)">
+              <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
+                }}</span>
             </TheButton>
           </div>
         </div>
 
         <!-- Price -->
-        <div class="flex flex-col gap-2">
+        <div class="flex-col gap-2 hidden xl:flex">
           <span class="w-full mb-2 heading-5 font-bold text-primary">قیمت محصول</span>
           <div class="flex gap-2 items-baseline">
             <p class="heading-4 font-extrabold text-foreground">
@@ -154,14 +143,7 @@
           </div>
         </div>
 
-        <div class="flex gap-2 mb-4 w-full">
-          <!-- Add to Cart Button -->
-          <TheButton @click="handleAddToCart" :disabled="!canAddToCart || cartStore.loading" class="px-8! mb-4 grow gap-4" variant="default" size="lg" :class="{ 'opacity-50': !canAddToCart }">
-            <ShoppingCart v-if="!cartStore.loading" class="size-4" />
-            <Loader2 class="size-4 animate-spin" v-if="cartStore.loading" />
-            <span v-if="cartStore.loading">در حال افزودن...</span>
-            <span v-else class="body-1">افزودن به سبد خرید</span>
-          </TheButton>
+        <div class="gap-2 mb-4 w-full hidden lg:flex flex-wrap">
 
           <!-- Quantity Selection -->
           <div class="quantity-selection flex items-center gap-2 mb-4">
@@ -169,10 +151,21 @@
               <Minus class="size-4" />
             </TheButton>
             <span class="min-w-7 text-center body-1">{{ quantity }}</span>
-            <TheButton variant="tonal" size="icon-lg" @click="increaseQuantity" :disabled="quantity >= (productsStore.product?.qty || 1)">
+            <TheButton variant="tonal" size="icon-lg" @click="increaseQuantity"
+              :disabled="quantity >= (productsStore.product?.qty || 1)">
               <Plus class="size-4" />
             </TheButton>
           </div>
+
+          <!-- Add to Cart Button -->
+          <TheButton @click="handleAddToCart" :disabled="!canAddToCart || cartStore.loading"
+            class="px-8! mb-4 grow gap-4" variant="default" size="lg" :class="{ 'opacity-50': !canAddToCart }">
+            <ShoppingCart v-if="!cartStore.loading" class="size-4" />
+            <Loader2 class="size-4 animate-spin" v-if="cartStore.loading" />
+            <span v-if="cartStore.loading">در حال افزودن...</span>
+            <span v-else class="body-1">افزودن به سبد خرید</span>
+          </TheButton>
+
         </div>
 
         <!-- Validation Messages -->
@@ -181,10 +174,56 @@
         </div>
       </div>
     </div>
-      <div v-else>
-        <SkeletonProductPage />
+
+    <div v-else>
+      <SkeletonProductPage />
+    </div>
+
+    <Teleport to="body">
+      <div class="fixed bottom-0 left-0 w-full z-50 p-4 lg:hidden">
+        <div
+          class="background-backdrop bg-background/90! flex justify-between flex-col sm:flex-row gap-4 p-4 rounded-lg">
+          <div class="flex-col gap-2">
+            <div class="flex gap-2 items-baseline">
+              <p class="heading-5 font-bold text-foreground">
+                <bdi>
+                  {{ productsStore.product?.final_price }}
+                </bdi>
+                <span class="text-muted-foreground body-2 ms-2">تومان</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="gap-2 w-full sm:w-auto flex justify-between items-center">
+
+            <!-- Quantity Selection -->
+            <div class="quantity-selection flex items-center gap-2">
+              <TheButton variant="outline" size="icon" @click="decreaseQuantity" :disabled="quantity <= 1">
+                <Minus class="size-4" />
+              </TheButton>
+              <span class="min-w-7 text-center body-1">{{ quantity }}</span>
+              <TheButton variant="outline" size="icon" @click="increaseQuantity"
+                :disabled="quantity >= (productsStore.product?.qty || 1)">
+                <Plus class="size-4" />
+              </TheButton>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <TheButton @click="handleAddToCart" :disabled="cartStore.loading" class="grow gap-4 sm:px-8!"
+              variant="default" size="sm" :class="{ 'opacity-80!': !canAddToCart }">
+              <ShoppingCart v-if="!cartStore.loading" class="size-4" />
+              <Loader2 class="size-4 animate-spin" v-if="cartStore.loading" />
+              <span v-if="cartStore.loading">در حال افزودن...</span>
+              <span v-else class="body-1">افزودن به سبد</span>
+            </TheButton>
+
+          </div>
+
+        </div>
       </div>
-   </div>
+
+    </Teleport>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -272,20 +311,37 @@ const canAddToCart = computed(() => {
   return quantity.value > 0 && quantity.value <= (productsStore.product.qty || 0)
 })
 
+// Smoothly scroll to a section by id (with slight offset for mobile headers)
+const scrollToSection = (targetId: string, offset: number = 80) => {
+  if (process.client) {
+    const target = document.getElementById(targetId)
+    if (target) {
+      const y = target.getBoundingClientRect().top + window.scrollY - offset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
+  }
+}
+
 // Add to cart handler
 const handleAddToCart = async () => {
-  if (!productsStore.product) return
+  if (!productsStore.product) {
+    scrollToSection('attributes-selection')
+    validationMessage.value = 'لطفاً ابتدا انتخاب رنگ و سایز مورد نظر را انجام دهید'
+    return
+  }
 
   const hasColors = (productsStore.product.attributes?.color?.length ?? 0) > 0
   const hasSizes = (productsStore.product.attributes?.size?.length ?? 0) > 0
 
   if (hasColors && !selectedColorId.value) {
     validationMessage.value = 'لطفاً رنگ مورد نظر را انتخاب کنید'
+    scrollToSection('color-selection')
     return
   }
 
   if (hasSizes && !selectedSizeId.value) {
     validationMessage.value = 'لطفاً سایز مورد نظر را انتخاب کنید'
+    scrollToSection('size-selection')
     return
   }
 
