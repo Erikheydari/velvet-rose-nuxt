@@ -32,6 +32,16 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         remove: (itemId: number) => `${apiUrl}${apiPrefix}/cart/${itemId}`,
     }
 
+    // Auth endpoints according to swagger sample
+    const auth = {
+        login: `${apiUrl}/api/login`,
+        register: `${apiUrl}/api/register`,
+        verifyOtp: `${apiUrl}/api/verify-otp`,
+        logout: `${apiUrl}/api/logout`,
+        me: `${apiUrl}/api/users/me`,
+        profile: `${apiUrl}/api/users/me`,
+    }
+
     return {
         apiUrl,
         apiPrefix,
@@ -40,5 +50,6 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         brands,
         categories,
         cart,
+        auth,
     }
 })
