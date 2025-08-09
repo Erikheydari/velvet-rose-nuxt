@@ -5,7 +5,7 @@ export const useEndpointStore = defineStore('endpointStore', () => {
 
     const products = {
         get: `${apiUrl}${apiPrefix}/products`,
-        detail: (id: number) => `${apiUrl}${apiPrefix}/products/${id}`,
+        detail: (identifier: string | number) => `${apiUrl}${apiPrefix}/products/${identifier}`,
         search: (query: string) => `${apiUrl}${apiPrefix}/products?search=${query}`,
     }
 
@@ -24,6 +24,13 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         getBySlug: (slug: string) => `${apiUrl}${apiPrefix}/categories/${slug}`,
     }
 
+    const cart = {
+        get: `${apiUrl}${apiPrefix}/cart`,
+        add: `${apiUrl}${apiPrefix}/cart`,
+        update: (itemId: number) => `${apiUrl}${apiPrefix}/cart/${itemId}`,
+        remove: (itemId: number) => `${apiUrl}${apiPrefix}/cart/${itemId}`,
+    }
+
     return {
         apiUrl,
         apiPrefix,
@@ -31,5 +38,6 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         pages,
         brands,
         categories,
+        cart,
     }
 })
