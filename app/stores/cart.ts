@@ -129,6 +129,31 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
+  // New: request password reset using auth endpoint
+  const requestPasswordReset = async (email: string): Promise<ApiResponse> => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data, error: apiError } = await apiStore.apiRequest(endpointStore.auth.forgotPassword, {
+        method: 'post',
+        body: { email }
+      });
+
+      if (apiError) {
+        error.value = apiError;
+        return { error: apiError };
+      }
+
+      return { data };
+    } catch (err: any) {
+      error.value = err.message || 'Failed to request password reset';
+      return { error: err };
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const clearCart = async (): Promise<ApiResponse> => {
     loading.value = true;
     error.value = null;
@@ -160,6 +185,7 @@ export const useCartStore = defineStore('cart', () => {
     fetchCart,
     removeFromCart,
     updateCartItem,
+    requestPasswordReset,
     clearCart,
 
     // Getters

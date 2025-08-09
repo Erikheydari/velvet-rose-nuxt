@@ -34,12 +34,13 @@ export const useEndpointStore = defineStore('endpointStore', () => {
 
     // Auth endpoints according to swagger sample
     const auth = {
-        login: `${apiUrl}/api/login`,
-        register: `${apiUrl}/api/register`,
-        verifyOtp: `${apiUrl}/api/verify-otp`,
-        logout: `${apiUrl}/api/logout`,
-        me: `${apiUrl}/api/users/me`,
-        profile: `${apiUrl}/api/users/me`,
+        login: `${apiUrl}${apiPrefix}/login`,
+        register: `${apiUrl}${apiPrefix}/register`,
+        verifyOtp: `${apiUrl}${apiPrefix}/verify-otp`,
+        forgotPassword: `${apiUrl}${apiPrefix}/forgot-password`,
+        logout: `${apiUrl}${apiPrefix}/logout`,
+        me: `${apiUrl}${apiPrefix}/users/me`,
+        profile: `${apiUrl}${apiPrefix}/profile`,
     }
 
     return {
