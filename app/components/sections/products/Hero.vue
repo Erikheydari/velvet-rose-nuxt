@@ -1,5 +1,5 @@
 <template>
-  <section class="flex  items-center justify-center hero-height overflow-hidden bg-background mb-8 lg:mb-12">
+  <section class="flex  items-center justify-center hero-height overflow-hidden bg-background">
 
     <div class="right-image absolute translate-x-[40%] md:translate-x-[30%] -translate-y-1/2 image-container">
       <div class="bg-secondary rounded-object absolute top-1/3 -translate-y-1/2 left-1/2 -translate-x-1/2 z-0">
