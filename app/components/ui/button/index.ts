@@ -21,7 +21,7 @@ export const buttonVariants = cva(
         tonal: 'bg-secondary/40 text-primary hover:bg-secondary/20',
       },
       size: {
-        default: 'h-10 px-4 pt-1.5 pb-2 has-[>svg]:px-3 text-base',
+        default: 'h-10 px-4 pt-1.5 pb-2 has-[>svg]:px-3 text-base rounded-full',
         sm: 'h-9 rounded-full gap-1.5 px-3 pt-1.5 pb-2 has-[>svg]:px-2.5 text-sm',
         lg: 'h-12 rounded-full px-6 pb-2.5 pt-1  has-[>svg]:px-4 text-lg [&_svg]:size-5',
         icon: 'size-9 rounded-full',
