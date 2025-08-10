@@ -8,8 +8,17 @@
       containScroll: 'keepSnaps'
     }" @init-api="(val) => emblaMainApi = val">
       <TheCarouselContent class="relative ml-0 z-1">
-        <TheCarouselItem v-for="(product, index) in products" :key="product.id"
-          class="basis-full md:basis-1/3 flex items-end justify-center relative pt-[30%] md:pt-[10%]  lg:pt-[8%] pl-0">
+        <TheCarouselItem v-if="localLoading" v-for="(i, index) in 4" :key="i"
+          class="basis-full md:basis-1/3 flex items-end justify-center relative pt-[30%] md:pt-[10%] lg:pt-[8%] pl-0">
+          <div :class="[
+            'transition-all duration-500  md:max-w-none lg:max-w-[15vw]',
+            { 'scale-130 md:scale-[1.2] lg:scale-[1.6] lg:translate-x-1/7': index === selectedIndex, 'md:scale-60 lg:scale-100': index !== selectedIndex }
+          ]">
+            <SkeletonProduct class="aspect-square w-auto product-image h-100" />
+          </div>
+        </TheCarouselItem>
+        <TheCarouselItem v-else v-for="(product, index) in products" :key="product.id"
+          class="basis-full md:basis-1/3 flex items-end justify-center relative pt-[30%] md:pt-[10%] lg:pt-[8%] pl-0">
           <div :class="[
             'transition-all duration-500 origin-bottom md:max-w-none lg:max-w-[15vw] ',
             { 'scale-130 md:scale-[1.2] lg:scale-[1.6]': index === selectedIndex, 'md:scale-60 lg:scale-100': index !== selectedIndex }
@@ -62,7 +71,12 @@ const props = defineProps<{
   products: Product[];
   title: string;
   description: string;
+  loading: boolean;
 }>();
+
+const localLoading = computed(() => {
+  return props.loading || props.products.length === 0
+})
 </script>
 <style scoped>
 .product-image {
