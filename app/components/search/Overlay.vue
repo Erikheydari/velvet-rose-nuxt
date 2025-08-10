@@ -140,7 +140,7 @@ onMounted(() => {
         inset-x-0 bottom-0 md:bottom-auto md:left-0 md:right-0 
         z-50
         background-backdrop-90
-        rounded-t-2xl
+        rounded-t-2xl md:rounded-none
         p-4 md:px-8 pt-8
         h-[80vh] md:h-auto md:max-h-[80vh] 
         overflow-hidden
@@ -158,6 +158,13 @@ onMounted(() => {
             <Input ref="inputRef" v-model="localQuery" @input="handleInput" @keydown.enter="handleSubmit"
               @keydown.esc="handleClose" placeholder="عبارت مورد نظر خود را وارد کنید..."
               class="w-full h-12 px-4 body-2 text-base md:text-sm" type="text" autocomplete="off" spellcheck="false" />
+
+            <!-- Clear button -->
+            <TheButton v-if="localQuery" variant="link" size="icon-lg"
+              class="md:flex hidden shrink touch-manipulation absolute left-0 top-1/2 -translate-y-1/2"
+              @click="clearSearch" aria-label="پاک کردن جستجو">
+              <X class="size-5" />
+            </TheButton>
           </div>
 
           <!-- Search button -->
@@ -167,9 +174,9 @@ onMounted(() => {
           </TheButton>
 
           <!-- Close button -->
-          <TheButton variant="ghost" size="icon-lg" class="md:flex hidden shrink touch-manipulation"
+          <TheButton variant="tonalDestructive" size="icon-lg" class="md:flex hidden shrink touch-manipulation"
             @click="handleClose" aria-label="بستن">
-            <X class="w-5 h-5" />
+            <X class="size-5" />
           </TheButton>
         </div>
 
