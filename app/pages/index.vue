@@ -2,7 +2,7 @@
   <SectionsHomeHero />
   <SectionsHomeBeforeAfter />
 
-  <SectionsHomeProducts :products="productsStore.products" type="primary">
+  <SectionsHomeProducts :products="productsStore.products" type="primary" :loading="productsStore.loading">
     <SectionsHeading title="محصولات آرایشی بهداشتی"
       description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
   </SectionsHomeProducts>
@@ -13,13 +13,14 @@
   </SectionsHomeCategory>
 
 
-  <SectionsHomeProducts :products="productsStore.products" type="secondary">
+  <SectionsHomeProducts :products="productsStore.products" type="secondary" :loading="productsStore.loading">
     <SectionsHeading title="محصولات آرایشی بهداشتی"
       description="تمامی محصولات کاملا اورجینال و از معتبر ترین برند های دنیا میباشند" />
   </SectionsHomeProducts>
 
 
-  <SectionsHomeProductsByBrand :products="productsStore.products" title="Tom Ford" description="Product Model" />
+  <SectionsHomeProductsByBrand :products="productsStore.products" title="Tom Ford" description="Product Model"
+    :loading="productsStore.loading" />
 </template>
 
 <script lang="ts" setup>
