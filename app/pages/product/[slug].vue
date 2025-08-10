@@ -173,7 +173,7 @@
     </div>
 
     <Teleport to="body">
-      <div class="fixed bottom-0 left-0 w-full z-50 p-4 lg:hidden">
+      <div class="fixed bottom-0 left-0 w-full z-49 p-4 lg:hidden">
         <div
           class="background-backdrop bg-background/90! flex justify-between flex-col sm:flex-row gap-4 p-4 rounded-lg">
           <div class="flex-col gap-2">
