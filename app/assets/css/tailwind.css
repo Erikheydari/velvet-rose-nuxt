@@ -85,6 +85,23 @@
     @apply border-border outline-ring/50;
   }
 
+  /* scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/80;
+  }
+
   body {
     direction: rtl;
     @apply bg-background text-foreground font-kalameh;
