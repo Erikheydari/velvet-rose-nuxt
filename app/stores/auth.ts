@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = ref<boolean>(false)
     const isInitialized = ref<boolean>(false)
     const token = ref<string | null>(null)
+    const needVerify = ref<boolean>(false)
 
     // Registration and OTP state
     const pendingEmail = ref<string>('')
@@ -212,6 +213,7 @@ export const useAuthStore = defineStore('auth', () => {
 
             awaitingOtp.value = false
             pendingEmail.value = ''
+            needVerify.value = false
 
             toast.success(data?.message)
 
@@ -226,6 +228,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const passwordLogin = async (username: string, password: string) => {
+        console.log('passwordLogin')
         try {
             loading.value = true
             error.value = null
@@ -234,7 +237,7 @@ export const useAuthStore = defineStore('auth', () => {
             body.append('email', username)
             body.append('password', password)
 
-            const { data, error: apiError } = await apiStore.apiRequest<LoginResponse, LoginResponse>(endpoints.auth.login, {
+            const { data, error: apiError, statusCode, errorData } = await apiStore.apiRequest<LoginResponse, LoginResponse>(endpoints.auth.login, {
                 method: 'post',
                 body: body.toString(),
                 headers: {
@@ -243,6 +246,17 @@ export const useAuthStore = defineStore('auth', () => {
             })
 
             if (apiError) {
+                // Detect unverified email flow from backend
+                const needsVerification = !!(errorData && (errorData.need_verification || (errorData as any).need_verify))
+                if ((statusCode === 401 || statusCode === 403) && needsVerification) {
+                    needVerify.value = true
+                    pendingEmail.value = username
+                    if (errorData?.message) {
+                        toast.error(errorData.message)
+                    }
+                    return false
+                }
+
                 error.value = apiError
                 return false
             }
@@ -269,6 +283,8 @@ export const useAuthStore = defineStore('auth', () => {
                 } else {
                     await navigateTo('/')
                 }
+                needVerify.value = false
+                console.log(needVerify.value)
                 return true
             } else {
                 error.value = 'پاسخ نامعتبر از سرور'
@@ -277,6 +293,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         } catch (err: any) {
             error.value = err?.message || 'ورود ناموفق بود. لطفا دوباره تلاش کنید.'
+            needVerify.value = err.response?.data?.need_verify
             return false
         } finally {
             loading.value = false
@@ -350,6 +367,7 @@ export const useAuthStore = defineStore('auth', () => {
         awaitingOtp: readonly(awaitingOtp),
         pendingEmail: readonly(pendingEmail),
         token: readonly(token),
+        needVerify: readonly(needVerify),
 
         // Getters
         currentUser,
