@@ -228,12 +228,12 @@ export function useSearch() {
   }
 
   return {
-    isActive: sharedIsActive,
+    isSearchOpen: sharedIsActive,
     searchQuery: sharedSearchQuery,
     openSearch,
     closeSearch,
     toggleSearch,
-    handleButtonClick,
+    handleSearchButtonClick: handleButtonClick,
     setSearchQuery,
     setSearchQuerySilently,
     navigateToSearchPage,
