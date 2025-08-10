@@ -340,6 +340,8 @@ const handleAddToCart = async () => {
 
   const attributes: string[] = []
 
+  console.log(selectedColorId.value, selectedSizeId.value)
+
   if (selectedColorId.value) {
     attributes.push(selectedColorId.value)
   }
@@ -347,6 +349,8 @@ const handleAddToCart = async () => {
   if (selectedSizeId.value) {
     attributes.push(selectedSizeId.value)
   }
+
+  console.log(attributes)
 
   const cartItem = {
     product_id: productsStore.product.id,
