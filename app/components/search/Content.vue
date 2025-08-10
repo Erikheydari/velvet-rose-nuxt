@@ -65,13 +65,6 @@ const navigateToFullSearch = () => {
   <div class="w-full" dir="rtl">
     <div v-if="hasSearched && hasResults" class="mb-3 flex justify-between items-center">
       <p class="caption-1 text-muted-foreground">جستجو برای: "{{ displayQuery }}"</p>
-      <TheButton 
-        variant="link"
-        @click="navigateToFullSearch"
-        class="caption-1"
-      >
-        مشاهده همه نتایج
-      </TheButton>
     </div>
     
     <div v-if="isLoading" class="py-4">
