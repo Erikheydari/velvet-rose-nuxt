@@ -6,7 +6,7 @@ export interface NavItem {
 export const navItems: NavItem[] = [
     { label: "صفحه اصلی", to: "/" },
     { label: "محصولات", to: "/products" },
-    { label: "درباره ما", to: "/about-us" },
+    { label: "درباره ما", to: "/about" },
 ];
 
 export interface ContactItem {
