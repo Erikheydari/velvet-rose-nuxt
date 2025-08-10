@@ -1,11 +1,10 @@
 <template>
   <div class="product-grid" aria-busy="true">
-    <Skeleton v-for="i in count" :key="i" class="aspect-[328/455] rounded-xl" />
+    <ProductSkeleton v-for="i in count" :key="i" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Skeleton } from '~/components/ui/skeleton'
 
 withDefaults(defineProps<{ count?: number }>(), {
   count: 8,
