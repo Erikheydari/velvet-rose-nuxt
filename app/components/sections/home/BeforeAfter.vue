@@ -13,10 +13,10 @@
     <h2
       class="flex flex-col lg:hidden heading-3 text-primary font-bold text-center absolute top-20 left-1/2 -translate-x-1/2 z-1">
       <span class="text-nowrap">
-        به بهتریـــــــــــــــــــــــــــن نسخه از
+        به بهتریـــــــــــــــــــــــــــــــــــــــن نسخه از
       </span>
       <span class="text-nowrap">
-        خودت تــــــــــــــــــــــــــــبدیل شو!
+        خودت تــــــــــــــــــــــــــــــــــــــــــبدیل شو!
       </span>
     </h2>
 
