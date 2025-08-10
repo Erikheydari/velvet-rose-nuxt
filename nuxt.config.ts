@@ -20,9 +20,10 @@ export default defineNuxtConfig({
     }, */
     head: {
       title: 'Velvet Rose',
-/*       link: [
+      titleTemplate: '%s - Velvet Rose',
+      link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-      ] */
+      ]
     }
   },
 
