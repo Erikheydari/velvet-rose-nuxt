@@ -12,6 +12,7 @@ export const useCartStore = defineStore('cart', () => {
   const cartItems = ref<CartItemResponse[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const justAdded = ref<boolean>(false);
 
   // Actions
   const addToCart = async (cartData: CartItem): Promise<ApiResponse> => {
@@ -31,6 +32,10 @@ export const useCartStore = defineStore('cart', () => {
 
       // Refresh cart after adding item
       await fetchCart();
+
+      // flip justAdded for reactive UI effects
+      justAdded.value = true;
+      setTimeout(() => (justAdded.value = false), 500);
 
       return { data };
     } catch (err: any) {
@@ -129,6 +134,14 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
+  const increaseCartItem = async (itemId: number, quantity: number): Promise<ApiResponse> => {
+    return await updateCartItem(itemId, quantity + 1);
+  };
+
+  const decreaseCartItem = async (itemId: number, quantity: number): Promise<ApiResponse> => {
+    return await updateCartItem(itemId, quantity - 1);
+  };
+
   // New: request password reset using auth endpoint
   const requestPasswordReset = async (email: string): Promise<ApiResponse> => {
     loading.value = true;
@@ -159,6 +172,7 @@ export const useCartStore = defineStore('cart', () => {
     error.value = null;
 
     for (const item of cartItems.value) {
+      console.log(item.id);
       await removeFromCart(item.id || 0);
     }
 
@@ -179,6 +193,7 @@ export const useCartStore = defineStore('cart', () => {
     cartItems: readonly(cartItems),
     loading: readonly(loading),
     error: readonly(error),
+    justAdded: readonly(justAdded),
 
     // Actions
     addToCart,
