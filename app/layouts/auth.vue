@@ -11,8 +11,9 @@ const { consumeReturnUrl } = useAuthRedirect()
 const { isAuthenticated, token } = storeToRefs(authStore)
 
 const redirectIfAuthenticated = async () => {
+  if (!token.value) return
   // If token exists but user not validated yet, check profile
-  if (!isAuthenticated.value && token.value) {
+  if (!isAuthenticated.value) {
     await authStore.checkAuthStatus()
   }
   if (isAuthenticated.value) {
@@ -27,10 +28,6 @@ const redirectIfAuthenticated = async () => {
 }
 
 onMounted(() => {
-  redirectIfAuthenticated()
-})
-
-watch([isAuthenticated, token], () => {
   redirectIfAuthenticated()
 })
 </script>
