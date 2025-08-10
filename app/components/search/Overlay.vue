@@ -138,7 +138,7 @@ onMounted(() => {
       <div v-if="isActive" ref="searchContainerRef" :class="overlayClass" class="
         fixed
         inset-x-0 bottom-0 md:bottom-auto md:left-0 md:right-0 
-        z-50
+        z-51
         background-backdrop-90
         rounded-t-2xl md:rounded-none
         p-4 md:px-8 pt-8
