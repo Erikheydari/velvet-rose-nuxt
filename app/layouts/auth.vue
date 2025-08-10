@@ -1,8 +1,38 @@
 <script setup lang="ts">
 import { ChevronRight } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useAuthRedirect } from '@/composables/useAuthRedirect'
+import { storeToRefs } from 'pinia'
 
+const authStore = useAuthStore()
 const route = useRoute()
+const { consumeReturnUrl } = useAuthRedirect()
+const { isAuthenticated, token } = storeToRefs(authStore)
+
+const redirectIfAuthenticated = async () => {
+  // If token exists but user not validated yet, check profile
+  if (!isAuthenticated.value && token.value) {
+    await authStore.checkAuthStatus()
+  }
+  if (isAuthenticated.value) {
+    if (import.meta.client) {
+      const { toast } = await import('vue-sonner')
+      toast.info('شما در حال حاضر وارد شدید!')
+    }
+    const saved = consumeReturnUrl()
+    const target = saved && !saved.startsWith('/auth') ? saved : '/'
+    await navigateTo(target, { replace: true })
+  }
+}
+
+onMounted(() => {
+  redirectIfAuthenticated()
+})
+
+watch([isAuthenticated, token], () => {
+  redirectIfAuthenticated()
+})
 </script>
 
 <template>
