@@ -1,6 +1,6 @@
 <template>
   <header class="w-full sticky top-0 z-50 transition-all duration-300 -mb-36 lg:-mb-24"
-    :class="{ 'background-backdrop-90': isSticky || isActive }">
+    :class="{ 'background-backdrop-90': isSticky || isSearchOpen || isCartOpen }">
     <div class="w-full py-4 default-padding-x transition-all duration-300" :class="{ 'py-2': isSticky }">
       <div class="w-full flex items-center justify-between gap-4">
         <!-- Left Section - User & Search -->
@@ -42,7 +42,12 @@
           </DropdownMenu>
 
           <div class="min-w-0 flex-1 max-w-md">
-            <Search :search-query="searchQuery" :handle-button-click="handleButtonClick" />
+            <Search :search-query="searchQuery" :handle-button-click="toggleSearch" />
+          </div>
+
+          <div class="min-w-0 flex-1 max-w-md relative">
+            <CartTrigger :handle-button-click="toggleCart" />
+            <CartPopover :is-active="isCartOpen" :close-cart="() => isCartOpen = false" />
           </div>
         </div>
 
@@ -68,11 +73,12 @@
     </nav>
 
     <!-- Search Overlay -->
-    <SearchOverlay :is-active="isActive" :search-query="searchQuery" :close-search="closeSearch"
+    <SearchOverlay :is-active="isSearchOpen" :search-query="searchQuery" :close-search="closeSearch"
       :set-search-query="setSearchQuery" :navigate-to-search-page="navigateToSearchPage"
       :overlay-class="isSticky ? 'md:top-20' : 'md:top-24'" />
 
     <MenuMobile :open="isMenuOpen" @close="isMenuOpen = false" />
+
   </header>
 </template>
 
@@ -116,6 +122,22 @@ onMounted(async () => {
 const { y } = useWindowScroll()
 const isSticky = computed(() => y.value > 100)
 const isMenuOpen = ref(false)
+const isCartOpen = ref(false)
+
+const toggleCart = () => {
+  isCartOpen.value = !isCartOpen.value
+  if (isSearchOpen) {
+    closeSearch()
+  }
+}
+
+const toggleSearch = () => {
+  handleSearchButtonClick()
+  if (isCartOpen.value) {
+    isCartOpen.value = false
+  }
+}
+
 
 const toggleMenu = () => {
   isMenuOpen.value = true
@@ -123,9 +145,9 @@ const toggleMenu = () => {
 
 // Search functionality
 const {
-  isActive,
+  isSearchOpen,
   searchQuery,
-  handleButtonClick,
+  handleSearchButtonClick,
   closeSearch,
   setSearchQuery,
   navigateToSearchPage
