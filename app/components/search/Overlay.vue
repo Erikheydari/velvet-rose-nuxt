@@ -11,6 +11,7 @@ const props = defineProps<{
   closeSearch: () => void
   setSearchQuery: (query: string) => void
   navigateToSearchPage: () => void
+  overlayClass?: string
 }>()
 
 const router = useRouter()
@@ -134,19 +135,20 @@ onMounted(() => {
       enter-to-class="opacity-100 transform translate-y-0" leave-active-class="transition-all duration-200 ease-in"
       leave-from-class="opacity-100 transform translate-y-0"
       leave-to-class="opacity-0 transform translate-y-full md:translate-y-[-10px]">
-      <div v-if="isActive" ref="searchContainerRef" class="
+      <div v-if="isActive" ref="searchContainerRef" :class="overlayClass" class="
         fixed
-        inset-x-0 bottom-0 md:top-24 md:bottom-auto md:left-0 md:right-0 
+        inset-x-0 bottom-0 md:bottom-auto md:left-0 md:right-0 
         z-50
-        bg-background 
+        background-backdrop-90
         rounded-t-2xl
-        p-4 md:px-8
+        p-4 md:px-8 pt-8
         h-[80vh] md:h-auto md:max-h-[80vh] 
         overflow-hidden
       " @click="stopPropagation" dir="rtl">
 
         <!-- Mobile Handle Bar -->
-        <div class="md:hidden flex justify-center h-8 -mb-2" @touchmove.prevent="handleClose">
+        <div class="md:hidden flex justify-center items-center h-7 absolute top-0 left-0 right-0 pt-3 pb-8"
+          @touchmove.prevent="handleClose">
           <div class="w-12 h-1 bg-muted-foreground/30 rounded-full"></div>
         </div>
 
@@ -156,13 +158,6 @@ onMounted(() => {
             <Input ref="inputRef" v-model="localQuery" @input="handleInput" @keydown.enter="handleSubmit"
               @keydown.esc="handleClose" placeholder="عبارت مورد نظر خود را وارد کنید..."
               class="w-full h-12 px-4 body-2 text-base md:text-sm" type="text" autocomplete="off" spellcheck="false" />
-
-            <!-- Clear button -->
-            <button v-if="localQuery" @click="clearSearch"
-              class="absolute left-3 top-1/2 transform -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors touch-manipulation"
-              type="button" aria-label="پاک کردن جستجو">
-              <X class="w-4 h-4" />
-            </button>
           </div>
 
           <!-- Search button -->
@@ -172,8 +167,8 @@ onMounted(() => {
           </TheButton>
 
           <!-- Close button -->
-          <TheButton variant="ghost" size="icon-lg" class="md:block hidden h-12 w-12 shrink-0 touch-manipulation" @click="handleClose"
-            aria-label="بستن">
+          <TheButton variant="ghost" size="icon-lg" class="md:flex hidden shrink touch-manipulation"
+            @click="handleClose" aria-label="بستن">
             <X class="w-5 h-5" />
           </TheButton>
         </div>
