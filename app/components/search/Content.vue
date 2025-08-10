@@ -57,6 +57,9 @@ const navigateToFullSearch = () => {
   <div class="w-full" dir="rtl">
     <div v-if="hasSearched && hasResults" class="mb-3 flex justify-between items-center">
       <p class="caption-1 text-muted-foreground">جستجو برای: "{{ displayQuery }}"</p>
+      <p class="caption-1 text-muted-foreground">
+        <span>{{ searchResults.length }}</span> نتیجه یافت شد
+      </p>
     </div>
 
     <div v-if="isLoading" class="py-4">
@@ -72,7 +75,8 @@ const navigateToFullSearch = () => {
     </div>
 
     <div v-else-if="hasResults">
-      <div class="lg:grid lg:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto max-h-[60vh]">
+      <div
+        class="flex flex-col lg:grid lg:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto max-h-[56vh] lg:max-h-[60vh]">
         <ProductSearchCard v-for="(product, index) in searchResults.slice(0, 6)" :product="product" :key="index" />
       </div>
 
