@@ -7,23 +7,23 @@ export const useProductsStore = defineStore('productsStore', () => {
   const endpointStore = useEndpointStore()
   const apiStore = useApiStore()
 
-  const isLoading = ref(true)
+  const loading = ref(true)
   const products = ref<Product[]>([])
   const product = ref<Product | null>(null)
 
   const fetchProducts = async () => {
-    isLoading.value = true
+    loading.value = true
     const { data, error } = await apiStore.apiRequest(endpointStore.products.get, {
       method: 'get',
     });
     if (data) {
       products.value = data as Product[]
     }
-    isLoading.value = false
+    loading.value = false
   }
 
   const fetchProduct = async (identifier: string | number) => {
-    isLoading.value = true
+    loading.value = true
     product.value = null
     try {
       const { data } = await apiStore.apiRequest(endpointStore.products.detail(identifier), {
@@ -33,23 +33,23 @@ export const useProductsStore = defineStore('productsStore', () => {
         product.value = data as Product
       }
     } finally {
-      isLoading.value = false
+      loading.value = false
     }
   }
 
   const fetchProductsByCategory = async (categorySlug: string) => {
-    isLoading.value = true
+    loading.value = true
     const { data, error } = await apiStore.apiRequest(endpointStore.products.getByCategory(categorySlug), {
       method: 'get',
     });
     if (data) {
       products.value = data as Product[]
     }
-    isLoading.value = false
+    loading.value = false
   }
 
   return {
-    isLoading,
+    loading,
 
     products,
     product,
