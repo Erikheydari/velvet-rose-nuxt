@@ -1,0 +1,21 @@
+<script setup lang="ts">
+import type { DropdownMenuRootEmits, DropdownMenuRootProps } from "reka-ui"
+import { DropdownMenuRoot, useForwardPropsEmits } from "reka-ui"
+
+const props = withDefaults(defineProps<DropdownMenuRootProps>(), {
+  dir: 'rtl',
+})
+const emits = defineEmits<DropdownMenuRootEmits>()
+
+const forwarded = useForwardPropsEmits(props, emits)
+</script>
+
+<template>
+  <DropdownMenuRoot
+    data-slot="dropdown-menu"
+    v-bind="forwarded"
+    :dir="dir"
+  >
+    <slot />
+  </DropdownMenuRoot>
+</template>
