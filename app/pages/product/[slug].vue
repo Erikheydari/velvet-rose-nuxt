@@ -118,7 +118,7 @@
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-                }}</span>
+              }}</span>
             </TheButton>
           </div>
         </div>
@@ -173,7 +173,7 @@
     </div>
 
     <Teleport to="body">
-      <div class="fixed bottom-0 left-0 w-full z-49 p-4 lg:hidden">
+      <div class="fixed bottom-0 left-0 w-full z-48 p-4 lg:hidden">
         <div
           class="background-backdrop bg-background/90! flex justify-between flex-col sm:flex-row gap-4 p-4 rounded-lg">
           <div class="flex-col gap-2">
