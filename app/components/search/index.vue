@@ -11,12 +11,6 @@ const handleTriggerClick = (event: MouseEvent | KeyboardEvent) => {
   event.stopPropagation()
   props.handleButtonClick()
 }
-
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' || event.key === ' ') {
-    handleTriggerClick(event)
-  }
-}
 </script>
 
 <template>
