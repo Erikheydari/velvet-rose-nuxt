@@ -1,13 +1,19 @@
+import { storeToRefs } from 'pinia'
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const auth = useAuthStore()
   const { getReturnUrl, setReturnUrl } = useAuthRedirect()
-  const { token } = storeToRefs(auth)
+  const { token, isAuthenticated } = storeToRefs(auth)
 
-  // If a token exists but user is not yet validated, validate now
   const hasToken = !!token.value
 
-  // If user is authenticated, redirect back where they came from or saved URL
+  // If user already has a token, optionally trigger validation and redirect away from guest pages
   if (hasToken) {
+    if (!isAuthenticated.value) {
+      // Validate in background; we do not block the redirect
+      auth.checkAuthStatus()
+    }
+
     const previous = from?.fullPath && from.fullPath !== to.fullPath ? from.fullPath : null
     const saved = getReturnUrl()
     const target = previous || saved || '/'
