@@ -10,7 +10,6 @@
 
 <script lang="ts" setup>
 import { useProductsStore } from '@/stores/products';
-import { ProductCard } from '@/components/product/card';
 
 const productsStore = useProductsStore();
 
