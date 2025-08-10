@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-  css: ['~/assets/css/tailwind.css', '~/assets/css/typography.css', '~/assets/fonts/fonts.css', '~/assets/css/transitions.css'],
+  css: ['~/assets/css/tailwind.css', '~/assets/css/typography.css', '~/assets/fonts/fonts.css', '~/assets/css/transitions.css', '~/assets/css/animations.css'],
   modules: ['@nuxt/eslint', '@nuxt/scripts', 'shadcn-nuxt', '@pinia/nuxt', 'nuxt-svgo'],
   shadcn: {
     prefix: 'The',
