@@ -40,13 +40,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ProductCardImage } from '.';
-import { ProductCardColorSwatches } from '.';
 import type { Product } from '~/types/product.types';
+
+export type ProductCardType = 'default' | 'secondary' | 'primary'
 
 const props = defineProps<{
   product: Product;
-  type: 'default' | 'secondary' | 'primary';
+  type: ProductCardType;
 }>();
 
 
