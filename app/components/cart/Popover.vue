@@ -6,7 +6,7 @@
     leave-to-class="opacity-0 transform translate-y-full md:translate-y-[-10px]">
     <div v-if="isActive" ref="cartContainerRef" :class="overlayClass" class="
         absolute
-        top-full right-0 w-full lg:w-md
+        top-full right-0 w-full lg:w-md xl:w-lg
         z-51
         background-backdrop-90
         p-4 h-min rounded-2xl
@@ -22,7 +22,7 @@
       </div>
 
       <div v-if="cartStore.cartItems.length > 0" class="flex flex-col gap-4">
-        <ProductCartCard v-for="item in cartStore.cartItems" :key="item.id" :product="item.product" />
+        <ProductCartCard v-for="item in cartStore.cartItems" :key="item.id" :product="item.product" :item-id="item.id" />
       </div>
       <div v-else class="flex flex-col gap-4 py-10">
         <div class="relative w-fit mx-auto">
@@ -57,23 +57,32 @@ const props = defineProps<{
 const router = useRouter()
 const route = useRoute()
 const cartContainerRef = ref<HTMLElement | null>(null)
+const isUnmounting = ref(false)
+
+// Computed property to safely check if cart is mounted and active
+const isCartMounted = computed(() => props.isActive && !!cartContainerRef.value && !isUnmounting.value)
 
 const handleClose = () => {
+  if (isUnmounting.value) return
   props.closeCart()
 }
 
 const handleClickOutside = (event: MouseEvent) => {
-  if (
-    cartContainerRef.value &&
-    !cartContainerRef.value.contains(event.target as Node) &&
-    props.isActive
-  ) {
-    handleClose()
+  // Additional safety checks to prevent errors during unmounting
+  if (!isCartMounted.value) {
+    return
   }
+  
+  // Check if the target is still valid and the component is mounted
+  if (event.target && cartContainerRef.value && event.target instanceof Node && cartContainerRef.value.contains(event.target)) {
+    return
+  }
+  
+  handleClose()
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (!props.isActive) return
+  if (!isCartMounted.value) return
 
   if (event.key === 'Escape') {
     event.preventDefault()
@@ -87,27 +96,37 @@ const stopPropagation = (event: Event) => {
 
 // Lifecycle
 onMounted(() => {
-  // Handle route changes
-  const removeRouterListener = router.afterEach((to, from) => {
-    if (to.path !== from.path && !to.path.startsWith('/cart')) {
-      if (props.isActive) {
-        handleClose()
-      }
-    }
-  })
-
   // Global event listeners
   document.addEventListener('click', handleClickOutside, { passive: true })
   document.addEventListener('keydown', handleKeyDown)
+})
 
-  onBeforeUnmount(() => {
-    removeRouterListener()
-    document.removeEventListener('click', handleClickOutside)
-    document.removeEventListener('keydown', handleKeyDown)
-  })
+// Handle route changes
+const removeRouterListener = router.afterEach((to, from) => {
+  if (to.path !== from.path && !to.path.startsWith('/cart')) {
+    if (props.isActive) {
+      handleClose()
+    }
+  }
+})
+
+onBeforeUnmount(() => {
+  // Set unmounting flag to prevent further operations
+  isUnmounting.value = true
+  
+  // Clean up global event listeners
+  document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('keydown', handleKeyDown)
+  
+  // Reset body overflow
+  document.body.style.overflow = 'auto'
+  
+  // Clean up router listener
+  removeRouterListener()
 })
 
 watch(() => props.isActive, (newVal) => {
+  if (!import.meta.client) return
   if (newVal) {
     document.body.style.overflow = 'hidden'
   } else {
