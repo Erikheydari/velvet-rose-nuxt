@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, readonly } from 'vue'
 import { useApiStore } from './api'
 import { useEndpointStore } from './endpoints'
 import type { User, LoginResponse } from '@/types/auth.types'
+import { useCookie } from '#app'
+import { toast } from 'vue-sonner'
 
 export const useAuthStore = defineStore('auth', () => {
     const apiStore = useApiStore()
@@ -10,7 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // State
     const user = ref<User | null>(null)
-    const loading = ref<boolean>(true)
+    const loading = ref<boolean>(false)
     const error = ref<string | null>(null)
     const isAuthenticated = ref<boolean>(false)
     const isInitialized = ref<boolean>(false)
@@ -27,29 +29,22 @@ export const useAuthStore = defineStore('auth', () => {
     const hasAuthSnapshot = computed(() => !!token.value && !!user.value)
 
     // Cookie helpers
+    const tokenCookie = useCookie<string | null>('auth_token', {
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: 'strict',
+        path: '/'
+    })
+
     const setTokenCookie = (tokenValue: string) => {
-        if (import.meta.client) {
-            document.cookie = `auth_token=${tokenValue}; path=/; max-age=2592000; SameSite=Strict`
-        }
+        tokenCookie.value = tokenValue
     }
 
     const clearTokenCookie = () => {
-        if (import.meta.client) {
-            document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-        }
+        tokenCookie.value = null
     }
 
     const getTokenFromCookie = (): string | null => {
-        if (import.meta.client) {
-            const cookies = document.cookie.split(';')
-            for (const cookie of cookies) {
-                const [name, value] = cookie.trim().split('=')
-                if (name === 'auth_token' && value) {
-                    return value
-                }
-            }
-        }
-        return null
+        return tokenCookie.value
     }
 
     // Local snapshot (no network)
@@ -58,7 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (!import.meta.client) return
         try {
             localStorage.setItem(SNAP_USER_KEY, JSON.stringify(u))
-        } catch {}
+        } catch { }
     }
     const loadUserSnapshot = (): User | null => {
         if (!import.meta.client) return null
@@ -73,21 +68,44 @@ export const useAuthStore = defineStore('auth', () => {
         if (!import.meta.client) return
         try {
             localStorage.removeItem(SNAP_USER_KEY)
-        } catch {}
+        } catch { }
+    }
+
+    const clearAuthState = (options: { clearToken?: boolean } = { clearToken: true }) => {
+        user.value = null
+        isAuthenticated.value = false
+        if (options.clearToken) {
+            token.value = null
+            clearTokenCookie()
+        }
+        clearUserSnapshot()
     }
 
     // Actions
-    const checkAuthStatus = async () => {
+    const checkAuthStatus = async (): Promise<boolean> => {
         try {
             loading.value = true
             error.value = null
 
+            // Ensure we have a token before hitting the network
+            const savedToken = token.value || getTokenFromCookie()
+            if (!savedToken) {
+                clearAuthState({ clearToken: false })
+                return false
+            }
+
+            // Make sure token in memory mirrors cookie
+            token.value = savedToken
+
             let resolvedUser: User | null = null
+            let statusCode: number | null = null
 
             // Try primary profile endpoint
             const first = await apiStore.apiRequest<undefined, User | { user: User }>(endpoints.auth.profile, {
                 method: 'get',
-            })
+            }) as any
+
+            statusCode = first?.statusCode ?? null
 
             if (!first.error && first.data) {
                 resolvedUser = ((first.data as any)?.user ?? first.data) as User
@@ -95,10 +113,17 @@ export const useAuthStore = defineStore('auth', () => {
                 // Fallback to alternative endpoint
                 const second = await apiStore.apiRequest<undefined, User | { user: User }>(endpoints.auth.me, {
                     method: 'get',
-                })
+                }) as any
+                statusCode = second?.statusCode ?? statusCode
                 if (!second.error && second.data) {
                     resolvedUser = ((second.data as any)?.user ?? second.data) as User
                 }
+            }
+
+            // If unauthorized, nuke token so user can try again
+            if ((statusCode === 401 || statusCode === 403) && !resolvedUser) {
+                clearAuthState({ clearToken: true })
+                return false
             }
 
             if (resolvedUser) {
@@ -109,15 +134,15 @@ export const useAuthStore = defineStore('auth', () => {
                 const { useCartStore } = await import('./cart')
                 const cartStore = useCartStore()
                 await cartStore.fetchCart()
-            } else {
-                user.value = null
-                isAuthenticated.value = false
-                clearUserSnapshot()
+                return true
             }
+
+            // No user resolved but not unauthorized → treat as logged out
+            clearAuthState({ clearToken: false })
+            return false
         } catch (err: any) {
-            user.value = null
-            isAuthenticated.value = false
-            clearUserSnapshot()
+            clearAuthState({ clearToken: false })
+            return false
         } finally {
             loading.value = false
             isInitialized.value = true
@@ -150,9 +175,11 @@ export const useAuthStore = defineStore('auth', () => {
 
             pendingEmail.value = payload.email
             awaitingOtp.value = true
+            toast.success(data?.message)
             return true
         } catch (err: any) {
             error.value = err?.message || 'ثبت نام ناموفق بود.'
+            toast.error(err?.message)
             return false
         } finally {
             loading.value = false
@@ -168,7 +195,7 @@ export const useAuthStore = defineStore('auth', () => {
             body.append('email', pendingEmail.value)
             body.append('otp', otp)
 
-            const { error: apiError } = await apiStore.apiRequest(endpoints.auth.verifyOtp, {
+            const { data, error: apiError } = await apiStore.apiRequest(endpoints.auth.verifyOtp, {
                 method: 'post',
                 body: body.toString(),
                 headers: {
@@ -186,7 +213,9 @@ export const useAuthStore = defineStore('auth', () => {
             awaitingOtp.value = false
             pendingEmail.value = ''
 
-            await navigateTo('/')
+            toast.success(data?.message)
+
+            await navigateTo('/auth/login')
             return true
         } catch (err: any) {
             error.value = err?.message || 'تایید کد ناموفق بود.'
@@ -264,11 +293,7 @@ export const useAuthStore = defineStore('auth', () => {
             })
 
             // Clear user state and token
-            user.value = null
-            isAuthenticated.value = false
-            token.value = null
-            clearTokenCookie()
-            clearUserSnapshot()
+            clearAuthState({ clearToken: true })
 
             // Handle cart state change after logout
             const { useCartStore } = await import('./cart')
