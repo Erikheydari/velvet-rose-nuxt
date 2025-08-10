@@ -20,7 +20,7 @@ export const useApiStore = defineStore('apiStore', () => {
         body?: TRequest | string | FormData | URLSearchParams;
         headers?: Record<string, string>;
         timeout?: number;
-        signal?: AbortSignal; // Add signal support
+        signal?: AbortSignal;
         errorTitle?: string;
       } = {}
     ) => {
@@ -105,6 +105,7 @@ export const useApiStore = defineStore('apiStore', () => {
       
         let errorMessage = 'Request failed';
         let statusCode = null as number | null;
+        let errorData: any = null;
       
         if (error && typeof error === 'object') {
           if ('statusCode' in error) {
@@ -112,11 +113,11 @@ export const useApiStore = defineStore('apiStore', () => {
           } else if ('status' in error) {
             statusCode = (error as any).status;
           }
-      
+
           if ('data' in error) {
-            const errorData = (error as any).data;
+            errorData = (error as any).data;
             if (errorData && typeof errorData === 'object' && 'message' in errorData) {
-              errorMessage = errorData.message;
+              errorMessage = (errorData as any).message;
             }
           }
         }
@@ -125,7 +126,8 @@ export const useApiStore = defineStore('apiStore', () => {
         return {
           data: null,
           error: errorMessage,
-          statusCode
+          statusCode,
+          errorData
         } as any;
       }
     };
