@@ -19,6 +19,7 @@ export const buttonVariants = cva(
           'hover:bg-accent hover:text-primary dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
         tonal: 'bg-secondary/40 text-primary hover:bg-secondary/20',
+        tonalDestructive: 'bg-destructive/10 text-destructive hover:bg-destructive/20',
       },
       size: {
         default: 'h-10 px-4 pt-1.5 pb-2 has-[>svg]:px-3 text-base rounded-full',
