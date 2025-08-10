@@ -30,6 +30,13 @@ import type { Category } from '~/types/product.types'
 const productsStore = useProductsStore()
 const categoriesStore = useCategoriesStore()
 
+useHead({
+  title: 'صفحه اصلی',
+  meta: [
+    { name: 'description', content: 'صفحه اصلی' }
+  ]
+})
+
 onMounted(async () => {
   await productsStore.fetchProducts()
   await categoriesStore.fetchCategories()
