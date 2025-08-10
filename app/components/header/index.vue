@@ -7,10 +7,10 @@
         <div class="flex items-center gap-3">
           <MenuMobileTrigger @toggle="toggleMenu" />
 
-          <Skeleton v-if="authStore.loading" class="size-12 lg:w-24 rounded-full relative">
+          <Skeleton v-if="localLoading && !authStore.loading" class="size-12 lg:w-24 rounded-full relative">
             <Loader2 class="w-4 h-4 animate-spin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </Skeleton>
-          <TheButton v-else-if="!authStore.isLoggedIn" variant="tonal" size="lg" class="shrink-0" :to="`/auth/login`">
+          <TheButton v-else-if="!authStore.token" variant="tonal" size="lg" class="shrink-0" :to="`/auth/login`">
             <User class="w-4 h-4" />
             <span class="hidden sm:inline">ورود / ثبت نام</span>
           </TheButton>
@@ -19,7 +19,10 @@
             <DropdownMenuTrigger>
               <TheButton variant="tonal" size="lg" class="shrink-0">
                 <User class="size-4" />
-                <span class="hidden sm:inline">حساب کاربری</span>
+                <span class="hidden sm:inline">
+                  سلام! {{ authStore.currentUser?.name }}
+                </span>
+                <ChevronDown class="size-3 mt-2" />
               </TheButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent class="w-52" align="start">
@@ -29,7 +32,7 @@
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <ScrollText class="stroke-1" />
-                مشاهده سفارشات"
+                مشاهده سفارشات
               </DropdownMenuItem>
               <DropdownMenuItem variant="destructive" class="items-center" @click="authStore.logout">
                 <LogOut class="-mb-1 stroke-1" />
@@ -75,16 +78,39 @@
 
 <script lang="ts" setup>
 import Logo from '~/assets/icons/logo.svg?component'
-import { User, Loader2, LogOut, ScrollText } from 'lucide-vue-next'
+import { User, Loader2, LogOut, ScrollText, ChevronDown } from 'lucide-vue-next'
 import { useWindowScroll } from '@vueuse/core'
 import { headerNavItems } from '~/constants/headerNavItems'
 import { useSearch } from '~/composables/useSearch'
 import { useAuthStore } from '~/stores/auth'
 import { Skeleton } from '~/components/ui/skeleton'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
 
 const authStore = useAuthStore()
+const localLoading = ref(true)
 
+// Kick a background auth check if we have a token but no user
+const triedAuthCheck = ref(false)
+watch(
+  () => [authStore.token, authStore.currentUser, authStore.loading],
+  async ([tok, usr, isLoading]) => {
+    if (import.meta.client && tok && !usr && !isLoading && !triedAuthCheck.value) {
+      triedAuthCheck.value = true
+      await authStore.checkAuthStatus()
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(async () => {
+  try {
+    await authStore.checkAuthStatus()
+  } catch (error) {
+    console.error(error)
+  } finally {
+    localLoading.value = false
+  }
+})
 
 // Sticky header logic
 const { y } = useWindowScroll()
