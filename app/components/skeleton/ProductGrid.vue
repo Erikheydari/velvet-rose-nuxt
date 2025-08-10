@@ -1,6 +1,6 @@
 <template>
   <div class="product-grid" aria-busy="true">
-    <ProductSkeleton v-for="i in count" :key="i" />
+    <SkeletonProduct v-for="i in count" :key="i" />
   </div>
 </template>
 

@@ -1,16 +1,21 @@
 <template>
   <section class="lg-inner-container default-padding-x w-full">
+    <slot name="header" />
     <div class="product-filter flex justify-between mb-4 lg:mb-8 relative">
       <div class="flex gap-2 w-full justify-between items-center">
         <Transition name="fade" mode="out-in">
-          <h1 class="body-2" :key="categoryTitleKey">{{ categoryTitle }}</h1>
+          <div class="flex items-center gap-2">
+            <h1 class="body-2" :key="categoryTitleKey">{{ categoryTitle }}</h1>
+            <TheButton v-if="selectedCategoryFilter" variant="ghost" :to="`/products/${selectedCategoryFilter}`">
+              <ArrowLeft class="size-4" />
+            </TheButton>
+          </div>
         </Transition>
 
         <div class="category-filter flex gap-2 w-full max-w-xs">
           <Select v-model="selectedCategoryFilter" @update:model-value="onCategoryModelUpdate">
-            <SelectTrigger class="w-full" :disabled="productsStore.isLoading"
-              :class="{ 'opacity-50!': productsStore.isLoading }">
-              <Loader2 v-if="productsStore.isLoading" class="size-4 animate-spin" />
+            <SelectTrigger class="w-full" :disabled="productsStore.loading" :class="{ 'opacity-50!': productsStore.loading }">
+              <Loader2 v-if="productsStore.loading" class="size-4 animate-spin" />
               <SelectValue placeholder="همه دسته‌بندی‌ها" />
             </SelectTrigger>
             <SelectContent>
@@ -35,7 +40,7 @@
     </div>
 
     <!-- Grid -->
-    <TransitionGroup v-if="!productsStore.isLoading" tag="div" class="product-grid" :css="false" aria-busy="false"
+    <TransitionGroup v-if="!productsStore.loading" tag="div" class="product-grid" :css="false" aria-busy="false"
       @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
       <slot />
     </TransitionGroup>
@@ -46,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Loader2, Trash } from 'lucide-vue-next';
+import { ArrowLeft, Loader2, Trash } from 'lucide-vue-next';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem, SelectLabel } from '~/components/ui/select';
 import { useCategoriesStore } from '~/stores/categories';
 
