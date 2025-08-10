@@ -14,6 +14,13 @@ import { ProductCard } from '@/components/product/card';
 
 const productsStore = useProductsStore();
 
+useHead({
+  title: 'محصولات',
+  meta: [
+    { name: 'description', content: 'محصولات' }
+  ]
+})
+
 onMounted(() => {
   productsStore.fetchProducts();
 });
