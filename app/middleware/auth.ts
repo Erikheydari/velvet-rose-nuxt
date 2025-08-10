@@ -1,15 +1,21 @@
 import { storeToRefs } from 'pinia'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const auth = useAuthStore()
   const { setReturnUrl } = useAuthRedirect()
   const { token } = storeToRefs(auth)
 
-  // If user is not authenticated, redirect to login page
+  // No token → redirect to login and remember where to return
   if (!token.value) {
-    // Save target path to return to after login
     const target = to.fullPath || '/'
     setReturnUrl(target)
     return navigateTo('/auth/login')
+  }
+
+  // Token exists: ensure user is validated in background
+  const { currentUser, loading } = storeToRefs(auth)
+  if (!currentUser.value && !loading.value) {
+    // Fire and forget; page can proceed while we validate
+    auth.checkAuthStatus()
   }
 }) 
