@@ -17,7 +17,7 @@ export const useApiStore = defineStore('apiStore', () => {
       endpoint: string,
       options: {
         method?: 'get' | 'post' | 'put' | 'delete';
-        body?: TRequest | string;
+        body?: TRequest | string | FormData | URLSearchParams;
         headers?: Record<string, string>;
         timeout?: number;
         signal?: AbortSignal; // Add signal support
@@ -31,16 +31,50 @@ export const useApiStore = defineStore('apiStore', () => {
         
         const fetchOptions: any = {
           method: method as any,
-          body: body as any,
           headers: {
+            Accept: 'application/json',
             ...headers
           },
+          credentials: 'include',
           timeout: timeoutValue,
         };
+
+        // Attach Authorization header if token exists and not already provided
+        try {
+          const authStore = useAuthStore()
+          const maybeRefToken: any = (authStore as any).authToken
+          const tokenValue = maybeRefToken && typeof maybeRefToken === 'object' && 'value' in maybeRefToken
+            ? maybeRefToken.value
+            : maybeRefToken
+          if (tokenValue && !fetchOptions.headers['Authorization']) {
+            fetchOptions.headers['Authorization'] = `Bearer ${tokenValue}`
+          }
+        } catch {}
   
-        // If body is object and no Content-Type provided, default to JSON
-        if (body && typeof body === 'object' && !('Content-Type' in fetchOptions.headers)) {
-          fetchOptions.headers['Content-Type'] = 'application/json';
+        // Prepare body and Content-Type safely based on payload type
+        if (body !== undefined && body !== null) {
+          const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+          const isURLSearchParams = typeof URLSearchParams !== 'undefined' && body instanceof URLSearchParams;
+  
+          if (isFormData) {
+            // Let the browser set multipart/form-data with proper boundary
+            fetchOptions.body = body as FormData;
+          } else if (isURLSearchParams) {
+            // Send as x-www-form-urlencoded
+            if (!('Content-Type' in fetchOptions.headers)) {
+              fetchOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+            fetchOptions.body = (body as URLSearchParams).toString();
+          } else if (typeof body === 'string') {
+            // Caller is responsible for Content-Type
+            fetchOptions.body = body;
+          } else if (typeof body === 'object') {
+            // JSON payload
+            if (!('Content-Type' in fetchOptions.headers)) {
+              fetchOptions.headers['Content-Type'] = 'application/json';
+            }
+            fetchOptions.body = JSON.stringify(body);
+          }
         }
   
         // Add signal if provided
@@ -54,7 +88,7 @@ export const useApiStore = defineStore('apiStore', () => {
         const data = (response && typeof response === 'object' && 'data' in (response as any))
           ? (response as any).data as TResponse
           : response as TResponse
-  
+      
         return {
           data,
           error: null
@@ -68,17 +102,17 @@ export const useApiStore = defineStore('apiStore', () => {
             aborted: true
           } as any;
         }
-  
+      
         let errorMessage = 'Request failed';
         let statusCode = null as number | null;
-  
+      
         if (error && typeof error === 'object') {
           if ('statusCode' in error) {
             statusCode = (error as any).statusCode;
           } else if ('status' in error) {
             statusCode = (error as any).status;
           }
-  
+      
           if ('data' in error) {
             const errorData = (error as any).data;
             if (errorData && typeof errorData === 'object' && 'message' in errorData) {
@@ -86,7 +120,7 @@ export const useApiStore = defineStore('apiStore', () => {
             }
           }
         }
-  
+      
         console.error('API Request Error:', errorMessage);
         return {
           data: null,
