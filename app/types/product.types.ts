@@ -31,8 +31,15 @@ export interface ProductImage {
 
 
 export interface ProductAttributes {
-  [key: string]: {
-    [key: string]: string
+  color: {
+    value: string
+    name: string
+    id?: string | number
+  }[]
+  size: {
+    value: string
+    name: string
+    id?: string | number
   }[]
 }
 
