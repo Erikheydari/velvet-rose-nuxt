@@ -43,7 +43,6 @@
     </template>
 
     <template v-else>
-      <p class="text-sm text-muted-foreground">کد تایید به ایمیل شما ارسال شد.</p>
       <TheInput
         v-model="otpValue"
         placeholder="کد تایید"
@@ -61,6 +60,7 @@
       >
         تایید کد
       </TheButton>
+      <p class="text-sm text-muted-foreground">کد تایید ارسال شده را وارد کنید.</p>
     </template>
   </form>
 </template>
