@@ -1,5 +1,5 @@
 <template>
-  <div class="default-inner-container">
+  <div class="default-inner-container px-4 md:px-0">
     <h3 v-if="props.title" class="heading-3 text-primary text-center mb-4">
       {{ props.title }}
     </h3>
