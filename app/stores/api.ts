@@ -22,9 +22,10 @@ export const useApiStore = defineStore('apiStore', () => {
         timeout?: number;
         signal?: AbortSignal;
         errorTitle?: string;
+        credentials?: boolean; // Add credentials option
       } = {}
     ) => {
-      const { method = 'get', body, headers = {}, timeout, signal } = options;
+      const { method = 'get', body, headers = {}, timeout, signal, credentials = false } = options;
   
       try {
         const timeoutValue = getTimeoutConfig(timeout);
@@ -35,9 +36,13 @@ export const useApiStore = defineStore('apiStore', () => {
             Accept: 'application/json',
             ...headers
           },
-          credentials: 'include',
           timeout: timeoutValue,
         };
+
+        // Only add credentials when explicitly requested
+        if (credentials) {
+          fetchOptions.credentials = 'include';
+        }
 
         // Attach Authorization header if token exists and not already provided
         try {
