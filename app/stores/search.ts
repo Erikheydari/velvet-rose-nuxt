@@ -159,7 +159,7 @@ export const useSearchStore = defineStore('searchStore', () => {
         endpointStore.products.search(query),
         {
           method: 'get',
-          signal: realtimeAbortController.signal
+          signal: realtimeAbortController.signal,
         }
       )
 
@@ -221,7 +221,8 @@ export const useSearchStore = defineStore('searchStore', () => {
         `${endpointStore.products.search(trimmedQuery)}?${searchParams.toString()}`,
         {
           method: 'get',
-          signal: fullSearchAbortController.signal
+          signal: fullSearchAbortController.signal,
+          credentials: true, // Add credentials for personalized search
         }
       )
 
