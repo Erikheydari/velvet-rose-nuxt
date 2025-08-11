@@ -11,27 +11,23 @@
 <script lang="ts" setup>
 import CheckoutLayout from '@/layouts/checkout.vue';
 import { usePaymentsStore } from '@/stores/payments';
-import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
+import { useRouter } from 'vue-router';
 
 const cartStore = useCartStore();
 const paymentStore = usePaymentsStore();
 const router = useRouter()
-const computedTitle = computed(() => {
-  if (paymentStore.paymentAuthority) {
-    return 'پرداخت'
-  }
-  return 'ثبت سفارش'
-})
 
 definePageMeta({
   layout: false,
-  title: computedTitle.value
+  title: () => {
+    const { paymentAuthority } = usePaymentsStore()
+    return paymentAuthority ? 'پرداخت' : 'ثبت سفارش'
+  }
 })
 
-//watch if cart is empty redirect to cart page
 watch(cartStore.cartItems, (newVal) => {
-  if (newVal.length === 0) {
+  if (newVal.length === 0 && !paymentStore.paymentAuthority) {
     router.push('/checkout/cart')
   }
 })
