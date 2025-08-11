@@ -1,7 +1,7 @@
 <template>
   <div class="h-full 2xl:hero-height px-4 xl:px-12 pt-36 pb-24 relative">
 
-    <div v-if="!productsStore.isLoading && productsStore.product"
+    <div v-if="!productsStore.loading && productsStore.product"
       class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
       <div class="order-2 xl:order-1 basis-full xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 ">
         <!-- Name -->
@@ -10,8 +10,8 @@
             {{ productsStore.product?.name }}
           </h1>
 
-          <h2 class="heading-6 hidden xl:block leading-none">
-            {{ productsStore.product?.full_name }}
+          <h2 class="heading-6 hidden xl:block leading-none capitalize">
+            {{ productsStore.product?.full_name.toLowerCase() }}
           </h2>
         </div>
 
@@ -36,30 +36,7 @@
         </div>
 
         <!-- Options -->
-        <ul v-if="productOptions.length > 0" class="mb-4 order-5 xl:order-3">
-          <li v-for="option in productOptions.slice(0, 3)" :key="option"
-            class="body-2 text-primary list-inside list-disc">
-            {{ option }}
-          </li>
-          <li v-if="isOptionsExpanded" v-for="option in productOptions.slice(3)" :key="option"
-            class="body-2 text-primary list-inside list-disc">
-            {{ option }}
-          </li>
-          <li v-if="productOptions.length > 3" class="body-2 text-primary">
-            <TheButton variant="ghost" class="cursor-pointer py-0! mt-2"
-              @click="isOptionsExpanded = !isOptionsExpanded">
-              <Plus class="size-4" v-if="!isOptionsExpanded" />
-              <Minus class="size-4" v-else />
-              <span v-if="!isOptionsExpanded">
-                {{ productOptions.length - 3 }}
-                مورد دیگر
-              </span>
-              <span v-else>
-                بستن
-              </span>
-            </TheButton>
-          </li>
-        </ul>
+        <ProductOptions :options="productOptions" />
 
         <span v-if="productsStore.product?.original_tag"
           class="py-3 px-6 bg-secondary text-primary flex items-center gap-2 rounded-full justify-center w-fit mb-4 order-6 xl:order-4">
@@ -83,8 +60,8 @@
       <div class="order-1 xl:order-2 basis-full xl:basis-2/3 ">
         <FantastyHeading v-if="productsStore.product?.brand?.name || productsStore.product?.brand?.en_name"
           :title="productsStore.product?.brand?.en_name || productsStore.product?.brand?.name"
-          :description="productsStore.product?.full_name" titleClass="heading-2 font-extrabold h-[10vh]"
-          descriptionClass="heading-5 font-light! -mt-4 lg:mt-4 pb-2 text-center lg:text-start leading-none" />
+          :description="productsStore.product?.full_name.toLowerCase()" titleClass="heading-2 font-extrabold h-[10vh]"
+          descriptionClass="heading-5 font-light! -mt-4 lg:mt-4 pb-2 text-center lg:text-start leading-none capitalize" />
 
         <figure class="hidden xl:block w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto">
           <img :src="productsStore.product?.image?.src" :alt="productsStore.product?.name"
@@ -118,7 +95,7 @@
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-              }}</span>
+                }}</span>
             </TheButton>
           </div>
         </div>
@@ -139,16 +116,7 @@
         <div class="gap-2 mb-4 w-full hidden lg:flex flex-wrap">
 
           <!-- Quantity Selection -->
-          <div class="quantity-selection flex items-center gap-2 mb-4">
-            <TheButton variant="tonal" size="icon-lg" @click="decreaseQuantity" :disabled="quantity <= 1">
-              <Minus class="size-4" />
-            </TheButton>
-            <span class="min-w-7 text-center body-1">{{ quantity }}</span>
-            <TheButton variant="tonal" size="icon-lg" @click="increaseQuantity"
-              :disabled="quantity >= (productsStore.product?.qty || 1)">
-              <Plus class="size-4" />
-            </TheButton>
-          </div>
+          <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" class="mb-4" />
 
           <!-- Add to Cart Button -->
           <TheButton @click="handleAddToCart" :disabled="!canAddToCart || cartStore.loading"
@@ -190,16 +158,7 @@
           <div class="gap-2 w-full sm:w-auto flex justify-between items-center">
 
             <!-- Quantity Selection -->
-            <div class="quantity-selection flex items-center gap-2">
-              <TheButton variant="outline" size="icon" @click="decreaseQuantity" :disabled="quantity <= 1">
-                <Minus class="size-4" />
-              </TheButton>
-              <span class="min-w-7 text-center body-1">{{ quantity }}</span>
-              <TheButton variant="outline" size="icon" @click="increaseQuantity"
-                :disabled="quantity >= (productsStore.product?.qty || 1)">
-                <Plus class="size-4" />
-              </TheButton>
-            </div>
+            <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" />
 
             <!-- Add to Cart Button -->
             <TheButton @click="handleAddToCart" :disabled="cartStore.loading" class="grow gap-4 sm:px-8!"
@@ -225,8 +184,9 @@ import { useCartStore } from '@/stores/cart'
 import { useRoute, useRouter } from 'vue-router'
 import Original from '@/assets/icons/original.svg?component'
 import { TheButton } from '#components'
-import { Check, ChevronDown, ChevronLeft, Loader2, Minus, Plus, ShoppingCart } from 'lucide-vue-next'
+import { Check, ChevronDown, ChevronLeft, Loader2, ShoppingCart } from 'lucide-vue-next'
 import { FantastyHeading } from '~/components/ui/heading'
+import ProductCounter from '~/components/product/counter/index.vue'
 
 
 const config = useRuntimeConfig()
@@ -239,7 +199,6 @@ const productsStore = useProductsStore()
 const cartStore = useCartStore()
 
 const isSummaryExpanded = ref(false)
-const isOptionsExpanded = ref(false)
 
 // Selection states
 const selectedColorId = ref<string | null>(null)
@@ -275,17 +234,7 @@ const selectSize = (sizeId: string) => {
   clearValidationMessage()
 }
 
-const increaseQuantity = () => {
-  if (quantity.value < (productsStore.product?.qty || 1)) {
-    quantity.value++
-  }
-}
 
-const decreaseQuantity = () => {
-  if (quantity.value > 1) {
-    quantity.value--
-  }
-}
 
 const clearValidationMessage = () => {
   validationMessage.value = ''
