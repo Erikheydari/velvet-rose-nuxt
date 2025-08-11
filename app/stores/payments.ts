@@ -1,11 +1,6 @@
 import { defineStore } from 'pinia'
-import { useApiStore } from './api'
-import { useEndpointStore } from './endpoints'
 
 export const usePaymentsStore = defineStore('paymentsStore', () => {
-  const apiStore = useApiStore()
-  const endpoints = useEndpointStore()
-
   const loading = ref(false)
   const error = ref<string | null>(null)
 
