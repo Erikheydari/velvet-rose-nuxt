@@ -35,6 +35,12 @@ export interface CartItemProduct {
   qty?: number;
 }
 
+export interface CartItemAdd {
+  product_id: number;
+  quantity: number;
+  attributes: string[];
+}
+
 export interface CartItem {
   id: number;
   product: CartItemProduct;
