@@ -2,7 +2,7 @@
   <div>
     <SectionsProductsHero />
     <SectionsProductsBanners class="mb-8 lg:mb-12" />
-    <ProductGrid class="mb-8 lg:mb-12">
+    <ProductGrid class="mb-8 lg:mb-12" :loading="productsStore.loading">
       <ProductCard v-for="product in productsStore.products" :key="product.id" :product="product" type="default">
         <template #swatches>
           <ProductCardColorSwatches v-if="product.attributes.color && product.attributes.color.length > 0"
