@@ -40,7 +40,7 @@ const calculateLink = () => {
   if (props.item) {
     return props.item.link
   }
-  return '/product-category/' + props.category?.slug
+  return '/products/' + props.category?.slug
 }
 
 const iconMap = {
