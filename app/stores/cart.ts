@@ -117,8 +117,8 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.cart.update(itemId), {
         method: 'put',
-        body: { quantity },
-        credentials: true, // Add credentials for cart operations
+        body: { quantity, attributes: { attribute: cartItems.value.find(item => item.id === itemId)?.product.selected_attributes } },
+        credentials: true,
       });
 
       if (apiError) {
