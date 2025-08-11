@@ -104,21 +104,13 @@ export const useAuthStore = defineStore('auth', () => {
             // Try primary profile endpoint
             const first = await apiStore.apiRequest<undefined, User | { user: User }>(endpoints.auth.profile, {
                 method: 'get',
+                credentials: true,
             }) as any
 
             statusCode = first?.statusCode ?? null
 
             if (!first.error && first.data) {
                 resolvedUser = ((first.data as any)?.user ?? first.data) as User
-            } else {
-                // Fallback to alternative endpoint
-                const second = await apiStore.apiRequest<undefined, User | { user: User }>(endpoints.auth.me, {
-                    method: 'get',
-                }) as any
-                statusCode = second?.statusCode ?? statusCode
-                if (!second.error && second.data) {
-                    resolvedUser = ((second.data as any)?.user ?? second.data) as User
-                }
             }
 
             // If unauthorized, nuke token so user can try again
@@ -167,6 +159,7 @@ export const useAuthStore = defineStore('auth', () => {
             const { data, error: apiError } = await apiStore.apiRequest(endpoints.auth.register, {
                 method: 'post',
                 body: form as any,
+                credentials: true, // Add credentials for auth endpoints
             })
 
             if (apiError) {
@@ -201,7 +194,8 @@ export const useAuthStore = defineStore('auth', () => {
                 body: body.toString(),
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                },
+                credentials: true, // Add credentials for auth endpoints
             })
 
             if (apiError) {
@@ -228,7 +222,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const passwordLogin = async (username: string, password: string) => {
-        console.log('passwordLogin')
         try {
             loading.value = true
             error.value = null
@@ -242,7 +235,8 @@ export const useAuthStore = defineStore('auth', () => {
                 body: body.toString(),
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                },
+                credentials: false,
             })
 
             if (apiError) {
@@ -307,6 +301,7 @@ export const useAuthStore = defineStore('auth', () => {
 
             await apiStore.apiRequest(endpoints.auth.logout, {
                 method: 'post',
+                credentials: true, // Add credentials for auth endpoints
             })
 
             // Clear user state and token
