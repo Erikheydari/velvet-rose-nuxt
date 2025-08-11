@@ -11,14 +11,31 @@ export const useProductsStore = defineStore('productsStore', () => {
   const products = ref<Product[]>([])
   const product = ref<Product | null>(null)
 
-  const fetchProducts = async () => {
+  // Pagination state
+  const pagination = ref<{ meta: any | null; links: any | null }>({ meta: null, links: null })
+
+  // Track current filter context for pagination
+  const currentFilter = ref<{ type: 'all' | 'category'; value?: string | null }>({ type: 'all', value: null })
+
+  const fetchProducts = async (page: number = 1) => {
     loading.value = true
-    const { data, error } = await apiStore.apiRequest(endpointStore.products.get, {
+    const url = `${endpointStore.products.get}?page=${page}`
+    const { data, raw } = await apiStore.apiRequest(url, {
       method: 'get',
     });
     if (data) {
       products.value = data as Product[]
     }
+    if (raw && typeof raw === 'object') {
+      // Capture pagination info if present
+      const maybeMeta: any = (raw as any).meta
+      const maybeLinks: any = (raw as any).links
+      pagination.value = {
+        meta: maybeMeta ?? null,
+        links: maybeLinks ?? null,
+      }
+    }
+    currentFilter.value = { type: 'all', value: null }
     loading.value = false
   }
 
@@ -37,15 +54,34 @@ export const useProductsStore = defineStore('productsStore', () => {
     }
   }
 
-  const fetchProductsByCategory = async (categorySlug: string) => {
+  const fetchProductsByCategory = async (categorySlug: string, page: number = 1) => {
     loading.value = true
-    const { data, error } = await apiStore.apiRequest(endpointStore.products.getByCategory(categorySlug), {
+    const url = `${endpointStore.products.getByCategory(categorySlug)}&page=${page}`
+    const { data, raw } = await apiStore.apiRequest(url, {
       method: 'get',
     });
     if (data) {
       products.value = data as Product[]
     }
+    if (raw && typeof raw === 'object') {
+      const maybeMeta: any = (raw as any).meta
+      const maybeLinks: any = (raw as any).links
+      pagination.value = {
+        meta: maybeMeta ?? null,
+        links: maybeLinks ?? null,
+      }
+    }
+    currentFilter.value = { type: 'category', value: categorySlug }
     loading.value = false
+  }
+
+  const goToPage = async (page: number) => {
+    const filter = currentFilter.value
+    if (filter.type === 'category' && filter.value) {
+      await fetchProductsByCategory(filter.value, page)
+      return
+    }
+    await fetchProducts(page)
   }
 
   return {
@@ -53,9 +89,12 @@ export const useProductsStore = defineStore('productsStore', () => {
 
     products,
     product,
+    pagination,
+    currentFilter,
 
     fetchProducts,
     fetchProduct,
     fetchProductsByCategory,
+    goToPage,
   }
 })
