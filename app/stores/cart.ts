@@ -1,8 +1,8 @@
-// stores/cart.ts
 import { defineStore } from 'pinia';
+import { ref, computed, readonly } from 'vue';
 import { useApiStore } from '@/stores/api';
 import { useEndpointStore } from '@/stores/endpoints';
-import type { CartItem, CartItemResponse, ApiResponse } from '~/types/cart.types';
+import type { CartItem, ApiResponse } from '~/types/cart.types';
 
 export const useCartStore = defineStore('cart', () => {
   const apiStore = useApiStore();
@@ -10,7 +10,7 @@ export const useCartStore = defineStore('cart', () => {
 
   // State
   const cartItems = ref<CartItem[]>([]);
-  const loading = ref(false);
+  const loading = ref(true);
   const error = ref<string | null>(null);
   const justAdded = ref<boolean>(false);
 
@@ -138,40 +138,6 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  const increaseCartItem = async (itemId: number, quantity: number): Promise<ApiResponse> => {
-    return await updateCartItem(itemId, quantity + 1);
-  };
-
-  const decreaseCartItem = async (itemId: number, quantity: number): Promise<ApiResponse> => {
-    return await updateCartItem(itemId, quantity - 1);
-  };
-
-  // New: request password reset using auth endpoint
-  const requestPasswordReset = async (email: string): Promise<ApiResponse> => {
-    loading.value = true;
-    error.value = null;
-
-    try {
-      const { data, error: apiError } = await apiStore.apiRequest(endpointStore.auth.forgotPassword, {
-        method: 'post',
-        body: { email },
-        credentials: true, // Add credentials for auth operations
-      });
-
-      if (apiError) {
-        error.value = apiError;
-        return { error: apiError };
-      }
-
-      return { data };
-    } catch (err: any) {
-      error.value = err.message || 'Failed to request password reset';
-      return { error: err };
-    } finally {
-      loading.value = false;
-    }
-  };
-
   const clearCart = async (): Promise<ApiResponse> => {
     loading.value = true;
     error.value = null;
@@ -198,7 +164,7 @@ export const useCartStore = defineStore('cart', () => {
   return {
     // State
     cartItems: readonly(cartItems),
-    loading: readonly(loading),
+    loading: computed(() => loading.value),
     error: readonly(error),
     justAdded: readonly(justAdded),
 
@@ -207,7 +173,6 @@ export const useCartStore = defineStore('cart', () => {
     fetchCart,
     removeFromCart,
     updateCartItem,
-    requestPasswordReset,
     clearCart,
 
     // Getters
