@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed, readonly } from 'vue';
 import { useApiStore } from '@/stores/api';
 import { useEndpointStore } from '@/stores/endpoints';
-import type { CartItem, ApiResponse } from '~/types/cart.types';
+import type { CartItem, ApiResponse, CartItemAdd } from '~/types/cart.types';
 
 export const useCartStore = defineStore('cart', () => {
   const apiStore = useApiStore();
@@ -15,7 +15,7 @@ export const useCartStore = defineStore('cart', () => {
   const justAdded = ref<boolean>(false);
 
   // Actions
-  const addToCart = async (cartData: CartItem): Promise<ApiResponse> => {
+  const addToCart = async (cartData: CartItemAdd): Promise<ApiResponse> => {
     loading.value = true;
     error.value = null;
 
