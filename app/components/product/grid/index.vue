@@ -2,20 +2,22 @@
   <section class="lg-inner-container default-padding-x w-full">
     <slot name="header" />
     <div class="product-filter flex justify-between mb-4 lg:mb-8 relative">
-      <div class="flex gap-2 w-full justify-between items-center">
+      <div class="flex flex-col sm:flex-row gap-2 w-full justify-between items-center">
         <Transition name="fade" mode="out-in">
-          <div class="flex items-center gap-2">
-            <h1 class="body-2" :key="categoryTitleKey">{{ categoryTitle }}</h1>
-            <TheButton v-if="selectedCategoryFilter" variant="ghost" :to="`/products/${selectedCategoryFilter}`">
-              <ArrowLeft class="size-4" />
+          <div class="flex items-baseline gap-2 w-full sm:w-auto">
+            <h1 class="body-2" :key="categoryTitleKey">{{ title || categoryTitle }}</h1>
+            <TheButton v-if="selectedCategoryFilter" variant="link" size="sm"
+              :to="`/products/${selectedCategoryFilter}`">
+              مشاهده همه
+              <ArrowLeft class="size-3" />
             </TheButton>
           </div>
         </Transition>
 
-        <div class="category-filter flex gap-2 w-full max-w-xs">
+        <div v-if="filterable" class="category-filter flex gap-2 w-full max-w-ful;l lg:max-w-xs">
           <Select v-model="selectedCategoryFilter" @update:model-value="onCategoryModelUpdate">
-            <SelectTrigger class="w-full" :disabled="productsStore.loading" :class="{ 'opacity-50!': productsStore.loading }">
-              <Loader2 v-if="productsStore.loading" class="size-4 animate-spin" />
+            <SelectTrigger class="w-full" :disabled="loading" :class="{ 'opacity-50!': loading }">
+              <Loader2 v-if="loading" class="size-4 animate-spin" />
               <SelectValue placeholder="همه دسته‌بندی‌ها" />
             </SelectTrigger>
             <SelectContent>
@@ -40,7 +42,7 @@
     </div>
 
     <!-- Grid -->
-    <TransitionGroup v-if="!productsStore.loading" tag="div" class="product-grid" :css="false" aria-busy="false"
+    <TransitionGroup v-if="!loading" tag="div" class="product-grid" :css="false" aria-busy="false"
       @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
       <slot />
     </TransitionGroup>
@@ -58,6 +60,17 @@ import { useCategoriesStore } from '~/stores/categories';
 const categoriesStore = useCategoriesStore();
 const categories = computed(() => categoriesStore.categories);
 const productsStore = useProductsStore();
+
+interface Props {
+  filterable?: boolean;
+  title?: string;
+  loading?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  filterable: true,
+  title: '',
+  loading: true,
+});
 
 const selectedCategoryFilter = ref<string | null>(null);
 const skeletonCount = 8;
