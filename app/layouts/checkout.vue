@@ -6,7 +6,7 @@
         بازگشت به سبد خرید
       </TheButton>
       <h1 class="heading-5 font-bold text-primary mx-auto text-center absolute left-1/2 -translate-x-1/2">
-        {{ route.meta.title }}
+        {{ props.title }}
       </h1>
     </div>
 
@@ -25,6 +25,11 @@ import { ArrowRight } from 'lucide-vue-next';
 
 const cartStore = useCartStore();
 const route = useRoute()
+
+interface Props {
+  title: string
+}
+const props = defineProps<Props>()
 
 onMounted(async () => {
   await cartStore.fetchCart();
