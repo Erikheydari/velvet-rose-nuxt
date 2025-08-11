@@ -1,9 +1,13 @@
 <template>
   <div class="quantity-selection flex items-center gap-2">
-    <TheButton :variant="canDelete && quantity <= 1 ? 'tonalDestructive' : 'tonal'" :size="buttonSize"
-      @click="canDelete && quantity <= 1 ? handleDelete() : decreaseQuantity()" :disabled="!canDelete && quantity <= 1">
-      <Trash2 v-if="canDelete && quantity <= 1 && sureToDelete" class="size-4" />
-      <Trash2 v-else-if="canDelete && quantity <= 1 && !sureToDelete" class="size-4" />
+    <TheButton :variant="canDelete && quantity <= 1 ? 'tonalDestructive' : 'tonal'" :size="sureToDelete ? 'sm' : buttonSize"
+      @click="canDelete && quantity <= 1 ? handleDelete() : decreaseQuantity()" :disabled="!canDelete && quantity <= 1"
+      :class="sureToDelete ? 'py-0.5! h-8 px-2' : ''">
+
+      <Trash2 v-if="canDelete && quantity <= 1 && !sureToDelete" class="size-4" />
+      <small v-else-if="canDelete && quantity <= 1 && sureToDelete">
+        حذف شود؟
+      </small>
       <Minus v-else class="size-4" />
     </TheButton>
     <span class="min-w-7 text-center body-1">{{ quantity }}</span>
@@ -47,6 +51,7 @@ const quantity = computed({
 })
 
 const increaseQuantity = () => {
+  sureToDelete.value = false
   if (quantity.value < props.maxQuantity) {
     quantity.value++
   }
