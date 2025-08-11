@@ -5,12 +5,19 @@
     direction: 'rtl',
   }">
     <CarouselContent>
-      <CarouselItem v-if="localLoading" v-for="i in 4" :key="i" class="basis-[80%] sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4 pt-8">
+      <CarouselItem v-if="localLoading" v-for="i in 4" :key="i"
+        class="basis-[80%] sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4 pt-8">
         <SkeletonProduct />
       </CarouselItem>
       <CarouselItem v-else v-for="(product, index) in products" :key="index"
         class="basis-[80%] sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4 pt-8">
-        <ProductCard :product="product" :type="props.type" />
+        <ProductCard :product="product" :type="props.type">
+          <template #swatches>
+            <ProductCardColorSwatches v-if="product.attributes.color && product.attributes.color.length > 0"
+              :colors="product.attributes.color" class="absolute! top-4! right-4! z-2" orientation="vertical"
+              size="lg" />
+          </template>
+        </ProductCard>
       </CarouselItem>
     </CarouselContent>
     <CarouselPrevious class="lg:flex hidden" variant="outline" />
@@ -31,7 +38,8 @@ const props = withDefaults(defineProps<{
 }>(), {
   loading: true,
   alignSlider: 'start',
-  type: 'default'
+  type: 'default',
+  swatchesSize: 'md'
 })
 
 
@@ -41,5 +49,4 @@ const localLoading = computed(() => {
 
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
