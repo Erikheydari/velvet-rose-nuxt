@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Product } from '~/types/product.types';
+import type { CartItem } from '~/types/cart.types';
 import ProductCardPrice from '@/components/product/card/Price.vue';
 import ColorSwatches from '@/components/product/card/ColorSwatches.vue';
 import ProductCounter from '@/components/product/counter/index.vue';
@@ -42,7 +42,7 @@ import { useCartStore } from '~/stores/cart';
 const cartStore = useCartStore();
 
 const props = defineProps<{
-  product: Product
+  product: CartItem['product']
   itemId: number
   quantity: number
 }>()
