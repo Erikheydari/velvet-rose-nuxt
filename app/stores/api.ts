@@ -96,6 +96,7 @@ export const useApiStore = defineStore('apiStore', () => {
       
         return {
           data,
+          raw: response as any,
           error: null
         };
       } catch (error) {
