@@ -8,51 +8,64 @@
       <h6 class="body-1 mb-2 font-medium!">{{ props.product.name }}</h6>
       <div class="flex flex-col gap-2 w-full items-start">
         <div class="flex gap-2 items-center w-full">
-          <ColorSwatches v-if="props.product.attributes.color?.length > 0" size="sm"
-            :colors="[props.product.attributes.color[0]!]" orientation="horizontal" />
-          <span v-if="props.product.attributes.color?.length > 0" class="body-2 text-muted-foreground">
-            {{ props.product.attributes.color[0]?.name }}
+          <ColorSwatches v-if="colorSwatches.length > 0" size="sm" :colors="colorSwatches" orientation="horizontal" />
+          <span v-if="selectedColorLabel" class="caption-1 text-muted-foreground">
+            {{ selectedColorLabel }}
           </span>
-          <span v-if="props.product.attributes.size?.length > 1">
+          <span v-if="selectedSizeLabel">
             -
           </span>
-          <span v-if="props.product.attributes.size?.length > 0" class="body-2 text-muted-foreground">
+          <span v-if="selectedSizeLabel" class="body-2 text-muted-foreground">
             سایز:‌
-            <span class="body-2 font-bold">
-              {{ props.product.attributes.size[0]?.name }}
+            <span class="caption-1 font-bold">
+              {{ selectedSizeLabel }}
             </span>
           </span>
         </div>
-        <div class="flex gap-2 items-center justify-between w-full">
+        <div class="flex gap-2 items-end justify-between w-full">
           <ProductCardPrice size="sm" :product="props.product" />
-          <span class="body-2 text-muted-foreground">
-            تعداد:‌
-            {{ props.product.qty }}
-          </span>
+          <ProductCounter v-model="quantity" :max-quantity="99" :min-quantity="1" :can-delete="true" size="sm"
+            @delete="handleDelete" />
         </div>
       </div>
     </div>
-
-    <TheButton variant="tonalDestructive" size="icon" @click="cartStore.removeFromCart(props.itemId)">
-      <X class="size-4" />
-    </TheButton>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { X } from 'lucide-vue-next';
 import type { Product } from '~/types/product.types';
 import ProductCardPrice from '@/components/product/card/Price.vue';
 import ColorSwatches from '@/components/product/card/ColorSwatches.vue';
+import ProductCounter from '@/components/product/counter/index.vue';
 import { useCartStore } from '~/stores/cart';
 
 const cartStore = useCartStore();
 
-
 const props = defineProps<{
   product: Product
   itemId: number
+  quantity: number
 }>()
+
+const selectedColor = computed(() => props.product.selected_attributes?.find(a => a.attribute === 'color'))
+const selectedSize = computed(() => props.product.selected_attributes?.find(a => a.attribute === 'size'))
+
+const colorSwatches = computed(() => selectedColor.value ? [{ value: selectedColor.value.name, name: selectedColor.value.value }] : [])
+const selectedColorLabel = computed(() => selectedColor.value?.value || '')
+const selectedSizeLabel = computed(() => selectedSize.value?.value || '')
+
+const quantity = ref(props.quantity)
+
+const handleDelete = () => {
+  cartStore.removeFromCart(props.itemId)
+}
+
+// Watch for quantity changes to update cart
+watch(quantity, (newQuantity) => {
+  if (newQuantity !== props.quantity) {
+    cartStore.updateCartItem(props.itemId, newQuantity)
+  }
+})
 </script>
 
 <style></style>
