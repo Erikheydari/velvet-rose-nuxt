@@ -50,6 +50,10 @@ export const useCategoriesStore = defineStore('categoriesStore', () => {
     isLoading.value = false
   }
 
+  const getCategoryName = (slug: string) => {
+    return categories.value.find(category => category.slug === slug)?.name
+  }
+
   const getCategoryBySlug = (slug: string) => {
     return categories.value.find(category => category.slug === slug)
   }
@@ -69,5 +73,6 @@ export const useCategoriesStore = defineStore('categoriesStore', () => {
     
     //getters
     getCategoryBySlug,
+    getCategoryName,
   }
 })
