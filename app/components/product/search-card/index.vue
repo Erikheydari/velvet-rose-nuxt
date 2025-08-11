@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="flex flex-col gap-2 w-full items-start">
-        <ColorSwatches :colors="props.product.attributes.color" orientation="horizontal" />
+        <ColorSwatches :colors="props.product.attributes.color" orientation="horizontal" class="" />
         <ProductCardPrice :product="props.product" />
       </div>
     </div>
