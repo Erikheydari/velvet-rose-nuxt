@@ -22,7 +22,7 @@
       </div>
 
       <div v-if="cartStore.cartItems.length > 0" class="flex flex-col gap-4">
-        <ProductCartCard v-for="item in cartStore.cartItems" :key="item.id" :product="item.product" :item-id="item.id" />
+        <ProductCartCard v-for="item in cartStore.cartItems" :key="item.id" :product="item.product" :item-id="item.id" :quantity="item.quantity" />
       </div>
       <div v-else class="flex flex-col gap-4 py-10">
         <div class="relative w-fit mx-auto">
