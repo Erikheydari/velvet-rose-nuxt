@@ -4,10 +4,10 @@ export interface CartItemCategory {
 }
 
 export interface CartItemAttribute {
-  id: number;
-  attribute: string;
-  value: string;
-  name: string;
+  readonly id: number;
+  readonly attribute: string;
+  readonly value: string;
+  readonly name: string;
 }
 
 export interface CartItemBrand {
@@ -31,7 +31,7 @@ export interface CartItemProduct {
   brand: CartItemBrand;
   image: CartItemImage;
   slug: string;
-  selected_attributes: CartItemAttribute[];
+  readonly selected_attributes: ReadonlyArray<CartItemAttribute>;
   qty?: number;
 }
 
@@ -39,16 +39,21 @@ export interface CartItem {
   id: number;
   product: CartItemProduct;
   quantity: number;
-  final_price: string;
+  line_total_without_discount: string;
+  line_total_with_discount: string;
+}
+
+export interface Cart {
+  data: CartItem[];
 }
 
 export interface CartItemResponse {
   data: CartItem[];
-  totalItems: number;
-  totalPrice: string;
-  totalDiscount: string;
-  line_without_total_discount: string;
-  line_with_total_discount: string;
+  totalItems?: number;
+  totalPrice?: string;
+  totalDiscount?: string;
+  line_without_total_discount?: string;
+  line_with_total_discount?: string;
 }
 
 export interface ApiResponse<T = any> {
