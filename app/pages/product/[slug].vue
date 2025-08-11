@@ -184,9 +184,10 @@ import { useCartStore } from '@/stores/cart'
 import { useRoute, useRouter } from 'vue-router'
 import Original from '@/assets/icons/original.svg?component'
 import { TheButton } from '#components'
-import { Check, ChevronDown, ChevronLeft, Loader2, ShoppingCart } from 'lucide-vue-next'
+import { Check, ChevronDown, Loader2, ShoppingCart } from 'lucide-vue-next'
 import { FantastyHeading } from '~/components/ui/heading'
 import ProductCounter from '~/components/product/counter/index.vue'
+import type { CartItemAdd } from '~/types/cart.types'
 
 
 const config = useRuntimeConfig()
@@ -301,7 +302,7 @@ const handleAddToCart = async () => {
 
   console.log(attributes)
 
-  const cartItem = {
+  const cartItem: CartItemAdd = {
     product_id: productsStore.product.id,
     quantity: quantity.value,
     attributes: attributes,
