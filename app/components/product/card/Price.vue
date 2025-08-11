@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 flex flex-col items-start">
-    <bdi v-if="props.product.discount_percentage > 0" class="text-muted-foreground line-through" :class="discountClass">
+    <bdi v-if="Number(props.product.discount_percentage) > 0" class="text-muted-foreground line-through" :class="discountClass">
       {{ props.product.price }}
       <small>
         تومان
@@ -17,9 +17,10 @@
 
 <script lang="ts" setup>
 import type { Product } from '~/types/product.types';
+import type { CartItem } from '~/types/cart.types';
 
 const props = withDefaults(defineProps<{
-  product: Product
+  product: Product | CartItem['product']
   size?: 'sm' | 'md' | 'lg'
 }>(), {
   size: 'md'
