@@ -95,7 +95,7 @@
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-                }}</span>
+              }}</span>
             </TheButton>
           </div>
         </div>
@@ -176,12 +176,17 @@
 
     </Teleport>
   </div>
+
+  <div class="px-4 xl:px-12">
+    <ProductCarousel :products="productsStore.getRandomProducts" type="default" :loading="false"
+      alignSlider="start" />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { useProductsStore } from '@/stores/products'
 import { useCartStore } from '@/stores/cart'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import Original from '@/assets/icons/original.svg?component'
 import { TheButton } from '#components'
 import { Check, ChevronDown, Loader2, ShoppingCart } from 'lucide-vue-next'
@@ -195,7 +200,6 @@ const config = useRuntimeConfig()
 const mediaUrl = computed(() => config.public.mediaUrl)
 
 const route = useRoute()
-const router = useRouter()
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
 
@@ -213,15 +217,6 @@ const productOptions = computed<string[]>(() => productsStore.product?.options ?
 const initializeSelections = () => {
   selectedColorId.value = null
   selectedSizeId.value = null
-}
-
-// Back navigation
-const goBack = () => {
-  if (history.length > 1) {
-    router.back()
-  } else {
-    router.push({ path: '/products' })
-  }
 }
 
 // Selection methods
@@ -256,7 +251,7 @@ const canAddToCart = computed(() => {
 
 // Smoothly scroll to a section by id (with slight offset for mobile headers)
 const scrollToSection = (targetId: string, offset: number = 80) => {
-  if (process.client) {
+  if (import.meta.client) {
     const target = document.getElementById(targetId)
     if (target) {
       const y = target.getBoundingClientRect().top + window.scrollY - offset
@@ -290,8 +285,6 @@ const handleAddToCart = async () => {
 
   const attributes: string[] = []
 
-  console.log(selectedColorId.value, selectedSizeId.value)
-
   if (selectedColorId.value) {
     attributes.push(selectedColorId.value)
   }
@@ -299,8 +292,6 @@ const handleAddToCart = async () => {
   if (selectedSizeId.value) {
     attributes.push(selectedSizeId.value)
   }
-
-  console.log(attributes)
 
   const cartItem: CartItemAdd = {
     product_id: productsStore.product.id,
@@ -312,7 +303,6 @@ const handleAddToCart = async () => {
     await cartStore.addToCart(cartItem)
 
     validationMessage.value = ''
-    console.log('Product added to cart successfully')
   } catch (error) {
     validationMessage.value = 'خطا در افزودن به سبد خرید'
     const { getErrorMessage } = await import('~/lib/utils')
@@ -340,6 +330,12 @@ watch(
     }
   }
 )
+
+useHead({
+  title: () => {
+    return productsStore.product?.name
+  }
+})
 
 onMounted(() => {
   productsStore.fetchProduct(route.params.slug as string)
