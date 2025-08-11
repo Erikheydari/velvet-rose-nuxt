@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia';
+
 export const useEndpointStore = defineStore('endpointStore', () => {
     const config = useRuntimeConfig();
     const apiUrl = config.public.apiUrl;
