@@ -43,6 +43,13 @@ export interface ProductAttributes {
   }[]
 }
 
+export interface ProductSelectedAttribute {
+  id: number
+  attribute: string
+  value: string
+  name: string
+}
+
 export interface Product {
   id: number
   name: string
@@ -66,4 +73,5 @@ export interface Product {
   seo: Seo
   slug: string
   original_tag?: boolean
+  selected_attributes?: ProductSelectedAttribute[]
 }
