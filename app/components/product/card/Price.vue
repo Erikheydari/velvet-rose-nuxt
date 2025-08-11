@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 flex flex-col items-start">
-    <bdi v-if="props.product.discount_percentage > 0" class="text-muted-foreground line-through" :class="sizeClass">
+    <bdi v-if="props.product.discount_percentage > 0" class="text-muted-foreground line-through" :class="discountClass">
       {{ props.product.price }}
       <small>
         تومان
@@ -39,11 +39,11 @@ const sizeClass = computed(() => {
 const discountClass = computed(() => {
   switch (props.size) {
     case 'sm':
-      return 'body-2'
+      return 'caption-1'
     case 'md':
-      return 'body-1'
+      return 'body-2'
     case 'lg':
-      return 'body-1'
+      return 'body-2'
   }
 })
 </script>
