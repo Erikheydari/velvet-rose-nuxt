@@ -1,5 +1,5 @@
 <template>
-  <div v-if="meta && (meta.last_page || 1) > 1" class="mt-6 mb-12">
+  <div v-if="meta && (meta.last_page || 1) > 1" class="mt-6 ">
     <Pagination
       :total="meta.total || 0"
       :items-per-page="meta.per_page || 12"
