@@ -43,6 +43,21 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         profile: `${apiUrl}${apiPrefix}/profile`,
     }
 
+    // Locations endpoints (from postorder.json)
+    const locations = {
+        provinces: `${apiUrl}${apiPrefix}/provinces`,
+        citiesByProvince: (provinceId: number) => `${apiUrl}${apiPrefix}/provinces/${provinceId}/cities`,
+    }
+
+    // Orders endpoints (from postorder.json)
+    const orders = {
+        create: `${apiUrl}${apiPrefix}/orders`,
+    }
+
+    const payments = {
+        initiate: `${apiUrl}${apiPrefix}/payments/initiate`,
+    }
+
     return {
         apiUrl,
         apiPrefix,
@@ -52,5 +67,8 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         categories,
         cart,
         auth,
+        locations,
+        orders,
+        payments,
     }
 })
