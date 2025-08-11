@@ -1,5 +1,5 @@
 <template>
-  <footer class="w-full bg-primary pt-14 relative z-10">
+  <footer class="w-full bg-primary pt-14 mt-16 relative z-10">
     <div
       class="lg-inner-container pb-14 flex flex-col lg:flex-row lg:items-start lg:justify-between flex-wrap gap-14 px-10">
       <div class="space-y-4 basis-1/3 text-center lg:text-start">
