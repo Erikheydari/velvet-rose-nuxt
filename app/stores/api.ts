@@ -1,3 +1,8 @@
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import { useEndpointStore } from '@/stores/endpoints';
+import { useAuthStore } from '@/stores/auth';
+
 export const useApiStore = defineStore('apiStore', () => {
     const config = useRuntimeConfig();
     const endpointStore = useEndpointStore();
