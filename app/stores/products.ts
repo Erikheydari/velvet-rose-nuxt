@@ -84,6 +84,15 @@ export const useProductsStore = defineStore('productsStore', () => {
     await fetchProducts(page)
   }
 
+  const getRandomProducts = computed(() => {
+    if (products.value.length > 0) {
+      return products.value.sort(() => Math.random() - 0.5).slice(0, 6)
+    } else {
+      fetchProducts()
+      return products.value.sort(() => Math.random() - 0.5).slice(0, 6)
+    }
+  })
+
   return {
     loading,
 
@@ -96,5 +105,6 @@ export const useProductsStore = defineStore('productsStore', () => {
     fetchProduct,
     fetchProductsByCategory,
     goToPage,
+    getRandomProducts,
   }
 })
