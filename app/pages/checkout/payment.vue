@@ -1,5 +1,5 @@
 <template>
-  <CheckoutLayout>
+  <CheckoutLayout :title="title">
     <FormSetOrder />
     <template #cart-box>
       <CartBox :loading="cartStore.loading" :disabled="!paymentStore.paymentAuthority"
@@ -20,6 +20,13 @@ const router = useRouter()
 
 definePageMeta({
   layout: false,
+})
+
+const title = computed(() => {
+  return paymentStore.paymentAuthority ? 'پرداخت' : 'ثبت سفارش'
+})
+
+useHead({
   title: () => {
     const { paymentAuthority } = usePaymentsStore()
     return paymentAuthority ? 'پرداخت' : 'ثبت سفارش'
