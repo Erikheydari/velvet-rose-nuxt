@@ -11,9 +11,7 @@
       </span>
     </div>
 
-
-    <ProductCardColorSwatches v-if="props.product.attributes.color && props.product.attributes.color.length > 0"
-      :colors="props.product.attributes.color" class="absolute top-4 right-4 z-1" />
+    <slot name="swatches" />
 
     <ProductCardImage :image="props.product.image" :name="props.product.name" :type="props.type"
       class="relative size-full object-contain z-[1]" />
@@ -29,6 +27,7 @@
         {{ generateOptionsString }}
       </p>
     </TheCardContent>
+
 
     <TheCardFooter class="relative z-1 justify-between items-end">
       <ProductCardPrice :product="props.product" />
