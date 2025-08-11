@@ -9,7 +9,7 @@ export const useCartStore = defineStore('cart', () => {
   const endpointStore = useEndpointStore();
 
   // State
-  const cartItems = ref<CartItemResponse[]>([]);
+  const cartItems = ref<CartItem[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const justAdded = ref<boolean>(false);
@@ -22,7 +22,8 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.cart.add, {
         method: 'post',
-        body: cartData
+        body: cartData,
+        credentials: true,
       });
 
       if (apiError) {
@@ -46,13 +47,14 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  const fetchCart = async (): Promise<ApiResponse<CartItemResponse[]>> => {
+  const fetchCart = async (): Promise<ApiResponse<CartItem[]>> => {
     loading.value = true;
     error.value = null;
 
     try {
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.cart.get, {
-        method: 'get'
+        method: 'get',
+        credentials: true,
       });
 
       if (apiError) {
@@ -63,18 +65,18 @@ export const useCartStore = defineStore('cart', () => {
       // Ensure data is an array before assigning
       if (Array.isArray(data)) {
         cartItems.value = data;
-      } else if (data && typeof data === 'object' && 'items' in data) {
-        // If API returns { items: [...] }
-        cartItems.value = data.items || [];
+      } else if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        cartItems.value = data.data;
+      } else if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        cartItems.value = data.items;
       } else {
-        // If data is not an array, initialize as empty array
         cartItems.value = [];
       }
 
       return { data: cartItems.value };
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch cart';
-      cartItems.value = []; // Ensure it's always an array
+      cartItems.value = [];
       return { error: err };
     } finally {
       loading.value = false;
@@ -88,6 +90,7 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.cart.remove(itemId), {
         method: 'delete',
+        credentials: true,
       });
 
       if (apiError) {
@@ -114,7 +117,8 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.cart.update(itemId), {
         method: 'put',
-        body: { quantity }
+        body: { quantity },
+        credentials: true, // Add credentials for cart operations
       });
 
       if (apiError) {
@@ -150,7 +154,8 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.auth.forgotPassword, {
         method: 'post',
-        body: { email }
+        body: { email },
+        credentials: true, // Add credentials for auth operations
       });
 
       if (apiError) {
@@ -172,8 +177,10 @@ export const useCartStore = defineStore('cart', () => {
     error.value = null;
 
     for (const item of cartItems.value) {
-      console.log(item.id);
-      await removeFromCart(item.id || 0);
+      // Now cartItems contains CartItem objects directly
+      if (item.id) {
+        await removeFromCart(item.id);
+      }
     }
 
     cartItems.value = [];
