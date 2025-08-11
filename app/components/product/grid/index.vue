@@ -49,6 +49,11 @@
 
     <!-- Skeletons while loading -->
     <SkeletonProductGrid v-else :count="skeletonCount" />
+
+    <!-- Pagination slot at bottom -->
+    <div class="mt-8">
+      <slot name="pagination" />
+    </div>
   </section>
 </template>
 
