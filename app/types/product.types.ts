@@ -20,7 +20,8 @@ export interface Brand {
   name: string
   en_name?: string
   banner?: string
-  slug?: string
+  products?: Product[]
+  slug: string
 }
 
 export interface ProductImage {
