@@ -21,14 +21,15 @@
       <div class="brands-wrapper">
         <div class="brands-track">
           <template v-for="i in 5" :key="`set-${i}`">
-            <div v-for="brand in brands" :key="`${i}-${brand.id}`" class="brand-item">
+            <NuxtLink v-for="brand in brands" :key="`${i}-${brand.id}`" target="_blank" :to="`/brands/${brand.slug}`"
+              class="brand-item">
               <img v-if="brand.banner" :src="brand.banner" alt="brand" class="h-30 w-auto object-contain" />
-            </div>
+            </NuxtLink>
           </template>
         </div>
       </div>
-      <span class="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-background to-transparent z-1" />
-      <span class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-background to-transparent z-1" />
+      <span class="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-background to-transparent z-1 pointer-events-none" />
+      <span class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-background to-transparent z-1 pointer-events-none" />
     </div>
 
     <div class="left-image absolute -translate-x-[40%] md:-translate-x-[30%] -translate-y-1/2 image-container">
