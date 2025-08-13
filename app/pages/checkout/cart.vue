@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col default-inner-container pt-24 lg:pt-36">
+  <div class="min-h-screen flex flex-col default-inner-container default-padding-top default-padding-x">
     <h1 class="heading-5 font-bold text-primary mb-6">سبد خرید</h1>
     <div class="flex flex-col lg:flex-row gap-4 lg:gap-8 lg:p-8 p-4 border-border border rounded-2xl bg-accent/20">
 
@@ -21,7 +21,8 @@
 
       </div>
 
-      <CartBox v-if="isStoreReady" :button-text="'تکمیل سفارش'" :loading="cartStore.loading" :cart-items="cartStore.cartItems" />
+      <CartBox v-if="isStoreReady" :button-text="'تکمیل سفارش'" :loading="cartStore.loading"
+        :cart-items="cartStore.cartItems" />
 
     </div>
   </div>
