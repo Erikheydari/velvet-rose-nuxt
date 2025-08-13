@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen flex flex-col default-inner-container py-12">
-    <div class="flex flex-row gap-4 justify-between w-full border border-border bg-accent/20 rounded-2xl p-8 mb-6">
+  <div class="min-h-screen flex flex-col default-inner-container py-12 default-padding-x">
+    <div class="flex flex-col lg:flex-row gap-4 justify-between w-full border border-border bg-accent/20 rounded-2xl p-2 py-4 lg:py-8 lg:p-8 mb-6">
       <TheButton to="/checkout/cart" variant="link">
         <ArrowRight class=" size-4" />
         بازگشت به سبد خرید
       </TheButton>
-      <h1 class="heading-5 font-bold text-primary mx-auto text-center absolute left-1/2 -translate-x-1/2">
+      <h1 class="heading-5 font-bold text-primary lg:mx-auto text-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
         {{ props.title }}
       </h1>
     </div>
