@@ -1,6 +1,9 @@
 <template>
-  <div class="flex w-full rounded-2xl border border-border p-0">
-    <figure v-if="props.product.image" class="image-container aspect-square lg:max-w-52 h-auto bg-muted relative">
+  <div :class="props.orientation === 'horizontal' ? 'flex-row' : 'flex-col lg:flex-row'"
+    class="flex w-full rounded-2xl border border-border p-0 overflow-hidden relative"
+    :to="`/product/${props.product.slug}`">
+    <figure v-if="props.product.image"
+      class="image-container aspect-square size-36 lg:size-38 h-auto bg-muted relative">
       <img :src="props.product.image.src" alt="product"
         class="object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full" />
     </figure>
@@ -22,13 +25,15 @@
             </span>
           </span>
         </div>
-        <div class="flex gap-2 items-end justify-between w-full">
+        <div
+          class="flex flex-col lg:flex-row gap-4 lg:gap-2 items-start lg:items-end justify-between w-full relative z-11">
           <ProductCardPrice size="sm" :product="props.product" />
           <ProductCounter v-model="quantity" :max-quantity="99" :min-quantity="1" :can-delete="true" size="sm"
             @delete="handleDelete" />
         </div>
       </div>
     </div>
+    <NuxtLink :to="`/product/${props.product.slug}`" class="absolute top-0 left-0 w-full h-full z-10" />
   </div>
 </template>
 
@@ -45,6 +50,7 @@ const props = defineProps<{
   product: CartItem['product']
   itemId: number
   quantity: number
+  orientation?: 'horizontal' | 'vertical'
 }>()
 
 const selectedColor = computed(() => props.product.selected_attributes?.find(a => a.attribute === 'color'))
