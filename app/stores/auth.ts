@@ -160,6 +160,7 @@ export const useAuthStore = defineStore('auth', () => {
                 method: 'post',
                 body: form as any,
                 credentials: true, // Add credentials for auth endpoints
+                showErrorToast: false, // Component will handle error display via watcher
             })
 
             if (apiError) {
@@ -173,7 +174,7 @@ export const useAuthStore = defineStore('auth', () => {
             return true
         } catch (err: any) {
             error.value = err?.message || 'ثبت نام ناموفق بود.'
-            toast.error(err?.message)
+            // Error will be displayed by component watcher
             return false
         } finally {
             loading.value = false
@@ -196,6 +197,7 @@ export const useAuthStore = defineStore('auth', () => {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 credentials: true, // Add credentials for auth endpoints
+                showErrorToast: false, // Component will handle error display via watcher
             })
 
             if (apiError) {
@@ -237,6 +239,7 @@ export const useAuthStore = defineStore('auth', () => {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 credentials: false,
+                showErrorToast: false, // Component will handle error display via watcher
             })
 
             if (apiError) {
@@ -245,9 +248,7 @@ export const useAuthStore = defineStore('auth', () => {
                 if ((statusCode === 401 || statusCode === 403) && needsVerification) {
                     needVerify.value = true
                     pendingEmail.value = username
-                    if (errorData?.message) {
-                        toast.error(errorData.message)
-                    }
+                    // Error will be displayed by component watcher
                     return false
                 }
 
