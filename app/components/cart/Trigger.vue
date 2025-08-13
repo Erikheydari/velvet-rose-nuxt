@@ -55,7 +55,7 @@ const handleTriggerClick = (event: MouseEvent | KeyboardEvent) => {
     @click="handleTriggerClick"
     aria-label="سبد خرید"
   >
-    <ShoppingCart class="w-5 h-5" />
+    <ShoppingCart class="size-5" />
 
     <span
       v-if="cartCount > 0"
