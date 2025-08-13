@@ -11,6 +11,7 @@ export const useCartStore = defineStore('cart', () => {
   // State
   const cartItems = ref<CartItem[]>([]);
   const loading = ref(true);
+  const updateCounterLoading = ref(false);
   const error = ref<string | null>(null);
   const justAdded = ref<boolean>(false);
 
@@ -47,8 +48,8 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  const fetchCart = async (): Promise<ApiResponse<CartItem[]>> => {
-    loading.value = true;
+  const fetchCart = async (loadingState: boolean = true): Promise<ApiResponse<CartItem[]>> => {
+    loading.value = loadingState;
     error.value = null;
 
     try {
@@ -111,7 +112,7 @@ export const useCartStore = defineStore('cart', () => {
   };
 
   const updateCartItem = async (itemId: number, quantity: number): Promise<ApiResponse> => {
-    loading.value = true;
+    updateCounterLoading.value = true;
     error.value = null;
 
     try {
@@ -127,14 +128,14 @@ export const useCartStore = defineStore('cart', () => {
       }
 
       // Refresh cart after updating item
-      await fetchCart();
+      await fetchCart(false);
 
       return { data };
     } catch (err: any) {
       error.value = err.message || 'Failed to update cart item';
       return { error: err };
     } finally {
-      loading.value = false;
+      updateCounterLoading.value = false;
     }
   };
 
@@ -165,6 +166,7 @@ export const useCartStore = defineStore('cart', () => {
     // State
     cartItems: readonly(cartItems),
     loading: computed(() => loading.value),
+    updateCounterLoading: computed(() => updateCounterLoading.value),
     error: readonly(error),
     justAdded: readonly(justAdded),
 
