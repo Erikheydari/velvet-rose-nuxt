@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 // Protect this route - only authenticated users can access
 definePageMeta({
   middleware: 'auth',
-  layout: 'auth'
+  layout: 'profile'
 })
 
 useHead({
@@ -26,70 +26,52 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="container mx-auto default-padding-top">
     <div class="max-w-4xl mx-auto">
 
       <!-- User Information Card -->
-      <div class="bg-white rounded-lg border p-6 mb-6">
+      <div class="bg-background rounded-lg border p-6 mb-6">
         <h2 class="title-4 mb-4">اطلاعات حساب کاربری</h2>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
-            <label class="text-sm font-medium text-muted">ایمیل:</label>
+            <label class="text-sm font-medium text-muted-foreground">ایمیل:</label>
             <p class="text-foreground">{{ authStore.currentUser?.email || 'ثبت نشده' }}</p>
           </div>
-          
+
           <div class="space-y-2" v-if="authStore.currentUser?.name">
-            <label class="text-sm font-medium text-muted">نام:</label>
+            <label class="text-sm font-medium text-muted-foreground">نام:</label>
             <p class="text-foreground">{{ authStore.currentUser.name }}</p>
           </div>
-          
-          <div class="space-y-2" v-if="authStore.currentUser?.phone">
-            <label class="text-sm font-medium text-muted">شماره تماس:</label>
-            <p class="text-foreground">{{ authStore.currentUser.phone }}</p>
-          </div>
-          
+
           <div class="space-y-2">
-            <label class="text-sm font-medium text-muted">شناسه کاربری:</label>
+            <label class="text-sm font-medium text-muted-foreground">شناسه کاربری:</label>
             <p class="text-foreground text-sm font-mono">{{ authStore.currentUser?.id || 'نامشخص' }}</p>
           </div>
         </div>
       </div>
 
       <!-- Quick Actions -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <NuxtLink to="/orders" class="block">
-          <TheCard class="p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-            <div class="flex items-center gap-3">
-              <Icon icon="solar:bag-linear" class="text-2xl text-primary"/>
-              <div>
-                <h3 class="font-medium">سفارشات من</h3>
-                <p class="text-sm text-muted">مشاهده تاریخچه خرید</p>
-              </div>
-            </div>
-          </TheCard>
-        </NuxtLink>
+      <div class="flex flex-col gap-4 default-padding-x lg:px-0!">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <TheButton to="/profile/orders" variant="tonal" size="lg">
+            <span class="font-medium">سفارشات من</span>
+          </TheButton>
 
-        <TheCard class="p-4">
-          <div class="flex items-center gap-3">
-            <Icon icon="solar:settings-linear" class="text-2xl text-primary"/>
-            <div>
-              <h3 class="font-medium">تنظیمات</h3>
-              <p class="text-sm text-muted">ویرایش اطلاعات کاربری</p>
-            </div>
-          </div>
-        </TheCard>
+          <TheButton to="/profile/settings" variant="tonal" size="lg">
+            <span class="font-medium">تنظیمات</span>
+          </TheButton>
 
-        <TheCard class="p-4">
-          <div class="flex items-center gap-3">
-            <Icon icon="solar:shield-check-linear" class="text-2xl text-primary"/>
-            <div>
-              <h3 class="font-medium">امنیت حساب</h3>
-              <p class="text-sm text-muted">تغییر رمز عبور</p>
-            </div>
-          </div>
-        </TheCard>
+          <TheButton to="/profile/security" variant="tonal" size="lg">
+            <span class="font-medium">امنیت حساب</span>
+          </TheButton>
+
+          <TheButton @click="handleLogout" variant="tonal" size="lg">
+            <span class="font-medium">خروج</span>
+          </TheButton>
+        </div>
       </div>
+
 
       <!-- Loading State -->
       <div v-if="authStore.loading" class="text-center py-8">
@@ -104,6 +86,4 @@ const handleLogout = async () => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
