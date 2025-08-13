@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <slot />
+  <div class="w-full h-full">
+    <Header />
+    <main class="w-full h-full">
+      <slot />
+    </main>
   </div>
 </template>
 
@@ -8,6 +11,4 @@
 
 </script>
 
-<style>
-
-</style>
+<style></style>
