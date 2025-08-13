@@ -58,7 +58,7 @@
 
       </div>
 
-      <TheButton class="w-full" :disabled="loading || disabled" :class="{ 'opacity-50 cursor-not-allowed': loading }"
+      <TheButton v-if="buttonIsActive" class="w-full" :disabled="loading || disabled" :class="{ 'opacity-50 cursor-not-allowed': loading }"
         variant="default" size="lg" @click="handleClick">
         {{ buttonText }}
       </TheButton>
@@ -79,10 +79,12 @@ interface Props {
   loading?: boolean
   handleClick?: () => void
   disabled?: boolean
+  buttonIsActive?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   buttonText: 'پرداخت',
+  buttonIsActive: true,
   loading: true,
   handleClick: () => {
     navigateTo('/checkout/payment')
