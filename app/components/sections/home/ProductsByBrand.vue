@@ -39,8 +39,8 @@
         class="brand-carousel-nav border-none [&>svg]:size-10 z-2 absolute bg-secondary right-0 w-[15%] h-[28%] opacity-0" />
     </TheCarousel>
     <div class="flex justify-center">
-      <TheButton size="lg" to="/products" variant="outline">
-        مشاهده همه
+      <TheButton size="lg" to="/brands" variant="outline">
+        مشاهده همه برندها
       </TheButton>
     </div>
   </div>
