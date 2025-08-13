@@ -1,0 +1,1 @@
+export type ProductCardType = 'default' | 'secondary' | 'primary'
