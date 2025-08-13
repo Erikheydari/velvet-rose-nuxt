@@ -123,6 +123,10 @@
     @apply px-4 lg:px-8;
   }
 
+  .default-margin-bottom {
+    @apply mb-4 lg:mb-8;
+  }
+
   /* Menu  */
   .menu-body-height {
     max-height: calc(100vh - var(--spacing) * 32);
@@ -140,6 +144,10 @@
   .hero-height {
     height: calc(100vh + var(--spacing) * 36);
     @apply -mb-20 lg:mb-0;
+  }
+
+  .default-padding-top {
+    @apply pt-36 lg:pt-24;
   }
 
   @media (min-width: 1024px) {
