@@ -1,58 +1,64 @@
 <template>
-  <Transition enter-active-class="transition-all duration-300 ease-out"
-    enter-from-class="opacity-0 transform translate-y-full md:translate-y-[-10px]"
-    enter-to-class="opacity-100 transform translate-y-0" leave-active-class="transition-all duration-200 ease-in"
-    leave-from-class="opacity-100 transform translate-y-0"
-    leave-to-class="opacity-0 transform translate-y-full md:translate-y-[-10px]">
-    <div v-if="isActive" ref="cartContainerRef" :class="overlayClass" class="
-        absolute
-        top-full right-0 w-full lg:w-md xl:w-lg
-        z-51
+  <Teleport :to="teleportTo">
+    <Transition enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="opacity-0 transform translate-y-full md:translate-y-[-10px]"
+      enter-to-class="opacity-100 transform translate-y-0" leave-active-class="transition-all duration-200 ease-in"
+      leave-from-class="opacity-100 transform translate-y-0"
+      leave-to-class="opacity-0 transform translate-y-full md:translate-y-[-10px]">
+      <div v-if="isActive" ref="cartContainerRef" :class="overlayClass" class="
+        fixed flex flex-col lg:absolute
+        bottom-0 lg:top-full right-0 w-full lg:w-md xl:w-lg
+        z-55!
         background-backdrop-90
-        p-4 h-min rounded-2xl
-        max-h-[65vh]
+        p-4 lg:h-min rounded-2xl
+        lg:max-h-[65vh] h-[80vh]
         overflow-hidden
       " @click="stopPropagation" dir="rtl">
-      <div class="flex justify-between items-center mb-4">
-        <h6 class="heading-6 font-bold">سبد خرید</h6>
-        <TheButton v-if="cartStore.cartItems.length > 0" variant="tonalDestructive" size="icon" @click="clearCart">
-          <Trash2 class="size-4" />
-          <span class="sr-only">پاک کردن سبد خرید</span>
-        </TheButton>
-      </div>
+        <div class="flex justify-between items-center mb-4">
+          <h6 class="heading-6 font-bold">سبد خرید</h6>
+          <TheButton v-if="cartStore.cartItems.length > 0" variant="tonalDestructive" size="icon" @click="clearCart">
+            <Trash2 class="size-4" />
+            <span class="sr-only">پاک کردن سبد خرید</span>
+          </TheButton>
+        </div>
 
-      <div v-if="cartStore.cartItems.length > 0" class="flex flex-col gap-4 overflow-y-auto max-h-[50vh] border-y border-border py-4">
-        <ProductCartCard v-for="item in cartStore.cartItems" :key="item.id" :product="item.product" :item-id="item.id"
-          :quantity="item.quantity" />
-      </div>
-      <div v-if="cartStore.cartItems.length > 0" class="flex justify-between h-full items-end mt-4 w-full">
-        <p class="caption-1 text-muted-foreground flex flex-row items-baseline">
-          <span class="text-primary body-2 me-1">
-            جمع کل
-          </span>
-          <span class="text-primary caption-2 me-4">({{ totalQuantity }})</span>
-          <span class="text-primary heading-6 font-bold">
-            {{ formatPrice(totalPrice) }}
-          </span>
-        </p>
-        <TheButton v-if="cartStore.cartItems.length > 0" variant="default" class="w-fit" to="/checkout/cart">
-          مشاهده سبد خرید
-        </TheButton>
-      </div>
+        <div v-if="cartStore.cartItems.length > 0"
+          class="flex flex-col gap-4 overflow-y-auto lg:max-h-[50vh] grow border-y border-border py-4">
+          <ProductCartCard v-for="item in cartStore.cartItems" :key="item.id" :product="item.product" :item-id="item.id"
+            :quantity="item.quantity" orientation="horizontal" />
+        </div>
+        <div v-if="cartStore.cartItems.length > 0" class="flex justify-between lg:h-full items-end mt-4 w-full">
+          <p class="caption-1 text-muted-foreground flex flex-row items-baseline">
+            <span class="text-primary body-2 me-1">
+              جمع کل
+            </span>
+            <span class="text-primary caption-2 me-4">({{ totalQuantity }})</span>
+            <span class="text-primary heading-6 font-bold">
+              {{ formatPrice(totalPrice) }}
+            </span>
+          </p>
+          <TheButton v-if="cartStore.cartItems.length > 0" variant="default" class="w-fit" to="/checkout/cart">
+            مشاهده سبد خرید
+          </TheButton>
+        </div>
 
-      <template v-else>
-        <CartEmpty class="h-full flex flex-col justify-center items-center gap-4" />
-      </template>
-    </div>
-  </Transition>
+        <template v-else>
+          <CartEmpty class="h-full flex flex-col justify-center items-center gap-4" />
+        </template>
+      </div>
+    </Transition>
+  </Teleport>
   <Backdrop :is-active="isActive" :handle-close="handleClose" />
 </template>
 
 <script lang="ts" setup>
-import { Trash2, ShoppingCart, X } from 'lucide-vue-next';
+import { Trash2 } from 'lucide-vue-next';
 import { ProductCartCard } from '#components';
 import { useCartStore } from '~/stores/cart';
 import Backdrop from '../ui/backdrop/Backdrop.vue';
+import { useWindowSize } from '@vueuse/core';
+
+const { width } = useWindowSize()
 
 const cartStore = useCartStore()
 const props = defineProps<{
@@ -65,6 +71,17 @@ const router = useRouter()
 const route = useRoute()
 const cartContainerRef = ref<HTMLElement | null>(null)
 const isUnmounting = ref(false)
+
+const teleportTo = ref('body')
+
+//on resize change Teleport to
+watch(width, (newWidth) => {
+  if (newWidth < 1024) {
+    teleportTo.value = 'body'
+  } else {
+    teleportTo.value = '#cart-trigger'
+  }
+})
 
 // Computed property to safely check if cart is mounted and active
 const isCartMounted = computed(() => props.isActive && !!cartContainerRef.value && !isUnmounting.value)
