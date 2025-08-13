@@ -1,14 +1,14 @@
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="handleSubmit" autocomplete="on">
 
-    <div class="flex flex-col gap-4 p-4 border-border border rounded-2xl bg-background">
+    <div class="flex flex-col gap-2 lg:gap-4 p-4 border-border border rounded-2xl bg-background">
       <Label class="w-full">مشخصات گیرنده</Label>
 
-      <div class="flex flex-row gap-4 w-full bg-background">
-        <TheInput v-model="fullName" class="w-full h-10 lg:h-12! body-2 px-8" placeholder="نام کامل گیرنده" name="name"
+      <div class="flex flex-col lg:flex-row gap-4 w-full bg-background">
+        <TheInput v-model="fullName" class="w-full h-12! body-2 px-6 lg:px-8" placeholder="نام کامل گیرنده" name="name"
           autocomplete="name" required :aria-invalid="!isFullNameValid && fullName.length > 0" enterkeyhint="next" />
 
-        <TheInput v-model="phoneNumber" class="w-full h-10 lg:h-12! body-2 px-8" placeholder="شماره تلفن گیرنده"
+        <TheInput v-model="phoneNumber" class="w-full h-12! body-2 px-6 lg:px-8" placeholder="شماره تلفن گیرنده"
           name="tel" type="tel" inputmode="numeric" pattern="^09[0-9]{9}$" maxlength="11" dir="ltr" autocomplete="tel"
           required :aria-invalid="!isPhoneValid && phoneNumber.length > 0" enterkeyhint="next" @input="handlePhoneInput"
           @keydown="handlePhoneKeydown" />
@@ -17,13 +17,13 @@
 
     </div>
 
-    <div class="flex flex-col gap-4 p-4 border-border border rounded-2xl bg-background">
+    <div class="flex flex-col gap-2 lg:gap-4 p-4 border-border border rounded-2xl bg-background">
       <Label class="w-full">آدرس</Label>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="w-full">
           <Select v-model="provinceModel" :disabled="ordersStore.loading">
-            <SelectTrigger class="w-full h-10 lg:h-12! body-2 rounded-full bg-input border-primary px-8"
+            <SelectTrigger class="w-full h-12! body-2 rounded-full bg-input border-primary px-6 lg:px-8"
               :disabled="ordersStore.loading">
               <SelectValue placeholder="استان" />
             </SelectTrigger>
@@ -39,7 +39,7 @@
 
         <div class="w-full">
           <Select v-model="cityModel" :disabled="ordersStore.loading || !ordersStore.selectedProvinceId">
-            <SelectTrigger class="w-full h-10 lg:h-12! body-2 rounded-full bg-input border-primary px-8"
+            <SelectTrigger class="w-full h-12! body-2 rounded-full bg-input border-primary px-6 lg:px-8"
               :disabled="ordersStore.loading || !ordersStore.selectedProvinceId">
               <SelectValue placeholder="شهر" />
             </SelectTrigger>
@@ -53,16 +53,16 @@
         </div>
       </div>
 
-      <TheInput v-model="address" class="w-full h-10 lg:h-12! body-2 px-8" placeholder="آدرس کامل" name="street-address"
+      <TheInput v-model="address" class="w-full h-12! body-2 px-6 lg:px-8" placeholder="آدرس کامل" name="street-address"
         autocomplete="shipping street-address" required :aria-invalid="!isAddressValid && address.length > 0"
         enterkeyhint="next" />
 
     </div>
 
-    <div class="flex flex-col gap-4 p-4 border-border border rounded-2xl bg-background">
+    <div class="flex flex-col gap-2 lg:gap-4 p-4 border-border border rounded-2xl bg-background">
       <Label class="w-full">توضیحات</Label>
 
-      <Textarea v-model="description" class="w-full body-2 px-8 pt-4" rows="3" placeholder="توضیحات (اختیاری)"
+      <Textarea v-model="description" class="w-full body-2 px-6 lg:px-8 pt-4" rows="6" placeholder="توضیحات (اختیاری)"
         name="comment" autocomplete="off" />
     </div>
 
