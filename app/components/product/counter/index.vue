@@ -1,5 +1,5 @@
 <template>
-  <div class="quantity-selection flex items-center gap-2">
+  <div class="quantity-selection flex items-center gap-2 w-full lg:w-fit justify-end lg:justify-start">
     <TheButton :variant="canDelete && quantity <= 1 ? 'tonalDestructive' : 'tonal'" :size="sureToDelete ? 'sm' : buttonSize"
       @click="canDelete && quantity <= 1 ? handleDelete() : decreaseQuantity()" :disabled="!canDelete && quantity <= 1"
       :class="sureToDelete ? 'py-0.5! h-8 px-2' : ''">
