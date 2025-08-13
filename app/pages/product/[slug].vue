@@ -119,14 +119,14 @@
           <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" class="mb-4" />
 
           <!-- Add to Cart Button -->
-          <TheButton @click="handleAddToCart" class="px-8! mb-4 grow gap-4" variant="default" size="lg"
+          <TheButton @click="handleAddToCart" class="px-6! mb-4 grow gap-4 " variant="default" size="lg"
             :class="{ 'opacity-50': !canAddToCart }">
             <ShoppingCart v-if="!cartStore.loading" class="size-4" />
-            <Loader2 class="size-4 animate-spin" v-if="cartStore.loading" />
             <span v-if="cartStore.loading">
               <Loader2 class="size-4 animate-spin" />
             </span>
             <span v-else class="body-1">افزودن به سبد خرید</span>
+            <span v-if="cartStore.loading" class="body-1">در حال افزودن...</span>
           </TheButton>
 
         </div>
