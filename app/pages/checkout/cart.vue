@@ -42,6 +42,14 @@ onMounted(async () => {
     console.error('Failed to fetch cart:', error);
   }
 })
+
+const title = computed(() => {
+  return cartStore.cartItems.length > 0 ? 'سبد خرید' : 'سبد خرید خالی است';
+})
+
+useHead({
+  title: title.value
+})
 </script>
 
 <style></style>
