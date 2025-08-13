@@ -1,5 +1,5 @@
 .heading-1 {
-    font-size: clamp(5rem, 10vw, 13rem);
+    font-size: clamp(4.5rem, 10vw, 13rem);
 }
 
 .heading-2 {
