@@ -80,7 +80,7 @@
             <TheButton v-for="color in productsStore.product.attributes.color" :key="color.id"
               class="color-selection-item-color hover:opacity-90 transition-opacity" variant="ghost" size="icon-lg"
               :style="{ backgroundColor: color.value }" @click="selectColor(color.id as string)">
-              <Check class="size-4 mix-blend-difference text-white stroke-4" v-if="color.id === selectedColorId" />
+              <Check class="size-4 mix-blend-difference text-background stroke-4" v-if="color.id === selectedColorId" />
             </TheButton>
           </div>
         </div>
@@ -119,11 +119,13 @@
           <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" class="mb-4" />
 
           <!-- Add to Cart Button -->
-          <TheButton @click="handleAddToCart" :disabled="!canAddToCart || cartStore.loading"
-            class="px-8! mb-4 grow gap-4" variant="default" size="lg" :class="{ 'opacity-50': !canAddToCart }">
+          <TheButton @click="handleAddToCart" class="px-8! mb-4 grow gap-4" variant="default" size="lg"
+            :class="{ 'opacity-50': !canAddToCart }">
             <ShoppingCart v-if="!cartStore.loading" class="size-4" />
             <Loader2 class="size-4 animate-spin" v-if="cartStore.loading" />
-            <span v-if="cartStore.loading">در حال افزودن...</span>
+            <span v-if="cartStore.loading">
+              <Loader2 class="size-4 animate-spin" />
+            </span>
             <span v-else class="body-1">افزودن به سبد خرید</span>
           </TheButton>
 
@@ -140,45 +142,39 @@
       <SkeletonProductPage />
     </div>
 
-    <Teleport to="body">
-      <div class="fixed bottom-0 left-0 w-full z-48 p-4 lg:hidden">
-        <div
-          class="background-backdrop bg-background/90! flex justify-between flex-col sm:flex-row gap-4 p-4 rounded-lg">
-          <div class="flex-col gap-2">
-            <div class="flex gap-2 items-baseline">
-              <p class="heading-5 font-bold text-foreground">
-                <bdi>
-                  {{ productsStore.product?.final_price }}
-                </bdi>
-                <span class="text-muted-foreground body-2 ms-2">تومان</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="gap-2 w-full sm:w-auto flex justify-between items-center">
-
-            <!-- Quantity Selection -->
-            <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" />
-
-            <!-- Add to Cart Button -->
-            <TheButton @click="handleAddToCart" :disabled="cartStore.loading" class="grow gap-4 sm:px-8!"
-              variant="default" size="sm" :class="{ 'opacity-80!': !canAddToCart }">
-              <ShoppingCart v-if="!cartStore.loading" class="size-4" />
-              <Loader2 class="size-4 animate-spin" v-if="cartStore.loading" />
-              <span v-if="cartStore.loading">در حال افزودن...</span>
-              <span v-else class="body-1">افزودن به سبد</span>
-            </TheButton>
-
-          </div>
-
+    <BottomNavigation class="flex justify-between flex-col sm:flex-row">
+      <div class="flex-col gap-2">
+        <div class="flex gap-2 items-baseline">
+          <p class="heading-5 font-bold text-foreground">
+            <bdi>
+              {{ productsStore.product?.final_price }}
+            </bdi>
+            <span class="text-muted-foreground body-2 ms-2">تومان</span>
+          </p>
         </div>
       </div>
 
-    </Teleport>
+      <div class="gap-2 flex-col w-full sm:w-auto flex sm:flex-row justify-between sm:items-center">
+
+        <!-- Quantity Selection -->
+        <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" size="sm" />
+
+        <!-- Add to Cart Button -->
+        <TheButton @click="handleAddToCart" :disabled="cartStore.loading" class="grow gap-4 sm:px-8!" variant="default"
+          :class="{ 'opacity-80!': !canAddToCart }">
+          <ShoppingCart v-if="!cartStore.loading" class="size-4" />
+          <span v-if="cartStore.loading">
+            <Loader2 class="size-4 animate-spin" />
+          </span>
+          <span v-else>افزودن به سبد</span>
+        </TheButton>
+
+      </div>
+    </BottomNavigation>
   </div>
 
   <div class="px-4 xl:px-12">
-    <ProductCarousel :products="productsStore.getRandomProducts" type="default" :loading="false"
+    <ProductCarousel :products="productsStore.getRandomProducts" type="default" :loading="false" navigation
       alignSlider="start" />
   </div>
 </template>
@@ -193,7 +189,10 @@ import { Check, ChevronDown, Loader2, ShoppingCart } from 'lucide-vue-next'
 import { FantastyHeading } from '~/components/ui/heading'
 import ProductCounter from '~/components/product/counter/index.vue'
 import type { CartItemAdd } from '~/types/cart.types'
+import { toast } from 'vue-sonner'
+import { useWindowSize } from '@vueuse/core'
 
+const { width } = useWindowSize()
 
 const config = useRuntimeConfig()
 
@@ -264,7 +263,7 @@ const scrollToSection = (targetId: string, offset: number = 80) => {
 const handleAddToCart = async () => {
   if (!productsStore.product) {
     scrollToSection('attributes-selection')
-    validationMessage.value = 'لطفاً ابتدا انتخاب رنگ و سایز مورد نظر را انجام دهید'
+    toast.error('لطفاً ابتدا انتخاب رنگ و سایز مورد نظر را انجام دهید')
     return
   }
 
@@ -272,14 +271,18 @@ const handleAddToCart = async () => {
   const hasSizes = (productsStore.product.attributes?.size?.length ?? 0) > 0
 
   if (hasColors && !selectedColorId.value) {
-    validationMessage.value = 'لطفاً رنگ مورد نظر را انتخاب کنید'
-    scrollToSection('color-selection')
+    toast.error('لطفاً رنگ مورد نظر را انتخاب کنید')
+    if (width.value < 1024) {
+      scrollToSection('color-selection')
+    }
     return
   }
 
   if (hasSizes && !selectedSizeId.value) {
-    validationMessage.value = 'لطفاً سایز مورد نظر را انتخاب کنید'
-    scrollToSection('size-selection')
+    toast.error('لطفاً سایز مورد نظر را انتخاب کنید')
+    if (width.value < 1024) {
+      scrollToSection('size-selection')
+    }
     return
   }
 
