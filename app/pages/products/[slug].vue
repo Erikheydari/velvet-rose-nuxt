@@ -1,9 +1,11 @@
 <template>
-    <div class="min-h-screen default-inner-container pt-36 lg:pt-24">
-        <ProductGrid v-if="categoriesStore.category" :filterable="false" :loading="categoriesStore.isLoading" :title="categoriesStore.getCategoryName(slug)">
-            <ProductCard v-for="product in categoriesStore.category.products" :key="product.id" :product="product" type="default" />
-        </ProductGrid>
-    </div>
+  <div class="min-h-screen default-inner-container default-padding-top">
+    <ProductGrid v-if="categoriesStore.category" :filterable="false" :loading="categoriesStore.isLoading"
+      :title="categoriesStore.getCategoryName(slug)">
+      <ProductCard v-for="product in categoriesStore.category.products" :key="product.id" :product="product"
+        type="default" />
+    </ProductGrid>
+  </div>
 </template>
 
 <script setup>
@@ -25,8 +27,14 @@ watch(
 )
 
 onMounted(async () => {
-    await categoriesStore.fetchCategoryBySlug(slug);
+  await categoriesStore.fetchCategoryBySlug(slug);
 });
+
+const title = computed(() => categoriesStore.getCategoryName(slug))
+
+useHead({
+  title: title
+})
 </script>
 
 <style scoped></style>
