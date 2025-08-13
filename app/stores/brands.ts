@@ -1,15 +1,22 @@
 import { defineStore } from 'pinia'
 import { useEndpointStore } from './endpoints'
-import type { Brand, Category } from '~/types/product.types'
+import type { Product } from '~/types/product.types'
 import { useApiStore } from './api'
+import type { ProductByBrand } from '~/types/brand.types'
 
 export const useBrandsStore = defineStore('brandsStore', () => {
     const endpointStore = useEndpointStore()
     const apiStore = useApiStore()
 
-    const brands = ref<Brand[]>([])
+    const brands = ref<ProductByBrand[]>([])
     const isLoading = ref(false)
     const error = ref<string | null>(null)
+
+    // Store products for each brand using a Map for efficient lookup
+    const brandProductsMap = ref<Map<string, Product[]>>(new Map())
+    const brandProducts = ref<Product[]>([])
+    const brand = ref<ProductByBrand | null>(null)
+    const isLoadingBrands = ref<Set<string>>(new Set())
 
     const fetchBrands = async () => {
         try {
@@ -18,7 +25,7 @@ export const useBrandsStore = defineStore('brandsStore', () => {
                 method: 'get',
             });
             if (data) {
-                brands.value = data as Brand[]
+                brands.value = data as ProductByBrand[]
             }
         } catch (err) {
             error.value = err as string
@@ -31,17 +38,62 @@ export const useBrandsStore = defineStore('brandsStore', () => {
         return brands.value.find(brand => brand.slug === slug)
     }
 
+    const fetchBrandProductsBySlug = async (slug: string) => {
+        try {
+            isLoadingBrands.value.add(slug)
+            const { data, error } = await apiStore.apiRequest(endpointStore.brands.getProductsBySlug(slug), {
+                method: 'get',
+            });
+            if (data) {
+                brandProductsMap.value.set(slug, data.products as Product[])
+                brandProducts.value = data.products as Product[]
+                brand.value = data.brand as ProductByBrand
+                return data.products as Product[]
+            }
+        } catch (err) {
+            error.value = err as string
+        } finally {
+            isLoadingBrands.value.delete(slug)
+        }
+    }
+
+    const fetchAllBrandProducts = async () => {
+        if (brands.value.length === 0) return
+        
+        // Fetch products for all brands concurrently
+        const promises = brands.value
+            .filter(brand => brand.slug)
+            .map(brand => fetchBrandProductsBySlug(brand.slug!))
+        
+        await Promise.all(promises)
+    }
+
+    const getBrandProducts = (slug: string) => {
+        return brandProductsMap.value.get(slug) || []
+    }
+
+    const isBrandLoading = (slug: string) => {
+        return isLoadingBrands.value.has(slug)
+    }
 
     return {
         //state
         isLoading,
         error,
         brands,
+        brandProducts,
+        brandProductsMap,
+        isLoadingBrands,
+        brand,
 
         //actions
         fetchBrands,
+        fetchBrandProductsBySlug,
+        fetchAllBrandProducts,
 
         //getters
         getBrandBySlug,
+        getBrandProducts,
+        isBrandLoading,
     }
 })
