@@ -40,8 +40,7 @@
 
 <script lang="ts" setup>
 import type { Product } from '~/types/product.types';
-
-export type ProductCardType = 'default' | 'secondary' | 'primary'
+import type { ProductCardType } from '~/types/components/product.types';
 
 const props = defineProps<{
   product: Product;
