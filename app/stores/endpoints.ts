@@ -19,6 +19,7 @@ export const useEndpointStore = defineStore('endpointStore', () => {
 
     const brands = {
         get: `${apiUrl}${apiPrefix}/brands`,
+        getProductsBySlug: (slug: string) => `${apiUrl}${apiPrefix}/brands/${slug}/products`,
     }
 
     const categories = {
@@ -41,7 +42,6 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         verifyOtp: `${apiUrl}${apiPrefix}/verify-otp`,
         forgotPassword: `${apiUrl}${apiPrefix}/forgot-password`,
         logout: `${apiUrl}${apiPrefix}/logout`,
-        me: `${apiUrl}${apiPrefix}/users/me`,
         profile: `${apiUrl}${apiPrefix}/profile`,
     }
 
@@ -57,7 +57,8 @@ export const useEndpointStore = defineStore('endpointStore', () => {
     }
 
     const payments = {
-        initiate: `${apiUrl}${apiPrefix}/payments/initiate`,
+        initiate: `${apiUrl}${apiPrefix}/payment/initiate`,
+        verify: (authority: string) => `${apiUrl}${apiPrefix}/payment/verify?Authority=${authority}`,
     }
 
     return {
