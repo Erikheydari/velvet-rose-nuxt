@@ -33,9 +33,9 @@ const props = withDefaults(defineProps<{
   products: Product[]
   type: ProductCardType
   loading: boolean
-  navigation: boolean
-  slideClass: string
-  alignSlider: 'start' | 'center' | 'end'
+  navigation?: boolean
+  slideClass?: string
+  alignSlider?: 'start' | 'center' | 'end'
 }>(), {
   loading: true,
   navigation: true,
