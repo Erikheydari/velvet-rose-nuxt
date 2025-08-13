@@ -81,6 +81,7 @@ export const useOrdersStore = defineStore('ordersStore', () => {
         method: 'post',
         body: form,
         credentials: true,
+        showErrorToast: false, // Component will handle error display
       })
       if (apiError) {
         error.value = apiError
