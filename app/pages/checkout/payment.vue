@@ -3,6 +3,7 @@
     <FormSetOrder />
     <template #cart-box>
       <CartBox :loading="cartStore.loading" :disabled="!paymentStore.paymentAuthority"
+        :button-is-active="paymentStore.paymentAuthority ? true : false"
         :handle-click="() => paymentStore.initiatePayment()" :cart-items="cartStore.cartItems" button-text="پرداخت" />
     </template>
   </CheckoutLayout>
