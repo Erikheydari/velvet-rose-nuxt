@@ -10,6 +10,7 @@ export type CreateOrderPayload = {
   full_name: string
   phone_number: string
   city_id: number
+  postal_code: string
   description?: string | null
 }
 
@@ -75,6 +76,7 @@ export const useOrdersStore = defineStore('ordersStore', () => {
       form.append('full_name', payload.full_name)
       form.append('phone_number', payload.phone_number)
       form.append('city_id', String(payload.city_id))
+      form.append('postal_code', String(payload.postal_code))
       if (payload.description) form.append('description', payload.description)
 
       const { data, raw, error: apiError } = await apiStore.apiRequest<FormData, any>(endpoints.orders.create, {
@@ -98,6 +100,50 @@ export const useOrdersStore = defineStore('ordersStore', () => {
     }
   }
 
+  // New: list and detail state
+  const orders = ref<any[]>([])
+  const selectedOrder = ref<any | null>(null)
+
+  const fetchOrders = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      const { data, error: apiError } = await apiStore.apiRequest<undefined, any[]>(endpoints.orders.get, {
+        method: 'get',
+        credentials: true,
+      })
+      if (apiError) {
+        error.value = apiError
+        orders.value = []
+        return { error: apiError }
+      }
+      orders.value = Array.isArray(data) ? data : ((data as any)?.data ?? [])
+      return { data: orders.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchOrderDetail = async (id: number | string) => {
+    loading.value = true
+    error.value = null
+    try {
+      const { data, error: apiError } = await apiStore.apiRequest<undefined, any>(endpoints.orders.detail(id), {
+        method: 'get',
+        credentials: true,
+      })
+      if (apiError) {
+        error.value = apiError
+        selectedOrder.value = null
+        return { error: apiError }
+      }
+      selectedOrder.value = (data as any) ?? null
+      return { data: selectedOrder.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     // state
     loading,
@@ -106,10 +152,14 @@ export const useOrdersStore = defineStore('ordersStore', () => {
     cities,
     selectedProvinceId,
     selectedCityId,
+    orders,
+    selectedOrder,
 
     // actions
     fetchProvinces,
     fetchCitiesByProvince,
     createOrder,
+    fetchOrders,
+    fetchOrderDetail,
   }
 }) 
