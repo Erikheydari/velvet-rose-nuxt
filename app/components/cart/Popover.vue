@@ -1,5 +1,5 @@
 <template>
-  <Teleport :to="teleportTo">
+  <Teleport to="body" :disabled="!isMobile">
     <Transition enter-active-class="transition-all duration-300 ease-out"
       enter-from-class="opacity-0 transform translate-y-full md:translate-y-[-10px]"
       enter-to-class="opacity-100 transform translate-y-0" leave-active-class="transition-all duration-200 ease-in"
@@ -74,14 +74,8 @@ const isUnmounting = ref(false)
 
 const teleportTo = ref('body')
 
-//on resize change Teleport to
-watch(width, (newWidth) => {
-  if (newWidth < 1024) {
-    teleportTo.value = 'body'
-  } else {
-    teleportTo.value = '#cart-trigger'
-  }
-})
+
+const isMobile = computed(() => width.value < 1024)
 
 // Computed property to safely check if cart is mounted and active
 const isCartMounted = computed(() => props.isActive && !!cartContainerRef.value && !isUnmounting.value)
