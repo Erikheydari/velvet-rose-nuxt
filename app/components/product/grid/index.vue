@@ -42,10 +42,19 @@
     </div>
 
     <!-- Grid -->
-    <TransitionGroup v-if="!loading" tag="div" class="product-grid" :css="false" aria-busy="false"
-      @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
-      <slot />
-    </TransitionGroup>
+    <template v-if="!loading">
+      <TransitionGroup tag="div" class="product-grid" :css="false" aria-busy="false"
+        @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
+        <slot />
+      </TransitionGroup>
+      
+      <!-- Empty state when no products -->
+      <div v-if="hasEmptySlot" class="col-span-full">
+        <slot name="empty">
+          <ProductEmpty class="py-16" />
+        </slot>
+      </div>
+    </template>
 
     <!-- Skeletons while loading -->
     <SkeletonProductGrid v-else :count="skeletonCount" />
@@ -66,6 +75,8 @@ const categoriesStore = useCategoriesStore();
 const categories = computed(() => categoriesStore.categories);
 const productsStore = useProductsStore();
 
+const slots = useSlots();
+
 interface Props {
   filterable?: boolean;
   title?: string;
@@ -79,6 +90,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const selectedCategoryFilter = ref<string | null>(null);
 const skeletonCount = 8;
+
+// Check if the default slot is empty (no products)
+const hasEmptySlot = computed(() => {
+  if (props.loading) return false;
+  const defaultSlot = slots.default?.();
+  return !defaultSlot || defaultSlot.length === 0 || 
+    (defaultSlot.length === 1 && !defaultSlot[0].children);
+});
 
 const clearCategoryFilter = async () => {
   selectedCategoryFilter.value = null;
