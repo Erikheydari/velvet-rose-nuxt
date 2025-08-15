@@ -393,30 +393,58 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Initialize auth state when store is created
     const initAuth = async () => {
-        if (import.meta.client) {
+        if (import.meta.client && !isInitialized.value) {
             const savedToken = getTokenFromCookie()
             const snap = loadUserSnapshot()
+            
             if (savedToken) {
                 token.value = savedToken
             }
-            // If we have both, trust snapshot for fast UX without network
+            
+            // If we have both token and snapshot, trust snapshot for fast UX
             if (savedToken && snap) {
                 user.value = snap
                 isAuthenticated.value = true
                 isInitialized.value = true
-                // Optionally refresh in background without blocking
-                setTimeout(() => {
-                    checkAuthStatus()
-                }, 0)
+                
+                // Validate in background without blocking UI
+                setTimeout(async () => {
+                    try {
+                        await checkAuthStatus()
+                    } catch (err) {
+                        // Silent fail for background validation
+                        console.warn('Background auth validation failed:', err)
+                    }
+                }, 100)
                 return
             }
-            // Otherwise, fallback to network check if token exists
+            
+            // Otherwise, validate token if it exists
             if (savedToken) {
-                await checkAuthStatus()
+                try {
+                    await checkAuthStatus()
+                } catch (err) {
+                    // If validation fails, clear auth state
+                    clearAuthState({ clearToken: true })
+                } finally {
+                    isInitialized.value = true
+                }
                 return
             }
+            
+            // No token, mark as initialized
             isInitialized.value = true
         }
+    }
+
+    // Auto-initialize on client side
+    if (import.meta.client) {
+        // Initialize immediately when store is created
+        nextTick(() => {
+            if (!isInitialized.value) {
+                initAuth()
+            }
+        })
     }
 
     return {
@@ -438,6 +466,7 @@ export const useAuthStore = defineStore('auth', () => {
         isLoggedIn,
         authToken,
         hasAuthSnapshot,
+        getTokenFromCookie,
 
         // Actions
         checkAuthStatus,
