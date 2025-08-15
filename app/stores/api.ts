@@ -173,10 +173,6 @@ export const useApiStore = defineStore('apiStore', () => {
 
       const response = await $fetch<{ data: TResponse } | TResponse>(endpoint, fetchOptions);
 
-      console.log('Raw API response:', response)
-      console.log('Response type:', typeof response)
-      console.log('Response constructor:', response?.constructor?.name)
-
       // Support both wrapped and raw responses
       const data = (response && typeof response === 'object' && 'data' in (response as any))
         ? (response as any).data as TResponse
