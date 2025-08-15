@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { User, ShoppingBag, Shield } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 
 // Protect this route - only authenticated users can access
@@ -16,73 +17,71 @@ useHead({
 
 const authStore = useAuthStore()
 
-const handleLogout = async () => {
+const joinDate = computed(() => {
+  const user = authStore.currentUser as any
+  if (!user?.created_at) return 'نامشخص'
   try {
-    await authStore.logout()
-  } catch (error) {
-    console.error('Logout error:', error)
+    const date = new Date(user.created_at)
+    return date.toLocaleDateString('fa-IR')
+  } catch {
+    return 'نامشخص'
   }
-}
+})
 </script>
 
 <template>
-  <div class="container mx-auto default-padding-top">
-    <div class="max-w-4xl mx-auto">
+  <div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="heading-5 font-bold">اطلاعات حساب کاربری</h1>
+        <p class="body-2 text-muted-foreground mt-1">مدیریت اطلاعات شخصی و تنظیمات حساب</p>
+      </div>
+    </div>
 
-      <!-- User Information Card -->
-      <div class="bg-background rounded-lg border p-6 mb-6">
-        <h2 class="title-4 mb-4">اطلاعات حساب کاربری</h2>
+    <!-- User Information Card -->
+    <TheCard class="bg-background border py-0">
+      <TheCardContent class="p-6 space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <User class="w-8 h-8 text-primary" />
+          </div>
+          <div>
+            <h3 class="heading-6 font-semibold">{{ authStore.currentUser?.name || 'کاربر عزیز' }}</h3>
+            <p class="body-2 text-muted-foreground">{{ authStore.currentUser?.email || 'ایمیل ثبت نشده' }}</p>
+          </div>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label class="text-sm font-medium text-muted-foreground">ایمیل:</label>
-            <p class="text-foreground">{{ authStore.currentUser?.email || 'ثبت نشده' }}</p>
+            <label class="body-2 font-medium text-muted-foreground">ایمیل</label>
+            <p class="body-1 text-foreground">{{ authStore.currentUser?.email || 'ثبت نشده' }}</p>
           </div>
 
           <div class="space-y-2" v-if="authStore.currentUser?.name">
-            <label class="text-sm font-medium text-muted-foreground">نام:</label>
-            <p class="text-foreground">{{ authStore.currentUser.name }}</p>
+            <label class="body-2 font-medium text-muted-foreground">نام کاربری</label>
+            <p class="body-1 text-foreground">{{ authStore.currentUser.name }}</p>
           </div>
 
           <div class="space-y-2">
-            <label class="text-sm font-medium text-muted-foreground">شناسه کاربری:</label>
-            <p class="text-foreground text-sm font-mono">{{ authStore.currentUser?.id || 'نامشخص' }}</p>
+            <label class="body-2 font-medium text-muted-foreground">شناسه کاربری</label>
+            <p class="body-1 text-foreground font-mono">{{ authStore.currentUser?.id || 'نامشخص' }}</p>
+          </div>
+
+          <div class="space-y-2">
+            <label class="body-2 font-medium text-muted-foreground">تاریخ عضویت</label>
+            <p class="body-1 text-foreground">{{ joinDate }}</p>
           </div>
         </div>
-      </div>
+      </TheCardContent>
+    </TheCard>
 
-      <!-- Quick Actions -->
-      <div class="flex flex-col gap-4 default-padding-x lg:px-0!">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <TheButton to="/profile/orders" variant="tonal" size="lg">
-            <span class="font-medium">سفارشات من</span>
-          </TheButton>
-
-          <TheButton to="/profile/settings" variant="tonal" size="lg">
-            <span class="font-medium">تنظیمات</span>
-          </TheButton>
-
-          <TheButton to="/profile/security" variant="tonal" size="lg">
-            <span class="font-medium">امنیت حساب</span>
-          </TheButton>
-
-          <TheButton @click="handleLogout" variant="tonal" size="lg">
-            <span class="font-medium">خروج</span>
-          </TheButton>
-        </div>
-      </div>
-
-
-      <!-- Loading State -->
-      <div v-if="authStore.loading" class="text-center py-8">
-        <p class="text-muted">در حال بارگذاری...</p>
-      </div>
-
-      <!-- Error Display -->
-      <div v-if="authStore.error" class="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mt-4">
+    <!-- Error Display -->
+    <TheCard v-if="authStore.error" class="bg-destructive/10 border border-destructive/20">
+      <TheCardContent class="p-4">
         <p class="text-destructive">{{ authStore.error }}</p>
-      </div>
-    </div>
+      </TheCardContent>
+    </TheCard>
   </div>
 </template>
 
