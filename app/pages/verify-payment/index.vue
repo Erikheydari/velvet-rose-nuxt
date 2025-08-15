@@ -28,7 +28,7 @@
         <div v-else-if="verificationResult" class="space-y-6">
           <!-- Status Icon and Title -->
           <div class="text-center">
-            <div v-if="verificationResult.status === '200'" 
+            <div v-if="verificationResult.status === 'OK'" 
                  class="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check class="w-10 h-10 text-success" />
             </div>
@@ -38,10 +38,10 @@
             </div>
             
             <h3 class="heading-4 text-card-foreground font-bold mb-2">
-              {{ verificationResult.status === '200' ? 'پرداخت موفقیت‌آمیز!' : 'وضعیت پرداخت' }}
+              {{ verificationResult.status === 'OK' ? 'پرداخت موفقیت‌آمیز!' : 'وضعیت پرداخت' }}
             </h3>
             <p class="body-2 text-muted-foreground">
-              {{ verificationResult.status === '200' ? 'تراکنش شما با موفقیت انجام شد' : 'لطفاً وضعیت تراکنش را بررسی کنید' }}
+              {{ verificationResult.status === 'OK' ? 'تراکنش شما با موفقیت انجام شد' : 'لطفاً وضعیت تراکنش را بررسی کنید' }}
             </p>
           </div>
 
@@ -52,19 +52,19 @@
               <div class="space-y-3">
                 <div class="flex justify-between items-center py-2 border-b border-border/50">
                   <span class="body-2 text-muted-foreground">وضعیت:</span>
-                  <span class="body-2 font-medium text-card-foreground">{{ verificationResult.status }}</span>
+                  <span class="body-2 font-medium text-card-foreground">{{ verificationResult.order.payment_status === 'paid' ? 'پرداخت شده' : 'معلق' }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b border-border/50">
-                  <span class="body-2 text-muted-foreground">کد پیگیری:</span>
-                  <span class="body-2 font-mono text-primary break-all">{{ authority }}</span>
+                  <span class="body-2 text-muted-foreground">شماره فاکتور:</span>
+                  <span class="body-2 font-medium text-card-foreground">{{ verificationResult.order.id }}</span>
                 </div>
-                <div v-if="verificationResult.ref_id" class="flex justify-between items-center py-2 border-b border-border/50">
-                  <span class="body-2 text-muted-foreground">شماره مرجع:</span>
-                  <span class="body-2 font-mono text-primary break-all">{{ verificationResult.ref_id }}</span>
+                <div v-if="verificationResult.transaction_id" class="flex justify-between items-center py-2 border-b border-border/50">
+                  <span class="body-2 text-muted-foreground">شماره تراکنش:</span>
+                  <span class="body-2 font-mono text-primary break-all">{{ verificationResult.transaction_id }}</span>
                 </div>
-                <div v-if="verificationResult.amount" class="flex justify-between items-center py-2">
-                  <span class="body-2 text-muted-foreground">مبلغ:</span>
-                  <span class="body-2 font-medium text-card-foreground">{{ verificationResult.amount }} تومان</span>
+                <div v-if="verificationResult.totalAmount" class="flex justify-between items-center py-2">
+                  <span class="body-2 text-muted-foreground">مبلغ کل:</span>
+                  <span class="body-2 font-medium text-card-foreground">{{ verificationResult.totalAmount.toLocaleString('fa-IR') }} تومان</span>
                 </div>
               </div>
             </CardContent>
@@ -128,6 +128,7 @@ onMounted(() => {
     loading.value = false
   }
 })
+
 
 const verifyPayment = async () => {
   try {
