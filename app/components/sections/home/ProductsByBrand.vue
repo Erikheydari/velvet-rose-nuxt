@@ -23,9 +23,9 @@
             'transition-all duration-500 origin-bottom md:max-w-none lg:max-w-[15vw] ',
             { 'scale-130 md:scale-[1.2] lg:scale-[1.6]': index === selectedIndex, 'md:scale-60 lg:scale-100': index !== selectedIndex }
           ]">
-            <figure class="aspect-square w-auto product-image">
+            <NuxtLink :to="`/product/${product.slug}`" class="aspect-square w-auto product-image">
               <img :src="`${product.image?.src}`" :alt="product.name" class="w-full h-full object-contain" />
-            </figure>
+            </NuxtLink>
           </div>
         </TheCarouselItem>
       </TheCarouselContent>
@@ -50,6 +50,9 @@ import type { Product } from '~/types/product.types';
 import type { CarouselApi } from '~/components/ui/carousel';
 import { ref, watch } from 'vue';
 import { FantastyHeading } from '~/components/ui/heading';
+import { useBrandsStore } from '~/stores/brands';
+
+const brandsStore = useBrandsStore()
 
 const emblaMainApi = ref<CarouselApi>();
 const emblaThumbnailApi = ref<CarouselApi>();
@@ -76,6 +79,10 @@ const props = defineProps<{
 
 const localLoading = computed(() => {
   return props.loading || props.products.length === 0
+})
+
+onMounted(() => {
+  brandsStore.fetchBrandProductsBySlug('tom-ford')
 })
 </script>
 <style scoped>
