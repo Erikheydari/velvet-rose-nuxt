@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full">
     <Header>
-      <template v-if="router.currentRoute.value.path.includes('product')" #left-section>
+      <template v-if="router.currentRoute.value.path.startsWith('/product/')" #left-section>
         <TheButton
           variant="tonal"
           size="icon-lg"
