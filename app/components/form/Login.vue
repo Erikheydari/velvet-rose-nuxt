@@ -1,5 +1,5 @@
 <template>
-    <form class="flex flex-col gap-3 w-full" @submit.prevent="handleSubmit">
+    <form class="flex flex-col gap-3 w-full" @submit.prevent="handleSubmit" autocomplete="on">
         <TheInput v-if="!showOtp" v-model="emailValue" placeholder="ایمیل" class="h-12"
             :aria-invalid="!isEmailValid && emailValue.length > 0" :disabled="authStore.loading" inputmode="email" />
 
