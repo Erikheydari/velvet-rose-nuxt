@@ -17,6 +17,10 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         contact: `${apiUrl}${apiPrefix}/pages/contact-us`,
     }
 
+    const contact = {
+        send: `${apiUrl}${apiPrefix}/contact`,
+    }
+
     const brands = {
         get: `${apiUrl}${apiPrefix}/brands`,
         getProductsBySlug: (slug: string) => `${apiUrl}${apiPrefix}/brands/${slug}/products`,
@@ -41,6 +45,7 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         register: `${apiUrl}${apiPrefix}/register`,
         verifyOtp: `${apiUrl}${apiPrefix}/verify-otp`,
         forgotPassword: `${apiUrl}${apiPrefix}/forgot-password`,
+        resetPassword: `${apiUrl}${apiPrefix}/reset-password`,
         logout: `${apiUrl}${apiPrefix}/logout`,
         profile: `${apiUrl}${apiPrefix}/profile`,
     }
@@ -73,5 +78,6 @@ export const useEndpointStore = defineStore('endpointStore', () => {
         locations,
         orders,
         payments,
+        contact,
     }
 })
