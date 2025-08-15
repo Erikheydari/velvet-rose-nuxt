@@ -35,13 +35,14 @@
 
             <div class="md:col-span-2">
               <label class="body-2 text-primary/80 mb-2 block">توضیحات</label>
-              <Textarea v-model="form.description" class="h-12 px-4 lg:px-6" placeholder="توضیحات" rows="6" :aria-invalid="!!errors.description" />
+              <Textarea v-model="form.description" class="px-4 lg:px-6" placeholder="توضیحات" rows="6" :aria-invalid="!!errors.description" />
               <p v-if="errors.description" class="caption-2 text-destructive mt-1">{{ errors.description }}</p>
             </div>
           </div>
 
-          <TheButton type="submit" size="lg" class="rounded-2xl px-8">
-            ثبت درخواست
+          <TheButton type="submit" size="lg" class="rounded-2xl px-8" :disabled="loading">
+            <Loader2 v-if="loading" class="size-4 animate-spin" />
+            <span v-else>ثبت درخواست</span>
           </TheButton>
         </form>
       </div>
@@ -52,6 +53,14 @@
 <script lang="ts" setup>
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useApiStore } from '@/stores/api'
+import { useEndpointStore } from '@/stores/endpoints'
+import { toast } from 'vue-sonner'
+import { Loader2 } from 'lucide-vue-next'
+import { TheButton } from '#components'
+
+const apiStore = useApiStore()
+const endpointStore = useEndpointStore()
 
 const form = reactive({
   name: '',
@@ -67,6 +76,8 @@ const errors = reactive({
   description: '',
 })
 
+const loading = ref(false)
+
 const validate = () => {
   errors.name = form.name ? '' : 'نام را وارد کنید'
   errors.email = /\S+@\S+\.\S+/.test(form.email) ? '' : 'ایمیل معتبر نیست'
@@ -75,10 +86,49 @@ const validate = () => {
   return !errors.name && !errors.email && !errors.subject && !errors.description
 }
 
-const handleSubmit = () => {
+const resetForm = () => {
+  form.name = ''
+  form.email = ''
+  form.subject = ''
+  form.description = ''
+  Object.keys(errors).forEach(key => {
+    errors[key as keyof typeof errors] = ''
+  })
+}
+
+const handleSubmit = async () => {
   if (!validate()) return
-  // TODO: send to API when available
-  console.log('contact form submit', { ...form })
+  
+  loading.value = true
+  
+  try {
+    const response = await apiStore.apiRequest(
+      endpointStore.contact.send,
+      {
+        method: 'post',
+        body: {
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          description: form.description
+        }
+      }
+    )
+
+    if (response.error) {
+      toast.error('خطا در ارسال پیام. لطفا دوباره تلاش کنید.')
+      return
+    }
+
+    toast.success('پیام شما با موفقیت ارسال شد')
+    resetForm()
+    
+  } catch (error) {
+    console.error('Contact form error:', error)
+    toast.error('خطا در ارسال پیام. لطفا دوباره تلاش کنید.')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
