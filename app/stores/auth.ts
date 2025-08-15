@@ -18,6 +18,8 @@ export const useAuthStore = defineStore('auth', () => {
     const isInitialized = ref<boolean>(false)
     const token = ref<string | null>(null)
     const needVerify = ref<boolean>(false)
+    const isForgotPasswordOtpSent = ref<boolean>(false)
+    const forgotPasswordEmail = ref<string | null>(null)
 
     // Registration and OTP state
     const pendingEmail = ref<string>('')
@@ -174,7 +176,6 @@ export const useAuthStore = defineStore('auth', () => {
             return true
         } catch (err: any) {
             error.value = err?.message || 'ثبت نام ناموفق بود.'
-            // Error will be displayed by component watcher
             return false
         } finally {
             loading.value = false
@@ -321,6 +322,71 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    const requestPasswordReset = async (email: string) => {
+        try {
+            forgotPasswordEmail.value = email
+            loading.value = true
+            error.value = null
+
+            const { data, error: apiError } = await apiStore.apiRequest(endpoints.auth.forgotPassword, {
+                method: 'post',
+                body: { email },
+                showErrorToast: false,
+            })
+
+            if (apiError) {
+                error.value = apiError
+                return false
+            }
+
+            isForgotPasswordOtpSent.value = true
+            toast.success(data?.message)
+            return true
+        } catch (err: any) {
+            error.value = err?.message || 'درخواست بازیابی رمز عبور ناموفق بود'
+            forgotPasswordEmail.value = null
+            return false
+        } finally {
+            loading.value = false
+        }
+    }
+
+    const resetPassword = async (email: string, password: string, otp: string) => {
+        try {
+            loading.value = true
+            error.value = null
+
+            const form = new FormData()
+            form.append('email', email)
+            form.append('otp_code', otp)
+            form.append('password', password)
+            form.append('password_confirmation', password)
+
+            const { data, error: apiError } = await apiStore.apiRequest(endpoints.auth.resetPassword, {
+                method: 'post',
+                body: form,
+                showErrorToast: false,
+            })
+
+            if (apiError) {
+                error.value = apiError
+                return false
+            }
+
+            // Clear forgot password state on success
+            forgotPasswordEmail.value = null
+            isForgotPasswordOtpSent.value = false
+            
+            toast.success(data?.message || 'رمز عبور با موفقیت تغییر کرد')
+            return true
+        } catch (err: any) {
+            error.value = err?.message || 'تغییر رمز عبور ناموفق بود'
+            return false
+        } finally {
+            loading.value = false
+        }
+    }
+
     const clearError = () => {
         error.value = null
     }
@@ -364,6 +430,8 @@ export const useAuthStore = defineStore('auth', () => {
         pendingEmail: readonly(pendingEmail),
         token: readonly(token),
         needVerify: readonly(needVerify),
+        isForgotPasswordOtpSent: readonly(isForgotPasswordOtpSent),
+        forgotPasswordEmail,
 
         // Getters
         currentUser,
@@ -378,6 +446,8 @@ export const useAuthStore = defineStore('auth', () => {
         verifyOtp,
         logout,
         clearError,
-        initAuth
+        initAuth,
+        requestPasswordReset,
+        resetPassword,
     }
 })
