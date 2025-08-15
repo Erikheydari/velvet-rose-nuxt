@@ -30,12 +30,16 @@
               </DropdownMenuTrigger>
               <DropdownMenuContent class="w-52" align="start">
                 <DropdownMenuItem>
-                  <User class="stroke-1" />
-                  مشاهده حساب کاربری
+                  <NuxtLink to="/profile" class="w-full flex items-cetner gap-2">
+                    <User class="stroke-1" />
+                    مشاهده حساب کاربری
+                  </NuxtLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <ScrollText class="stroke-1" />
-                  مشاهده سفارشات
+                  <NuxtLink to="/profile/orders" class="w-full flex items-cetner gap-2">
+                    <ScrollText class="stroke-1" />
+                    مشاهده سفارشات
+                  </NuxtLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" class="items-center" @click="authStore.logout">
                   <LogOut class="-mb-1 stroke-1" />
@@ -55,8 +59,8 @@
 
         <!-- Right Section - Logo -->
         <NuxtLink to="/" class="shrink-0 hidden lg:block">
-          <Logo class="transition-all duration-300 z-49" :class="{ 'h-10 md:h-12': isSticky, 'h-14 md:h-16': !isSticky }"
-            alt="لوگو سایت" />
+          <Logo class="transition-all duration-300 z-49"
+            :class="{ 'h-10 md:h-12': isSticky, 'h-14 md:h-16': !isSticky }" alt="لوگو سایت" />
         </NuxtLink>
       </div>
     </div>
@@ -83,7 +87,7 @@
 
     <MenuMobile :open="isMenuOpen" @close="isMenuOpen = false" />
 
-    <BottomNavigation v-if="!router.currentRoute.value.path.includes('product')" class="flex justify-between w-full">
+    <BottomNavigation v-if="!router.currentRoute.value.path.startsWith('/product/')" class="flex justify-between w-full">
 
       <TheButton variant="tonal" size="icon-lg" class="shrink-0 bg-primary hover:bg-primary/90" to="/">
         <Home class="size-5 text-secondary" />
