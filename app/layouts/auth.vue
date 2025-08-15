@@ -12,18 +12,22 @@ const { isAuthenticated, token } = storeToRefs(authStore)
 
 const redirectIfAuthenticated = async () => {
   if (!token.value) return
-  // If token exists but user not validated yet, check profile
-  if (!isAuthenticated.value) {
-    await authStore.checkAuthStatus()
-  }
-  if (isAuthenticated.value) {
-    if (import.meta.client) {
-      const { toast } = await import('vue-sonner')
-      toast.info('شما در حال حاضر وارد شدید!')
+  
+  // Don't redirect if we're already being redirected or navigating
+  if (import.meta.client && window.location.pathname.startsWith('/auth')) {
+    // If token exists but user not validated yet, check profile
+    if (!isAuthenticated.value) {
+      await authStore.checkAuthStatus()
     }
-    const saved = consumeReturnUrl()
-    const target = saved && !saved.startsWith('/auth') ? saved : '/'
-    await navigateTo(target, { replace: true })
+    if (isAuthenticated.value) {
+      if (import.meta.client) {
+        const { toast } = await import('vue-sonner')
+        toast.info('شما در حال حاضر وارد شدید!')
+      }
+      const saved = consumeReturnUrl()
+      const target = saved && !saved.startsWith('/auth') ? saved : '/'
+      await navigateTo(target, { replace: true })
+    }
   }
 }
 
