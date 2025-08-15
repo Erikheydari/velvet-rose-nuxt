@@ -11,7 +11,7 @@
           کیف و کفش فعالیت می‌کنیم. ولوت رز با هدف ارائه بهترین محصولات با کیفیت و قیمت مناسب، تنها شش ماه است
           که آغاز به کار کرده است و در این مدت کوتاه توانسته‌ایم به یکی از مقاصد محبوب خریداران آنلاین تبدیل شویم.
         </p>
-        <TheButton variant="secondary" class="text-primary w-fit" href="#contact" size="lg">
+        <TheButton variant="secondary" class="text-primary w-fit" to="/contact" size="lg">
           ارتباط با ما
         </TheButton>
       </div>
