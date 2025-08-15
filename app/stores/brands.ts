@@ -41,17 +41,36 @@ export const useBrandsStore = defineStore('brandsStore', () => {
     const fetchBrandProductsBySlug = async (slug: string) => {
         try {
             isLoadingBrands.value.add(slug)
-            const { data, error } = await apiStore.apiRequest(endpointStore.brands.getProductsBySlug(slug), {
+            error.value = null
+            
+            const { data, error: apiError } = await apiStore.apiRequest(endpointStore.brands.getProductsBySlug(slug), {
                 method: 'get',
             });
-            if (data) {
-                brandProductsMap.value.set(slug, data.products as Product[])
-                brandProducts.value = data.products as Product[]
-                brand.value = data.brand as ProductByBrand
-                return data.products as Product[]
+            
+            if (apiError) {
+                error.value = apiError
+                brandProducts.value = []
+                brand.value = null
+                return []
             }
+            
+            if (data) {
+                const products = Array.isArray(data.products) ? data.products as Product[] : []
+                const brandData = data.brand as ProductByBrand || null
+                
+                brandProductsMap.value.set(slug, products)
+                brandProducts.value = products
+                brand.value = brandData
+                return products
+            }
+            
+            return []
         } catch (err) {
-            error.value = err as string
+            const errorMessage = typeof err === 'string' ? err : 'خطا در بارگذاری محصولات برند'
+            error.value = errorMessage
+            brandProducts.value = []
+            brand.value = null
+            return []
         } finally {
             isLoadingBrands.value.delete(slug)
         }
@@ -76,6 +95,12 @@ export const useBrandsStore = defineStore('brandsStore', () => {
         return isLoadingBrands.value.has(slug)
     }
 
+    const clearCurrentBrand = () => {
+        brandProducts.value = []
+        brand.value = null
+        error.value = null
+    }
+
     return {
         //state
         isLoading,
@@ -90,6 +115,7 @@ export const useBrandsStore = defineStore('brandsStore', () => {
         fetchBrands,
         fetchBrandProductsBySlug,
         fetchAllBrandProducts,
+        clearCurrentBrand,
 
         //getters
         getBrandBySlug,
