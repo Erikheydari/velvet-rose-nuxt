@@ -11,6 +11,10 @@
         </template>
       </ProductCard>
 
+      <template #empty>
+        <ProductEmpty class="py-16" />
+      </template>
+
       <template #pagination>
         <ProductPagination :meta="meta" @update:page="onPageChange" />
       </template>
