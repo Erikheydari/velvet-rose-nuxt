@@ -3,7 +3,7 @@
     <NuxtPage />
   </NuxtLayout>
 
-  <Toaster position="top-center" richColors />
+  <Toaster position="top-center" dir="rtl" richColors />
 </template>
 
 <script lang="ts" setup>
