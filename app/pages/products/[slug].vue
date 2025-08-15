@@ -1,15 +1,28 @@
 <template>
   <div class="min-h-screen default-inner-container default-padding-top">
-    <ProductGrid v-if="categoriesStore.category" :filterable="false" :loading="categoriesStore.isLoading"
-      :title="categoriesStore.getCategoryName(slug)">
-      <ProductCard v-for="product in categoriesStore.category.products" :key="product.id" :product="product"
-        type="default" />
+    <ProductGrid 
+      :filterable="false" 
+      :loading="categoriesStore.isLoading"
+      :title="pageTitle"
+    >
+      <ProductCard 
+        v-for="product in categoryProducts" 
+        :key="product.id" 
+        :product="product"
+        type="default" 
+      />
+
+      <template #empty>
+        <ProductEmpty 
+          :category-name="categoriesStore.category?.name"
+          class="py-16"
+        />
+      </template>
     </ProductGrid>
   </div>
 </template>
 
-<script setup>
-import { ProductGrid } from '#components';
+<script setup lang="ts">
 import { useCategoriesStore } from '~/stores/categories';
 
 const route = useRoute();
@@ -17,23 +30,46 @@ const { slug } = route.params;
 
 const categoriesStore = useCategoriesStore();
 
+// Computed values
+const categoryProducts = computed(() => {
+  return categoriesStore.category?.products || []
+})
+
+const pageTitle = computed(() => {
+  return categoriesStore.getCategoryName(slug as string) || 'محصولات دسته‌بندی'
+})
+
+// Fetch logic
+const fetchCategoryProducts = async (slugParam: string | string[]) => {
+  if (typeof slugParam === 'string' && slugParam) {
+    await categoriesStore.fetchCategoryBySlug(slugParam)
+  }
+}
+
+// Watch for route changes
 watch(
   () => route.params.slug,
-  (newSlug) => {
-    if (typeof newSlug === 'string' && newSlug) {
-      categoriesStore.fetchCategoryBySlug(newSlug)
+  (newSlug, oldSlug) => {
+    if (newSlug && newSlug !== oldSlug) {
+      fetchCategoryProducts(newSlug)
     }
   }
 )
 
-onMounted(async () => {
-  await categoriesStore.fetchCategoryBySlug(slug);
-});
+// Initial fetch
+onMounted(() => {
+  fetchCategoryProducts(slug)
+})
 
-const title = computed(() => categoriesStore.getCategoryName(slug))
-
+// SEO
 useHead({
-  title: title
+  title: pageTitle.value,
+  meta: [
+    { 
+      name: 'description', 
+      content: () => `مشاهده محصولات ${categoriesStore.category?.name || 'دسته‌بندی'} در فروشگاه آنلاین` 
+    }
+  ]
 })
 </script>
 
