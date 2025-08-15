@@ -57,6 +57,9 @@
         autocomplete="shipping street-address" required :aria-invalid="!isAddressValid && address.length > 0"
         enterkeyhint="next" />
 
+      <TheInput v-model="postalCode" class="w-full h-12! body-2 px-6 lg:px-8" placeholder="کد پستی" name="postal-code"
+        autocomplete="postal-code" required :aria-invalid="!isPostalCodeValid && postalCode.length > 0"
+        enterkeyhint="next" />
     </div>
 
     <div class="flex flex-col gap-2 lg:gap-4 p-4 border-border border rounded-2xl bg-background">
@@ -91,6 +94,7 @@ const address = ref('')
 const fullName = ref('')
 const phoneNumber = ref('')
 const description = ref('')
+const postalCode = ref('')
 
 // Select v-models use strings, we map to numbers in watchers
 const provinceModel = ref<string | null>(null)
@@ -99,9 +103,10 @@ const cityModel = ref<string | null>(null)
 const isAddressValid = computed(() => address.value.trim().length >= 5)
 const isFullNameValid = computed(() => fullName.value.trim().length >= 2)
 const isPhoneValid = computed(() => /^09\d{9}$/.test(phoneNumber.value))
+const isPostalCodeValid = computed(() => /^[0-9]{10}$/.test(postalCode.value))
 
 const canSubmit = computed(() => {
-  return isAddressValid.value && isFullNameValid.value && isPhoneValid.value && !!ordersStore.selectedProvinceId && !!ordersStore.selectedCityId
+  return isAddressValid.value && isFullNameValid.value && isPhoneValid.value && isPostalCodeValid.value && !!ordersStore.selectedProvinceId && !!ordersStore.selectedCityId
 })
 
 onMounted(async () => {
@@ -177,6 +182,7 @@ const handleSubmit = async () => {
     full_name: fullName.value,
     phone_number: phoneNumber.value,
     city_id: ordersStore.selectedCityId,
+    postal_code: postalCode.value,
     description: description.value || undefined,
   })
 
