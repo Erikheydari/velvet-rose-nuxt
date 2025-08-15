@@ -28,12 +28,26 @@
         <div
           class="flex flex-col lg:flex-row gap-4 lg:gap-2 items-start lg:items-end justify-between w-full relative z-11">
           <ProductCardPrice size="sm" :product="props.product" />
-          <ProductCounter v-model="quantity" :max-quantity="99" :min-quantity="1" :can-delete="true" size="sm"
-            @delete="handleDelete" />
+          <ProductCounter 
+            v-if="props.mode !== 'order'"
+            v-model="quantity" 
+            :max-quantity="99" 
+            :min-quantity="1" 
+            :can-delete="true" 
+            size="sm"
+            @delete="handleDelete" 
+          />
+          <div v-else class="text-sm text-muted-foreground">
+            تعداد: {{ props.quantity }}
+          </div>
         </div>
       </div>
     </div>
-    <NuxtLink :to="`/product/${props.product.slug}`" class="absolute top-0 left-0 w-full h-full z-10" />
+    <NuxtLink 
+      v-if="props.mode !== 'order'"
+      :to="`/product/${props.product.slug}`" 
+      class="absolute top-0 left-0 w-full h-full z-10" 
+    />
   </div>
 </template>
 
@@ -48,27 +62,48 @@ const cartStore = useCartStore();
 
 const props = defineProps<{
   product: CartItem['product']
-  itemId: number
+  itemId?: number
   quantity: number
   orientation?: 'horizontal' | 'vertical'
+  mode?: 'cart' | 'order'
+  orderItem?: any // For order-specific data structure
 }>()
 
-const selectedColor = computed(() => props.product.selected_attributes?.find(a => a.attribute === 'color'))
-const selectedSize = computed(() => props.product.selected_attributes?.find(a => a.attribute === 'size'))
+const selectedColor = computed(() => {
+  if (props.mode === 'order' && props.orderItem?.attribute) {
+    // For order items, get color from attribute array
+    const colorAttr = props.orderItem.attribute.find((attr: any) => attr.color)
+    return colorAttr ? { value: colorAttr.color, name: colorAttr.color } : null
+  }
+  // For cart items, use selected_attributes
+  return props.product.selected_attributes?.find(a => a.attribute === 'color')
+})
+
+const selectedSize = computed(() => {
+  if (props.mode === 'order' && props.orderItem?.attribute) {
+    // For order items, get size from attribute array
+    const sizeAttr = props.orderItem.attribute.find((attr: any) => attr.size)
+    return sizeAttr ? { value: sizeAttr.size, name: sizeAttr.size } : null
+  }
+  // For cart items, use selected_attributes
+  return props.product.selected_attributes?.find(a => a.attribute === 'size')
+})
 
 const colorSwatches = computed(() => selectedColor.value ? [{ value: selectedColor.value.name, name: selectedColor.value.value }] : [])
-const selectedColorLabel = computed(() => selectedColor.value?.value || '')
-const selectedSizeLabel = computed(() => selectedSize.value?.value || '')
+const selectedColorLabel = computed(() => selectedColor.value?.value || selectedColor.value?.name || '')
+const selectedSizeLabel = computed(() => selectedSize.value?.value || selectedSize.value?.name || '')
 
 const quantity = ref(props.quantity)
 
 const handleDelete = () => {
-  cartStore.removeFromCart(props.itemId)
+  if (props.itemId) {
+    cartStore.removeFromCart(props.itemId)
+  }
 }
 
-// Watch for quantity changes to update cart
+// Watch for quantity changes to update cart - only for cart mode
 watch(quantity, (newQuantity) => {
-  if (newQuantity !== props.quantity) {
+  if (props.mode !== 'order' && newQuantity !== props.quantity && props.itemId) {
     cartStore.updateCartItem(props.itemId, newQuantity)
   }
 })
