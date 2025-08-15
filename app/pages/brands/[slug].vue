@@ -1,9 +1,29 @@
 <template>
-  <ProductGrid v-if="brandsStore.brandProducts" :filterable="false" :loading="brandsStore.isLoading" class="default-inner-container default-padding-top default-margin-bottom"
-    :title="brandsStore.brand?.name || 'محصولات برند'">
-    <ProductCard v-for="product in brandsStore.brand?.products" :key="product.id" :product="product"
-      type="default" />
-  </ProductGrid>
+  <div class="default-inner-container default-padding-top default-margin-bottom">
+    <ProductGrid 
+      :filterable="false" 
+      :loading="isLoading" 
+      :title="pageTitle"
+    >
+      <!-- Products -->
+      <ProductCard 
+        v-for="product in brandProducts" 
+        :key="product.id" 
+        :product="product"
+        type="default" 
+      />
+
+      <!-- Empty State -->
+      <template v-if="!isLoading && brandProducts.length === 0">
+        <div class="col-span-full">
+          <ProductEmpty 
+            :brand-name="brandsStore.brand?.name"
+            class="py-16"
+          />
+        </div>
+      </template>
+    </ProductGrid>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -14,27 +34,60 @@ const { slug } = route.params;
 
 const brandsStore = useBrandsStore();
 
+// Computed values
+const isLoading = computed(() => {
+  if (typeof slug === 'string') {
+    return brandsStore.isBrandLoading(slug)
+  }
+  return false
+})
+
+const brandProducts = computed(() => {
+  return brandsStore.brandProducts || []
+})
+
+const pageTitle = computed(() => {
+  if (brandsStore.brand?.name) {
+    return `محصولات ${brandsStore.brand.name}`
+  }
+  return 'محصولات برند'
+})
+
+// Fetch logic
+const fetchBrandProducts = async (slugParam: string) => {
+  if (typeof slugParam === 'string' && slugParam) {
+    await brandsStore.fetchBrandProductsBySlug(slugParam)
+  }
+}
+
+// Watch for route changes
 watch(
   () => route.params.slug,
-  (newSlug) => {
-    if (typeof newSlug === 'string' && newSlug) {
-      brandsStore.fetchBrandProductsBySlug(newSlug)
+  (newSlug, oldSlug) => {
+    if (newSlug && newSlug !== oldSlug) {
+      // Clear previous brand data before loading new one
+      brandsStore.clearCurrentBrand()
+      fetchBrandProducts(newSlug as string)
     }
   }
 )
 
-onMounted(async () => {
+// Initial fetch
+onMounted(() => {
   if (typeof slug === 'string' && slug) {
-    await brandsStore.fetchBrandProductsBySlug(slug);
+    fetchBrandProducts(slug)
   }
-});
-
-const title = computed(() => {
-  return brandsStore.brand?.name || 'محصولات برند'
 })
 
+// SEO
 useHead({
-  title: title.value
+  title: pageTitle.value,
+  meta: [
+    { 
+      name: 'description', 
+      content: () => `مشاهده محصولات ${brandsStore.brand?.name || 'برند'} در فروشگاه آنلاین` 
+    }
+  ]
 })
 </script>
 
