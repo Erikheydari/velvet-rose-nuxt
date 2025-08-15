@@ -95,7 +95,7 @@
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-              }}</span>
+                }}</span>
             </TheButton>
           </div>
         </div>
@@ -191,6 +191,7 @@ import ProductCounter from '~/components/product/counter/index.vue'
 import type { CartItemAdd } from '~/types/cart.types'
 import { toast } from 'vue-sonner'
 import { useWindowSize } from '@vueuse/core'
+import { useAuthStore } from '@/stores/auth'
 
 const { width } = useWindowSize()
 
@@ -201,6 +202,7 @@ const mediaUrl = computed(() => config.public.mediaUrl)
 const route = useRoute()
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 
 const isSummaryExpanded = ref(false)
 
@@ -264,6 +266,11 @@ const handleAddToCart = async () => {
   if (!productsStore.product) {
     scrollToSection('attributes-selection')
     toast.error('لطفاً ابتدا انتخاب رنگ و سایز مورد نظر را انجام دهید')
+    return
+  }
+
+  if (!authStore.getTokenFromCookie()) {
+    toast.error('لطفا ابتدا لاگین کنید!')
     return
   }
 
