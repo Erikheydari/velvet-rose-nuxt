@@ -1,10 +1,10 @@
 <template>
-  <div class="h-full 2xl:hero-height px-4 xl:px-12 relative default-padding-top default-margin-bottom">
+  <div class="h-full 2xl:hero-height px-4 lg:px-12 relative default-padding-top default-margin-bottom">
     <section v-if="!productsStore.loading && productsStore.product"
-      class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
-      <div class="order-2 xl:order-1 basis-full xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 ">
+      class="flex flex-col lg:flex-row justify-between w-full gap-6 h-full">
+      <div class="order-2 xl:order-1 basis-full lg:basis-2/3 xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 lg:gap-10 xl:gap-8 xl:pt-10 ">
         <!-- Name -->
-        <div class="w-full order-3 xl:order-1">
+        <div class="w-full order-3 lg:order-1">
           <h1 class="heading-4 font-extrabold text-primary mb-2">
             {{ productsStore.product?.name }}
           </h1>
@@ -14,7 +14,7 @@
           </h2>
         </div>
 
-        <div class="block xl:hidden order-1">
+        <div class="block xl:hidden order-1 lg:order-2 xl:order-1">
 
           <ProductImage v-model="activeImageIndex" :images="allImages" :alt="productsStore.product?.name"
             :show-dots="true" :show-navigation="false" />
@@ -49,8 +49,8 @@
           :show-navigation="allImages.length > 3" class="order-2 xl:order-5" />
       </div>
 
-      <div class="order-1 xl:order-2 basis-full xl:basis-2/3 ">
-        <div class="bread-crumbs flex items-center gap-1 mb-4 w-full justify-center relative z-10">
+      <div class="order-1 xl:order-2 basis-full lg:hidden xl:block xl:basis-2/3 ">
+        <div class="bread-crumbs flex items-center gap-1 mb-4 w-full justify-center relative z-10 lg:hidden xl:flex">
           <TheButton variant="link" size="sm" class="shrink-0" :to="`/products`">
             محصولات
           </TheButton>
@@ -61,12 +61,18 @@
           </TheButton>
           <ChevronLeft class="size-3.5" />
           <TheButton disabled variant="link" size="sm" class="shrink-0">
-            {{ productsStore.product?.name }}
+            <span class="md:block hidden">
+              {{ productsStore.product?.name }}
+            </span>
+            <span class="md:hidden block">
+              {{ productsStore.product?.name.slice(0, 5) }}...{{ productsStore.product?.name.slice(-5) }}
+            </span>
           </TheButton>
         </div>
 
 
         <FantastyHeading v-if="productsStore.product?.brand?.name || productsStore.product?.brand?.en_name"
+          class="lg:hidden xl:flex"
           :title="productsStore.product?.brand?.en_name?.toLowerCase().replaceAll('-', ' ') || productsStore.product?.brand?.name"
           :description="productsStore.product?.full_name.toLowerCase()"
           :to="`/brands/${productsStore.product?.brand?.slug}`"
@@ -80,7 +86,7 @@
 
       </div>
 
-      <div class="order-3 xl:order-3 basis-full xl:basis-1/3 flex flex-col xl:sticky xl:top-24 h-fit gap-8"
+      <div class="order-3 xl:order-3 basis-full lg:basis-1/3 lg:sticky xl:relative flex flex-col lg:top-24 h-fit gap-8 xl:pt-10"
         id="attributes-selection">
 
         <!-- Color Selection -->
@@ -91,7 +97,8 @@
             <TheButton v-for="color in productsStore.product.attributes.color" :key="color.id"
               class="color-selection-item-color hover:opacity-90 transition-opacity" variant="ghost" size="icon-lg"
               :style="{ backgroundColor: color.value }" @click="selectColor(color.id as string)">
-              <Check class="size-4 mix-blend-difference text-background stroke-4" v-if="color.id === selectedColorId" />
+              <Check class="size-4 mix-blend-difference text-background stroke-4"
+                v-if="color.id === cartComposable.selectedColorId.value" />
             </TheButton>
           </div>
         </div>
@@ -102,11 +109,11 @@
           <span class="w-full mb-2 heading-5 font-bold text-primary">انتخاب سایز</span>
           <div class="flex flex-wrap gap-2">
             <TheButton v-for="size in productsStore.product.attributes.size" :key="size.id" class="size-selection-item"
-              :variant="size.id === selectedSizeId ? 'default' : 'outline'"
+              :variant="size.id === cartComposable.selectedSizeId.value ? 'default' : 'outline'"
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-              }}</span>
+                }}</span>
             </TheButton>
           </div>
         </div>
@@ -117,8 +124,8 @@
             <span class="w-full heading-5 font-bold text-primary">قیمت محصول</span>
           </div>
 
-          <p class="-mb-3">
-            <bdi v-if="productsStore.product?.discount_percentage" class="text-muted-foreground line-through">
+          <p v-if="productsStore.product?.discount_percentage > 0" class="-mb-1">
+            <bdi class="text-muted-foreground line-through">
               {{ productsStore.product?.price }}
             </bdi>
             <span class="text-muted-foreground caption-2 ms-2">تومان</span>
@@ -130,19 +137,21 @@
             </bdi>
             <span class="text-muted-foreground body-2 ms-2">تومان</span>
 
-            <ProductDiscountPercentage :percentage="productsStore.product?.discount_percentage" class="ms-auto" />
+            <ProductDiscountPercentage v-if="productsStore.product?.discount_percentage > 0"
+              :percentage="productsStore.product?.discount_percentage" class="ms-auto" />
           </div>
 
         </div>
 
-        <div class="gap-2 mb-4 w-full hidden lg:flex flex-wrap">
+        <div class="gap-2 lg:mb-0 mb-4 w-full hidden lg:flex flex-wrap">
 
           <!-- Quantity Selection -->
-          <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" class="mb-4" />
+          <ProductCounter v-model="cartComposable.quantity.value" :max-quantity="productsStore.product?.qty || 1"
+            class="mb-4" />
 
           <!-- Add to Cart Button -->
-          <TheButton @click="handleAddToCart" class="px-6! mb-4 grow gap-4 " variant="default" size="lg"
-            :class="{ 'opacity-50': !canAddToCart }">
+          <TheButton @click="cartComposable.handleAddToCart" class="px-6! lg:mb-0 mb-4 grow lg:grow-0 gap-4 " variant="default"
+            size="lg" :class="{ 'opacity-50': !cartComposable.canAddToCart }">
             <ShoppingCart v-if="!cartStore.loading" class="size-4" />
             <span v-if="cartStore.loading">
               <Loader2 class="size-4 animate-spin" />
@@ -152,11 +161,6 @@
           </TheButton>
 
         </div>
-
-        <!-- Validation Messages -->
-        <div v-if="validationMessage" class="text-destructive text-sm mb-2">
-          {{ validationMessage }}
-        </div>
       </div>
     </section>
 
@@ -164,12 +168,13 @@
       <SkeletonProductPage />
     </section>
 
-    <BottomNavigation v-if="!productsStore.loading && productsStore.product" class="flex justify-between flex-col sm:flex-row">
+    <BottomNavigation v-if="!productsStore.loading && productsStore.product"
+      class="flex justify-between flex-col sm:flex-row">
 
       <div class="flex items-center gap-2 grow justify-between">
         <div class="flex-col gap-2">
 
-          <p v-if="productsStore.product?.discount_percentage" class="text-muted-foreground">
+          <p v-if="productsStore.product?.discount_percentage > 0" class="text-muted-foreground">
             <bdi class="line-through">
               {{ productsStore.product.price }}
             </bdi>
@@ -185,23 +190,27 @@
         </div>
 
         <!-- Quantity Selection -->
-        <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" size="sm" class="w-fit!" />
+        <ProductCounter v-model="cartComposable.quantity.value" :max-quantity="productsStore.product?.qty || 1"
+          size="sm" class="w-fit!" />
 
       </div>
 
-      <div class="gap-2 flex-col w-full sm:w-auto flex sm:flex-row justify-between sm:items-center">
+      <div class="gap-2 w-full sm:w-auto flex sm:flex-row justify-between sm:items-center">
         <!-- Add to Cart Button -->
-        <TheButton @click="handleAddToCart" :disabled="cartStore.loadingAddToCart" class="grow gap-4 sm:px-8!"
-          variant="default" :class="{ 'opacity-80!': !canAddToCart }">
+        <TheButton @click="cartComposable.handleAddToCart" :disabled="cartStore.loadingAddToCart" size="sm"
+          class="grow gap-4 sm:px-8!" variant="default" :class="{ 'opacity-80!': !cartComposable.canAddToCart }">
           <ShoppingCart v-if="!cartStore.loadingAddToCart" class="size-4" />
           <span v-if="cartStore.loadingAddToCart">
             <Loader2 class="size-4 animate-spin" />
           </span>
           <span v-else>افزودن به سبد</span>
         </TheButton>
-
+        <CartTrigger v-if="cartComposable.hasItemsInCart" :handle-button-click="toggleCart" size="icon" />
       </div>
     </BottomNavigation>
+
+    <!-- Cart Popover for Bottom Navigation -->
+    <CartPopover :is-active="isCartOpen" :close-cart="() => isCartOpen = false" />
   </div>
 
   <section class="px-4 xl:px-12">
@@ -224,140 +233,33 @@ import { TheButton } from '#components'
 import { Check, ChevronDown, ChevronLeft, Loader2, ShoppingCart } from 'lucide-vue-next'
 import { FantastyHeading } from '~/components/ui/heading'
 import ProductCounter from '~/components/product/counter/index.vue'
-import type { CartItemAdd } from '~/types/cart.types'
-import { toast } from 'vue-sonner'
-import { useWindowSize } from '@vueuse/core'
-import { useAuthStore } from '@/stores/auth'
+import { useCart } from '@/composables/useCart'
 import { nextTick } from 'vue'
 
-const { width } = useWindowSize()
-
 const config = useRuntimeConfig()
-
 const mediaUrl = computed(() => config.public.mediaUrl)
 
 const route = useRoute()
 const productsStore = useProductsStore()
 const cartStore = useCartStore()
-const authStore = useAuthStore()
+
+// Use the cart composable
+const cartComposable = useCart()
+
+// Cart state for the popover
+const isCartOpen = ref(false)
+
+const toggleCart = () => {
+  isCartOpen.value = !isCartOpen.value
+}
 
 const isSummaryExpanded = ref(false)
 
-// Selection states
-const selectedColorId = ref<string | null>(null)
-const selectedSizeId = ref<string | null>(null)
-const quantity = ref(1)
-const validationMessage = ref('')
-
 const productOptions = computed<string[]>(() => productsStore.product?.options ?? [])
-
 const activeImageIndex = ref(0)
 
-// Initialize default selections when product loads
-const initializeSelections = () => {
-  selectedColorId.value = null
-  selectedSizeId.value = null
-}
-
-// Selection methods
-const selectColor = (colorId: string) => {
-  selectedColorId.value = colorId
-  clearValidationMessage()
-}
-
-const selectSize = (sizeId: string) => {
-  selectedSizeId.value = sizeId
-  clearValidationMessage()
-}
-
-
-
-const clearValidationMessage = () => {
-  validationMessage.value = ''
-}
-
-// Validation
-const canAddToCart = computed(() => {
-  if (!productsStore.product) return false
-
-  const hasColors = (productsStore.product.attributes?.color?.length ?? 0) > 0
-  const hasSizes = (productsStore.product.attributes?.size?.length ?? 0) > 0
-
-  if (hasColors && !selectedColorId.value) return false
-  if (hasSizes && !selectedSizeId.value) return false
-
-  return quantity.value > 0 && quantity.value <= (productsStore.product.qty || 0)
-})
-
-// Smoothly scroll to a section by id (with slight offset for mobile headers)
-const scrollToSection = (targetId: string, offset: number = 80) => {
-  if (import.meta.client) {
-    const target = document.getElementById(targetId)
-    if (target) {
-      const y = target.getBoundingClientRect().top + window.scrollY - offset
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
-  }
-}
-
-// Add to cart handler
-const handleAddToCart = async () => {
-  if (!productsStore.product) {
-    scrollToSection('attributes-selection')
-    toast.error('لطفاً ابتدا انتخاب رنگ و سایز مورد نظر را انجام دهید')
-    return
-  }
-
-  if (!authStore.getTokenFromCookie()) {
-    toast.error('لطفا ابتدا لاگین کنید!')
-    return
-  }
-
-  const hasColors = (productsStore.product.attributes?.color?.length ?? 0) > 0
-  const hasSizes = (productsStore.product.attributes?.size?.length ?? 0) > 0
-
-  if (hasColors && !selectedColorId.value) {
-    toast.error('لطفاً رنگ مورد نظر را انتخاب کنید')
-    if (width.value < 1024) {
-      scrollToSection('color-selection')
-    }
-    return
-  }
-
-  if (hasSizes && !selectedSizeId.value) {
-    toast.error('لطفاً سایز مورد نظر را انتخاب کنید')
-    if (width.value < 1024) {
-      scrollToSection('size-selection')
-    }
-    return
-  }
-
-  const attributes: string[] = []
-
-  if (selectedColorId.value) {
-    attributes.push(selectedColorId.value)
-  }
-
-  if (selectedSizeId.value) {
-    attributes.push(selectedSizeId.value)
-  }
-
-  const cartItem: CartItemAdd = {
-    product_id: productsStore.product.id,
-    quantity: quantity.value,
-    attributes: attributes,
-  }
-
-  try {
-    await cartStore.addToCart(cartItem)
-
-    validationMessage.value = ''
-  } catch (error) {
-    validationMessage.value = 'خطا در افزودن به سبد خرید'
-    const { getErrorMessage } = await import('~/lib/utils')
-    console.error('Add to cart error:', getErrorMessage(error))
-  }
-}
+// Use composable selections and methods
+const { selectedColorId, selectedSizeId, selectColor, selectSize, initializeSelections } = cartComposable
 
 // Watch for product changes to reinitialize selections
 watch(
@@ -369,7 +271,6 @@ watch(
   },
   { immediate: true }
 )
-
 
 let fetchTimeout: NodeJS.Timeout | null = null
 watch(
