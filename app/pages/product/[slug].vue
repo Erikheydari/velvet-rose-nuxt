@@ -1,6 +1,5 @@
 <template>
   <div class="h-full 2xl:hero-height px-4 xl:px-12 relative default-padding-top default-margin-bottom">
-
     <section v-if="!productsStore.loading && productsStore.product"
       class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
       <div class="order-2 xl:order-1 basis-full xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 ">
@@ -51,9 +50,26 @@
       </div>
 
       <div class="order-1 xl:order-2 basis-full xl:basis-2/3 ">
+        <div class="bread-crumbs flex items-center gap-1 mb-4 w-full justify-center relative z-10">
+          <TheButton variant="link" size="sm" class="shrink-0" :to="`/products`">
+            محصولات
+          </TheButton>
+          <ChevronLeft class="size-3.5" />
+          <TheButton variant="link" size="sm" :to="`/products/${productsStore.product?.category?.slug}`"
+            class="shrink-0">
+            {{ productsStore.product?.category?.name }}
+          </TheButton>
+          <ChevronLeft class="size-3.5" />
+          <TheButton disabled variant="link" size="sm" class="shrink-0">
+            {{ productsStore.product?.name }}
+          </TheButton>
+        </div>
+
+
         <FantastyHeading v-if="productsStore.product?.brand?.name || productsStore.product?.brand?.en_name"
           :title="productsStore.product?.brand?.en_name?.toLowerCase().replaceAll('-', ' ') || productsStore.product?.brand?.name"
           :description="productsStore.product?.full_name.toLowerCase()"
+          :to="`/brands/${productsStore.product?.brand?.slug}`"
           titleClass="heading-2 font-extrabold text-center lg:text-start leading-[80%]!"
           descriptionClass="heading-6 font-light! -mt-4 pb-2 max-w-[80%] mx-auto lg:mx-0 text-center leading-none capitalize" />
 
@@ -90,22 +106,33 @@
               :size="size.name?.length && size.name?.length < 3 ? 'icon-lg' : 'lg'"
               @click="selectSize(size.id as string)">
               <span class="-mt-0.5" :class="{ 'body-1': size.name?.length && size.name?.length < 3 }">{{ size.name
-                }}</span>
+              }}</span>
             </TheButton>
           </div>
         </div>
 
         <!-- Price -->
-        <div class="flex-col gap-2 hidden xl:flex">
-          <span class="w-full mb-2 heading-5 font-bold text-primary">قیمت محصول</span>
-          <div class="flex gap-2 items-baseline">
-            <p class="heading-4 font-extrabold text-foreground">
-              <bdi>
-                {{ productsStore.product?.final_price }}
-              </bdi>
-              <span class="text-muted-foreground body-2 ms-2">تومان</span>
-            </p>
+        <div class="flex-col hidden xl:flex">
+          <div class="flex items-center gap-2 mb-2 w-fit">
+            <span class="w-full heading-5 font-bold text-primary">قیمت محصول</span>
           </div>
+
+          <p class="-mb-3">
+            <bdi v-if="productsStore.product?.discount_percentage" class="text-muted-foreground line-through">
+              {{ productsStore.product?.price }}
+            </bdi>
+            <span class="text-muted-foreground caption-2 ms-2">تومان</span>
+          </p>
+
+          <div class="heading-4 font-extrabold text-foreground flex items-baseline w-full">
+            <bdi>
+              {{ productsStore.product?.final_price }}
+            </bdi>
+            <span class="text-muted-foreground body-2 ms-2">تومان</span>
+
+            <ProductDiscountPercentage :percentage="productsStore.product?.discount_percentage" class="ms-auto" />
+          </div>
+
         </div>
 
         <div class="gap-2 mb-4 w-full hidden lg:flex flex-wrap">
@@ -137,9 +164,18 @@
       <SkeletonProductPage />
     </section>
 
-    <BottomNavigation class="flex justify-between flex-col sm:flex-row">
-      <div class="flex-col gap-2">
-        <div class="flex gap-2 items-baseline">
+    <BottomNavigation v-if="!productsStore.loading && productsStore.product" class="flex justify-between flex-col sm:flex-row">
+
+      <div class="flex items-center gap-2 grow justify-between">
+        <div class="flex-col gap-2">
+
+          <p v-if="productsStore.product?.discount_percentage" class="text-muted-foreground">
+            <bdi class="line-through">
+              {{ productsStore.product.price }}
+            </bdi>
+            <span class="text-muted-foreground caption-2 ms-2">تومان</span>
+          </p>
+
           <p class="heading-5 font-bold text-foreground">
             <bdi>
               {{ productsStore.product?.final_price }}
@@ -147,13 +183,13 @@
             <span class="text-muted-foreground body-2 ms-2">تومان</span>
           </p>
         </div>
+
+        <!-- Quantity Selection -->
+        <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" size="sm" class="w-fit!" />
+
       </div>
 
       <div class="gap-2 flex-col w-full sm:w-auto flex sm:flex-row justify-between sm:items-center">
-
-        <!-- Quantity Selection -->
-        <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" size="sm" />
-
         <!-- Add to Cart Button -->
         <TheButton @click="handleAddToCart" :disabled="cartStore.loadingAddToCart" class="grow gap-4 sm:px-8!"
           variant="default" :class="{ 'opacity-80!': !canAddToCart }">
@@ -169,7 +205,12 @@
   </div>
 
   <section class="px-4 xl:px-12">
-    <ProductCarousel :products="productsStore.getRandomProducts" type="default" :loading="false" navigation
+    <div class="flex flex-row w-full">
+      <h4 class="heading-4 font-bold text-primary">
+        محصولات مرتبط
+      </h4>
+    </div>
+    <ProductCarousel :products="productsStore.getRandomProducts" type="default" :loading="false" :navigation="false"
       alignSlider="start" />
   </section>
 </template>
@@ -180,7 +221,7 @@ import { useCartStore } from '@/stores/cart'
 import { useRoute } from 'vue-router'
 import Original from '@/assets/icons/original.svg?component'
 import { TheButton } from '#components'
-import { Check, ChevronDown, Loader2, ShoppingCart } from 'lucide-vue-next'
+import { Check, ChevronDown, ChevronLeft, Loader2, ShoppingCart } from 'lucide-vue-next'
 import { FantastyHeading } from '~/components/ui/heading'
 import ProductCounter from '~/components/product/counter/index.vue'
 import type { CartItemAdd } from '~/types/cart.types'

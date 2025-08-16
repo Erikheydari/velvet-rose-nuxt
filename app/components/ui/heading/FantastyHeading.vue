@@ -1,11 +1,15 @@
 <template>
   <div class="flex flex-col justify-center items-center relative lg:mb-20">
-    <h3 
+    <NuxtLink 
       class="relative z-0 leading-none uppercase" 
       :class="props.titleClass"
+      target="_blank"
+      :to="props.to"
     >
+    <h3>
       {{ props.title }}
     </h3>
+    </NuxtLink>
     <p class="relative z-2 leading-none -mt-[2%] text-primary" :class="props.descriptionClass">
       {{ props.description }}
     </p>
@@ -18,6 +22,7 @@ const props = withDefaults(defineProps<{
   description: string;
   titleClass?: string;
   descriptionClass?: string;
+  to?: string;
 }>(), {
   titleClass: 'heading-2 font-extrabold',
   descriptionClass: 'heading-3 font-light!'

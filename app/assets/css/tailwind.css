@@ -106,6 +106,15 @@
     @apply bg-primary/80;
   }
 
+  /* set draggable to false */
+  * {
+    
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+  }
+
   body {
     direction: rtl;
     @apply bg-background text-foreground font-kalameh;
@@ -124,7 +133,7 @@
   }
 
   .default-margin-bottom {
-    @apply mb-6! lg:mb-12! xl:mb-18!;
+    @apply mb-12! lg:mb-24! xl:mb-28!;
   }
 
   /* Menu  */
