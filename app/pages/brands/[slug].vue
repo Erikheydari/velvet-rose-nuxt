@@ -1,25 +1,12 @@
 <template>
   <div class="default-inner-container default-padding-top default-margin-bottom">
-    <ProductGrid 
-      :filterable="false" 
-      :loading="isLoading" 
-      :title="pageTitle"
-    >
+    <ProductGrid :filterable="false" :loading="brandsStore.isLoading" :title="pageTitle">
       <!-- Products -->
-      <ProductCard 
-        v-for="product in brandProducts" 
-        :key="product.id" 
-        :product="product"
-        type="default" 
-      />
-
+      <ProductCard v-for="product in brandProducts" :key="product.id" :product="product" type="default" />
       <!-- Empty State -->
-      <template v-if="!isLoading && brandProducts.length === 0">
+      <template v-if="!brandsStore.isLoading && brandProducts.length === 0">
         <div class="col-span-full">
-          <ProductEmpty 
-            :brand-name="brandsStore.brand?.name"
-            class="py-16"
-          />
+          <ProductEmpty :brand-name="brandsStore.brand?.name" class="py-16" />
         </div>
       </template>
     </ProductGrid>
@@ -33,14 +20,6 @@ const route = useRoute();
 const { slug } = route.params;
 
 const brandsStore = useBrandsStore();
-
-// Computed values
-const isLoading = computed(() => {
-  if (typeof slug === 'string') {
-    return brandsStore.isBrandLoading(slug)
-  }
-  return false
-})
 
 const brandProducts = computed(() => {
   return brandsStore.brandProducts || []
@@ -65,7 +44,6 @@ watch(
   () => route.params.slug,
   (newSlug, oldSlug) => {
     if (newSlug && newSlug !== oldSlug) {
-      // Clear previous brand data before loading new one
       brandsStore.clearCurrentBrand()
       fetchBrandProducts(newSlug as string)
     }
@@ -83,9 +61,9 @@ onMounted(() => {
 useHead({
   title: pageTitle.value,
   meta: [
-    { 
-      name: 'description', 
-      content: () => `مشاهده محصولات ${brandsStore.brand?.name || 'برند'} در فروشگاه آنلاین` 
+    {
+      name: 'description',
+      content: () => `مشاهده محصولات ${brandsStore.brand?.name || 'برند'} در فروشگاه آنلاین`
     }
   ]
 })
