@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useCategoriesStore } from '~/stores/categories'
 import type { Category } from '~/types/product.types'
-// import ProductCategoriesList from './CategoriesList.vue'
 import { headerPages, headerContact, headerSocials } from '~/constants/headerNavItems'
 
 // Types definitions
