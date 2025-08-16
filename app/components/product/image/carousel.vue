@@ -1,5 +1,5 @@
 <template>
-  <div v-if="images.length > 1" class="product-gallery flex gap-2 w-full grow">
+  <div v-if="images.length > 1" class="product-gallery flex gap-2 sm:max-w-[80%] w-full grow mx-auto lg:mx-0">
     <TheCarousel 
       :opts="{ 
         loop: true, 
@@ -10,11 +10,11 @@
       @init-api="handleInitApi"
       class="w-full"
     >
-      <TheCarouselContent class="-ml-3 pr-2">
+      <TheCarouselContent class="-ml-3 px-1!">
         <TheCarouselItem 
           v-for="(image, index) in images" 
           :key="`gallery-${index}`"
-          class="pl-3 basis-1/2 lg:basis-1/3 cursor-pointer py-2"
+          class="pl-3 basis-1/3 md:basis-1/4 lg:basis-1/3 cursor-pointer py-2"
           @click="selectImage(index)"
         >
           <div class="relative group">
