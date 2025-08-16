@@ -5,7 +5,8 @@
       <div class="flex flex-col sm:flex-row gap-2 w-full justify-between items-center">
         <Transition name="fade" mode="out-in">
           <div class="flex items-baseline gap-2 w-full sm:w-auto">
-            <h1 class="body-2" :key="categoryTitleKey">{{ title || categoryTitle }}</h1>
+            <h1 v-if="!loading" class="heading-5 text-primary font-bold" :key="categoryTitleKey">{{ title || categoryTitle }}</h1>
+            <TheSkeleton v-else class="w-34 h-10" />
             <TheButton v-if="selectedCategoryFilter" variant="link" size="sm"
               :to="`/products/${selectedCategoryFilter}`">
               مشاهده همه
@@ -96,7 +97,7 @@ const hasEmptySlot = computed(() => {
   if (props.loading) return false;
   const defaultSlot = slots.default?.();
   return !defaultSlot || defaultSlot.length === 0 || 
-    (defaultSlot.length === 1 && !defaultSlot[0].children);
+    (defaultSlot.length === 1 && !defaultSlot[0]?.children);
 });
 
 const clearCategoryFilter = async () => {
