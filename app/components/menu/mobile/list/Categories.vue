@@ -2,7 +2,6 @@
 import { ChevronLeft } from 'lucide-vue-next';
 import { ref, computed } from 'vue'
 import type { Category } from '~/types/product.types'
-// import CategoryItem from './CategoryItem.vue'
 
 const props = defineProps<{
   mainCategories: Category[]
@@ -78,7 +77,7 @@ const isCategoryActive = (categorySlug: string) => {
       </ul>
 
       <div class="mt-4 h-14 px-4 flex items-center w-full overflow-x-auto thin-scrollbar-thumb overflow-y-hidden">
-        <span class="text-secondary caption-1 whitespace-nowrap ml-2">دسته‌بندی‌های پرطرفدار:</span>
+        <span class="caption-1 whitespace-nowrap ml-2 text-muted-foreground">دسته‌بندی‌های پرطرفدار:</span>
         <div v-for="(category, index) in randomCategories" :key="index" class="bg-primary-50 ml-2 rounded-md">
           <TheButton variant="ghost" size="sm" :to="'/products/' + category.slug"
             class="w-fit whitespace-nowrap text-sm px-2 py-1.5 text-primary hover:text-primary">
