@@ -2,7 +2,7 @@
   <div class="min-h-screen default-inner-container default-padding-top">
     <ProductGrid 
       :filterable="false" 
-      :loading="categoriesStore.isLoading"
+      :loading="productsStore.loading"
       :title="pageTitle"
     >
       <ProductCard 
@@ -18,21 +18,31 @@
           class="py-16"
         />
       </template>
+
+
+      <template #pagination>
+        <ProductPagination :meta="meta" @update:page="onPageChange" />
+      </template>
+      
     </ProductGrid>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useCategoriesStore } from '~/stores/categories';
+import { useProductsStore } from '~/stores/products';
 
 const route = useRoute();
 const { slug } = route.params;
 
 const categoriesStore = useCategoriesStore();
+const productsStore = useProductsStore();
+
+const meta = computed(() => productsStore.pagination?.meta)
 
 // Computed values
 const categoryProducts = computed(() => {
-  return categoriesStore.category?.products || []
+  return productsStore.products || []
 })
 
 const pageTitle = computed(() => {
@@ -42,8 +52,12 @@ const pageTitle = computed(() => {
 // Fetch logic
 const fetchCategoryProducts = async (slugParam: string | string[]) => {
   if (typeof slugParam === 'string' && slugParam) {
-    await categoriesStore.fetchCategoryBySlug(slugParam)
+    await productsStore.fetchProductsByCategory(slugParam)
   }
+}
+
+const onPageChange = async (page: number) => {
+  await productsStore.goToPage(page)
 }
 
 // Watch for route changes
@@ -58,7 +72,7 @@ watch(
 
 // Initial fetch
 onMounted(() => {
-  fetchCategoryProducts(slug)
+  fetchCategoryProducts(slug as string)
 })
 
 // SEO
