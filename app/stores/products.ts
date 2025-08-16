@@ -10,6 +10,7 @@ export const useProductsStore = defineStore('productsStore', () => {
   const loading = ref(true)
   const products = ref<Product[]>([])
   const product = ref<Product | null>(null)
+  const randomProducts = ref<Product[]>([])
 
   // Pagination state
   const pagination = ref<{ meta: any | null; links: any | null }>({ meta: null, links: null })
@@ -25,6 +26,8 @@ export const useProductsStore = defineStore('productsStore', () => {
     });
     if (data) {
       products.value = data as Product[]
+      // Regenerate random products when products list changes
+      generateRandomProducts()
     }
     if (raw && typeof raw === 'object') {
       // Capture pagination info if present
@@ -41,14 +44,18 @@ export const useProductsStore = defineStore('productsStore', () => {
 
   const fetchProduct = async (identifier: string | number) => {
     loading.value = true
-    product.value = null
     try {
       const { data } = await apiStore.apiRequest(endpointStore.products.detail(identifier), {
         method: 'get',
       });
       if (data) {
         product.value = data as Product
+      } else {
+        product.value = null
       }
+    } catch (error) {
+      console.error('Error fetching product:', error)
+      product.value = null
     } finally {
       loading.value = false
     }
@@ -62,6 +69,8 @@ export const useProductsStore = defineStore('productsStore', () => {
     });
     if (data) {
       products.value = data as Product[]
+      // Regenerate random products when products list changes
+      generateRandomProducts()
     }
     if (raw && typeof raw === 'object') {
       const maybeMeta: any = (raw as any).meta
@@ -84,13 +93,27 @@ export const useProductsStore = defineStore('productsStore', () => {
     await fetchProducts(page)
   }
 
-  const getRandomProducts = computed(() => {
+  // Generate random products only when products list changes
+  const generateRandomProducts = () => {
     if (products.value.length > 0) {
-      return products.value.sort(() => Math.random() - 0.5).slice(0, 6)
-    } else {
-      fetchProducts()
-      return products.value.sort(() => Math.random() - 0.5).slice(0, 6)
+      const shuffled = [...products.value].sort(() => Math.random() - 0.5)
+      randomProducts.value = shuffled.slice(0, 6)
     }
+  }
+
+  // Helper to ensure we have products for random selection
+  const ensureProductsForRandom = async () => {
+    if (products.value.length === 0) {
+      await fetchProducts()
+    }
+  }
+
+  const getRandomProducts = computed(() => {
+    // If we don't have random products but we have products, generate them
+    if (randomProducts.value.length === 0 && products.value.length > 0) {
+      generateRandomProducts()
+    }
+    return randomProducts.value
   })
 
   return {
@@ -98,6 +121,7 @@ export const useProductsStore = defineStore('productsStore', () => {
 
     products,
     product,
+    randomProducts,
     pagination,
     currentFilter,
 
@@ -105,6 +129,10 @@ export const useProductsStore = defineStore('productsStore', () => {
     fetchProduct,
     fetchProductsByCategory,
     goToPage,
+    generateRandomProducts,
+    ensureProductsForRandom,
+
+    //Getters
     getRandomProducts,
   }
 })
