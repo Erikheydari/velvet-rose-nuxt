@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="options.length > 0" class="mb-4 order-5 xl:order-3">
+  <ul v-if="options.length > 0 && options[0] !== null" class="mb-4 order-5 xl:order-3">
     <li v-for="option in options.slice(0, 3)" :key="option" class="body-2 text-primary list-inside list-disc">
       {{ option }}
     </li>
