@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-4 w-full rounded-2xl border border-border p-2 lg:p-4">
+  <NuxtLink :to="`/product/${props.product.slug}`" class="flex gap-4 w-full rounded-2xl border border-border p-2 lg:p-4">
     <figure v-if="props.product.image" class="image-container aspect-square w-1/4 lg:max-w-58 h-auto bg-muted relative">
       <img :src="props.product.image.src" alt="product" class="object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full" />
     </figure>
@@ -16,7 +16,7 @@
         <ProductCardPrice :product="props.product" />
       </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script lang="ts" setup>
