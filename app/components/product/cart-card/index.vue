@@ -1,6 +1,6 @@
 <template>
   <div :class="props.orientation === 'horizontal' ? 'flex-row' : 'flex-col lg:flex-row'"
-    class="flex w-full rounded-2xl border border-border p-0 overflow-hidden relative"
+    class="flex w-full rounded-2xl border border-border p-0 overflow-hidden relative min-h-38!"
     :to="`/product/${props.product.slug}`">
     <figure v-if="props.product.image"
       class="image-container aspect-square size-36 lg:size-38 h-auto bg-muted relative">
