@@ -2,16 +2,9 @@
   <div class="w-full h-full">
     <Header>
       <template v-if="router.currentRoute.value.path.startsWith('/product/')" #left-section>
-        <TheButton
-          variant="tonal"
-          size="icon-lg"
-          class="shrink-0 lg:hidden"
-          @click="handleBack"
-        >
+        <TheButton variant="tonal" size="icon-lg" class="shrink-0 lg:hidden" @click="handleBack">
           <ArrowRight class="size-5" />
         </TheButton>
-
-        <CartTrigger class="flex lg:hidden" :handle-button-click="toggleCart" />
         <CartPopover class="flex lg:hidden" :is-active="isCartOpen" :close-cart="() => isCartOpen = false" />
       </template>
     </Header>
@@ -23,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ArrowRight } from 'lucide-vue-next'  
+import { ArrowRight } from 'lucide-vue-next'
 
 
 
