@@ -97,7 +97,7 @@ export const headerTabs: Tab[] = [
   },
   {
     id: 'websitePages',
-    label: 'صفحات و تماس',
+    label: 'صفحات',
     icon: 'mdi-menu'
   }
 ]
