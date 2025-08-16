@@ -11,13 +11,14 @@ export const useCartStore = defineStore('cart', () => {
   // State
   const cartItems = ref<CartItem[]>([]);
   const loading = ref(true);
+  const loadingAddToCart = ref(false);
   const updateCounterLoading = ref(false);
   const error = ref<string | null>(null);
   const justAdded = ref<boolean>(false);
 
   // Actions
   const addToCart = async (cartData: CartItemAdd): Promise<ApiResponse> => {
-    loading.value = true;
+    loadingAddToCart.value = true;
     error.value = null;
 
     try {
@@ -44,7 +45,7 @@ export const useCartStore = defineStore('cart', () => {
       error.value = err.message || 'Failed to add item to cart';
       return { error: err };
     } finally {
-      loading.value = false;
+      loadingAddToCart.value = false;
     }
   };
 
@@ -116,9 +117,16 @@ export const useCartStore = defineStore('cart', () => {
     error.value = null;
 
     try {
+      // Find the cart item safely
+      const cartItem = cartItems.value.find(item => item.id === itemId);
+      if (!cartItem) {
+        error.value = 'Cart item not found';
+        return { error: 'Cart item not found' };
+      }
+
       const { data, error: apiError } = await apiStore.apiRequest(endpointStore.cart.update(itemId), {
         method: 'put',
-        body: { quantity, attributes: { attribute: cartItems.value.find(item => item.id === itemId)?.product.selected_attributes } },
+        body: { quantity, attributes: { attribute: cartItem.product.selected_attributes } },
         credentials: true,
       });
 
@@ -133,6 +141,7 @@ export const useCartStore = defineStore('cart', () => {
       return { data };
     } catch (err: any) {
       error.value = err.message || 'Failed to update cart item';
+      console.error('Error updating cart item:', err);
       return { error: err };
     } finally {
       updateCounterLoading.value = false;
@@ -151,7 +160,7 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     cartItems.value = [];
-
+    loading.value = false;
     return { data: cartItems.value };
   };
 
@@ -169,6 +178,7 @@ export const useCartStore = defineStore('cart', () => {
     updateCounterLoading: computed(() => updateCounterLoading.value),
     error: readonly(error),
     justAdded: readonly(justAdded),
+    loadingAddToCart: computed(() => loadingAddToCart.value),
 
     // Actions
     addToCart,
