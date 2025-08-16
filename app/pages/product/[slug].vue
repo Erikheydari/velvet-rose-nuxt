@@ -1,7 +1,7 @@
 <template>
-  <div class="h-full 2xl:hero-height px-4 xl:px-12 pt-36 pb-24 relative">
+  <div class="h-full 2xl:hero-height px-4 xl:px-12 relative default-padding-top default-margin-bottom">
 
-    <div v-if="!productsStore.loading && productsStore.product"
+    <section v-if="!productsStore.loading && productsStore.product"
       class="flex flex-col xl:flex-row justify-between w-full gap-6 h-full">
       <div class="order-2 xl:order-1 basis-full xl:basis-1/3 flex h-full flex-col xl:sticky xl:top-24 gap-8 ">
         <!-- Name -->
@@ -15,10 +15,12 @@
           </h2>
         </div>
 
-        <figure class="block xl:hidden w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto order-1">
-          <img :src="productsStore.product?.image?.src" :alt="productsStore.product?.name"
-            class="w-full h-full object-contain" />
-        </figure>
+        <div class="block xl:hidden order-1">
+
+          <ProductImage v-model="activeImageIndex" :images="allImages" :alt="productsStore.product?.name"
+            :show-dots="true" :show-navigation="false" />
+
+        </div>
 
         <!-- Summary -->
         <div class="text-muted-foreground body-2 relative order-4 xl:order-2">
@@ -44,29 +46,22 @@
           این محصول اورجینال می‌باشد.
         </span>
 
-        <div v-if="productsStore.product?.gallery" class="product-gallery flex gap-2 w-full grow order-2 xl:order-5">
-          <TheCarousel :opts="{ loop: true, direction: 'rtl' }">
-            <TheCarouselContent>
-              <TheCarouselItem v-for="image, index in productsStore.product?.gallery" :key="image?.id || index"
-                class="basis-1/3">
-                <img :src="mediaUrl + image.src" :alt="productsStore.product?.name"
-                  class="w-full h-full object-cover" />
-              </TheCarouselItem>
-            </TheCarouselContent>
-          </TheCarousel>
-        </div>
+        <ProductImageCarousel v-model="activeImageIndex" :images="allImages" :alt="productsStore.product?.name"
+          :show-navigation="allImages.length > 3" class="order-2 xl:order-5" />
       </div>
 
       <div class="order-1 xl:order-2 basis-full xl:basis-2/3 ">
         <FantastyHeading v-if="productsStore.product?.brand?.name || productsStore.product?.brand?.en_name"
-          :title="productsStore.product?.brand?.en_name || productsStore.product?.brand?.name"
-          :description="productsStore.product?.full_name.toLowerCase()" titleClass="heading-2 font-extrabold h-[10vh]"
-          descriptionClass="heading-5 font-light! -mt-4 lg:mt-4 pb-2 text-center lg:text-start leading-none capitalize" />
+          :title="productsStore.product?.brand?.en_name?.toLowerCase().replaceAll('-', ' ') || productsStore.product?.brand?.name"
+          :description="productsStore.product?.full_name.toLowerCase()"
+          titleClass="heading-2 font-extrabold text-center lg:text-start leading-[80%]!"
+          descriptionClass="heading-6 font-light! -mt-4 pb-2 max-w-[80%] mx-auto lg:mx-0 text-center leading-none capitalize" />
 
-        <figure class="hidden xl:block w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto">
-          <img :src="productsStore.product?.image?.src" :alt="productsStore.product?.name"
-            class="w-full h-full object-contain" />
-        </figure>
+        <div class="hidden xl:block">
+          <ProductImage v-model="activeImageIndex" :images="allImages" :alt="productsStore.product?.name"
+            :show-dots="false" :show-navigation="true" />
+        </div>
+
       </div>
 
       <div class="order-3 xl:order-3 basis-full xl:basis-1/3 flex flex-col xl:sticky xl:top-24 h-fit gap-8"
@@ -136,11 +131,11 @@
           {{ validationMessage }}
         </div>
       </div>
-    </div>
+    </section>
 
-    <div v-else>
+    <section v-else>
       <SkeletonProductPage />
-    </div>
+    </section>
 
     <BottomNavigation class="flex justify-between flex-col sm:flex-row">
       <div class="flex-col gap-2">
@@ -160,10 +155,10 @@
         <ProductCounter v-model="quantity" :max-quantity="productsStore.product?.qty || 1" size="sm" />
 
         <!-- Add to Cart Button -->
-        <TheButton @click="handleAddToCart" :disabled="cartStore.loading" class="grow gap-4 sm:px-8!" variant="default"
-          :class="{ 'opacity-80!': !canAddToCart }">
-          <ShoppingCart v-if="!cartStore.loading" class="size-4" />
-          <span v-if="cartStore.loading">
+        <TheButton @click="handleAddToCart" :disabled="cartStore.loadingAddToCart" class="grow gap-4 sm:px-8!"
+          variant="default" :class="{ 'opacity-80!': !canAddToCart }">
+          <ShoppingCart v-if="!cartStore.loadingAddToCart" class="size-4" />
+          <span v-if="cartStore.loadingAddToCart">
             <Loader2 class="size-4 animate-spin" />
           </span>
           <span v-else>افزودن به سبد</span>
@@ -173,10 +168,10 @@
     </BottomNavigation>
   </div>
 
-  <div class="px-4 xl:px-12">
+  <section class="px-4 xl:px-12">
     <ProductCarousel :products="productsStore.getRandomProducts" type="default" :loading="false" navigation
       alignSlider="start" />
-  </div>
+  </section>
 </template>
 
 <script lang="ts" setup>
@@ -192,6 +187,7 @@ import type { CartItemAdd } from '~/types/cart.types'
 import { toast } from 'vue-sonner'
 import { useWindowSize } from '@vueuse/core'
 import { useAuthStore } from '@/stores/auth'
+import { nextTick } from 'vue'
 
 const { width } = useWindowSize()
 
@@ -213,6 +209,8 @@ const quantity = ref(1)
 const validationMessage = ref('')
 
 const productOptions = computed<string[]>(() => productsStore.product?.options ?? [])
+
+const activeImageIndex = ref(0)
 
 // Initialize default selections when product loads
 const initializeSelections = () => {
@@ -331,12 +329,20 @@ watch(
   { immediate: true }
 )
 
-// Watch for slug changes to refetch product on client-side navigation
+
+let fetchTimeout: NodeJS.Timeout | null = null
 watch(
   () => route.params.slug,
-  (newSlug) => {
-    if (typeof newSlug === 'string' && newSlug) {
-      productsStore.fetchProduct(newSlug)
+  (newSlug, oldSlug) => {
+    if (fetchTimeout) {
+      clearTimeout(fetchTimeout)
+    }
+
+    if (typeof newSlug === 'string' && newSlug && newSlug !== oldSlug) {
+      fetchTimeout = setTimeout(() => {
+        productsStore.fetchProduct(newSlug)
+        fetchTimeout = null
+      }, 100)
     }
   }
 )
@@ -347,9 +353,60 @@ useHead({
   }
 })
 
-onMounted(() => {
-  productsStore.fetchProduct(route.params.slug as string)
+const allImages = computed(() => {
+  if (!productsStore.product) return []
+
+  const images: string[] = []
+
+  // Add the default image first
+  if (productsStore.product.image?.src) {
+    images.push(productsStore.product.image.src)
+  }
+
+  // Add gallery images
+  if (productsStore.product.gallery) {
+    productsStore.product.gallery.forEach(img => {
+      if (img.src) {
+        // Check if it's a relative path that needs the media URL prefix
+        const imageSrc = img.src.startsWith('http') ? img.src : mediaUrl.value + img.src
+        images.push(imageSrc)
+      }
+    })
+  }
+
+  return images
 })
+
+
+onMounted(async () => {
+  await productsStore.fetchProduct(route.params.slug as string)
+  await productsStore.ensureProductsForRandom()
+})
+
+// Cleanup timeout on unmount
+onBeforeUnmount(() => {
+  if (fetchTimeout) {
+    clearTimeout(fetchTimeout)
+    fetchTimeout = null
+  }
+})
+
+
+
+// Reset active image when product changes
+watch(
+  () => productsStore.product,
+  (newProduct, oldProduct) => {
+    // Only process if product actually changed and is valid
+    if (newProduct && newProduct !== oldProduct) {
+      nextTick(() => {
+        initializeSelections()
+        activeImageIndex.value = 0
+      })
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <style></style>
