@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full aspect-square h-auto max-w-[80%] md:max-w-[60%] mx-auto">
+  <div class="w-full aspect-square h-auto sm:max-w-[80%] md:max-w-[60%] lg:max-w-[80%] mx-auto lg:mx-0 xl:mx-auto">
     <TheCarousel :opts="{
       loop: true,
       direction: 'rtl',
@@ -15,7 +15,6 @@
       </TheCarouselContent>
     </TheCarousel>
 
-    <!-- Optional: Add dots indicator -->
     <div v-if="showDots && images.length > 1" class="flex justify-center gap-1 mt-4">
       <button v-for="(_, index) in images" :key="`dot-${index}`" @click="goToSlide(index)"
         class="w-2 h-2 rounded-full transition-all"
