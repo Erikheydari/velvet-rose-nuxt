@@ -3,7 +3,7 @@
     class="flex w-full rounded-2xl border border-border p-0 overflow-hidden relative min-h-38!"
     :to="`/product/${props.product.slug}`">
     <figure v-if="props.product.image"
-      class="image-container aspect-square size-36 lg:size-38 h-auto bg-muted relative">
+      class="image-container aspect-square w-full  lg:size-38 h-auto bg-muted relative" :class="{ 'size-30!': props.orientation === 'horizontal' }">
       <img :src="props.product.image.src" alt="product"
         class="object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full" />
     </figure>
@@ -31,7 +31,7 @@
           <ProductCounter 
             v-if="props.mode !== 'order'"
             v-model="quantity" 
-            :max-quantity="99" 
+            :max-quantity="props.product.qty" 
             :min-quantity="1" 
             :can-delete="true" 
             size="sm"
