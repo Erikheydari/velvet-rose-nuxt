@@ -1,5 +1,5 @@
 <template>
-  <Teleport to="body" :disabled="!isMobile">
+  <Teleport to="body" :disabled="!shouldTeleport">
     <Transition enter-active-class="transition-all duration-300 ease-out"
       enter-from-class="opacity-0 transform translate-y-full md:translate-y-[-10px]"
       enter-to-class="opacity-100 transform translate-y-0" leave-active-class="transition-all duration-200 ease-in"
@@ -14,8 +14,7 @@
           p-4 lg:h-min rounded-t-2xl lg:rounded-2xl
           lg:max-h-[65vh] h-[80vh]
           overflow-hidden
-          touch-none lg:touch-auto
-        " @click="stopPropagation" v-bind="isMobile ? panelTouchHandlers : {}" dir="rtl">
+          touch-none lg:touch-auto" @click="stopPropagation" v-bind="isMobile ? panelTouchHandlers : {}" dir="rtl">
 
         <!-- Mobile Handle Bar -->
         <div v-if="isMobile" class="
@@ -44,15 +43,19 @@
         </div>
 
         <div v-if="cartStore.cartItems.length > 0" class="flex justify-between lg:h-full items-end mt-4 w-full">
-          <p class="caption-1 text-muted-foreground flex flex-row items-baseline">
-            <span class="text-primary body-2 me-1">
-              جمع کل
-            </span>
-            <span class="text-primary caption-2 me-4">({{ totalQuantity }})</span>
+          <div class="caption-1 text-muted-foreground flex flex-col items-start">
+            <p class="flex flex-row items-baseline">
+              <span class="text-primary body-2 me-1">
+                جمع کل
+              </span>
+              <span class="text-primary caption-2 me-4">({{ totalQuantity }})</span>
+            </p>
+
             <span class="text-primary heading-6 font-bold">
               {{ formatPrice(totalPrice) }}
+              <bdi class="text-primary caption-2">تومان</bdi>
             </span>
-          </p>
+          </div>
           <TheButton v-if="cartStore.cartItems.length > 0" variant="default" class="w-fit" to="/checkout/cart">
             مشاهده سبد خرید
           </TheButton>
@@ -92,6 +95,9 @@ const isUnmounting = ref(false)
 const teleportTo = ref('body')
 
 const isMobile = computed(() => width.value < 1024)
+
+// Stable teleport flag that doesn't change after mount to prevent DOM errors
+const shouldTeleport = ref(false)
 
 // Use the slide panel composable for mobile only
 const {
@@ -146,6 +152,10 @@ const stopPropagation = (event: Event) => {
 
 // Lifecycle
 onMounted(() => {
+  // Set the stable teleport flag based on initial screen size
+  // This prevents DOM manipulation errors from reactive changes
+  shouldTeleport.value = width.value < 1024
+
   // Global event listeners
   document.addEventListener('click', handleClickOutside, { passive: true })
   document.addEventListener('keydown', handleKeyDown)
