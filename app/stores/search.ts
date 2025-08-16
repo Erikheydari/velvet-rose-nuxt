@@ -213,12 +213,10 @@ export const useSearchStore = defineStore('searchStore', () => {
     try {
       const searchParams = new URLSearchParams({
         q: trimmedQuery,
-        page: String(options.page || 1),
-        limit: String(options.limit || 20)
       })
 
       const { data, error, aborted } = await apiStore.apiRequest(
-        `${endpointStore.products.search(trimmedQuery)}?${searchParams.toString()}`,
+        `${endpointStore.products.search(trimmedQuery)}`,
         {
           method: 'get',
           signal: fullSearchAbortController.signal,
