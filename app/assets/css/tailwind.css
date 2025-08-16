@@ -124,7 +124,7 @@
   }
 
   .default-margin-bottom {
-    @apply mb-4 lg:mb-8;
+    @apply mb-6! lg:mb-12! xl:mb-18!;
   }
 
   /* Menu  */
@@ -147,7 +147,7 @@
   }
 
   .default-padding-top {
-    @apply pt-36 lg:pt-24;
+    @apply pt-40 lg:pt-28;
   }
 
   @media (min-width: 1024px) {
