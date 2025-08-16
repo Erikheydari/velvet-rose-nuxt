@@ -81,7 +81,7 @@ const navigateToFullSearch = () => {
       </div>
 
 
-      <div class="mt-4 text-center">
+      <div class="my-2 text-center">
         <TheButton variant="tonal" @click="navigateToFullSearch" class="px-4 py-2 text-sm">
           مشاهده همه نتایج جستجو
         </TheButton>
